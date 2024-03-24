@@ -19,7 +19,19 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.a303.memberms.domain.member.dto.request.MemberStandardLoginReq;
+import com.a303.memberms.domain.member.dto.request.MemberStandardRegisterReq;
+import com.a303.memberms.domain.member.dto.response.MemberBaseRes;
+import com.a303.memberms.domain.member.service.MemberService;
+import com.a303.memberms.global.api.response.BaseResponse;
+import com.a303.memberms.global.exception.code.SuccessCode;
+
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api/members")
@@ -87,6 +99,32 @@ public class MemberController {
 		return BaseResponse.success(
 			SuccessCode.INSERT_SUCCESS,
 			"회원가입 성공"
+		);
+	}
+
+	@GetMapping("/v1/availability/id")
+	public ResponseEntity<BaseResponse<String>> checkIdAvailability(
+		@RequestParam
+		String id
+	) {
+		memberService.checkIdDuplication(id);
+
+		return BaseResponse.success(
+			SuccessCode.AVAILABLE_ID,
+			"사용 가능한 아이디입니다."
+		);
+	}
+
+	@GetMapping("/v1/availability/nickname")
+	public ResponseEntity<BaseResponse<String>> checkNicknameAvailability(
+		@RequestParam
+		String nickname
+	) {
+		memberService.checkNicknameDuplication(nickname);
+
+		return BaseResponse.success(
+			SuccessCode.AVAILABLE_NICKNAME,
+			"사용 가능한 닉네임입니다."
 		);
 	}
 }

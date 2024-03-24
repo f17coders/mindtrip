@@ -19,4 +19,7 @@ public interface MemberService {
     String standardLogin(MemberStandardLoginReq memberStandardLoginReq);
 
     boolean standardRegister(MemberStandardRegisterReq memberStandardRegisterReq);
+
+	void checkIdDuplication(String id);
+	void checkNicknameDuplication(String nickname);
 }

@@ -17,6 +17,9 @@ public enum SuccessCode {
     // 수정 성공 코드 (HTTP Response: 201 Created)
     UPDATE_SUCCESS(201, "201", "UPDATE SUCCESS"),
 
+    AVAILABLE_NICKNAME(200, "200", "AVAILABLE NICKNAME"),
+    AVAILABLE_ID(200, "200", "AVAILABLE ID")
+
     ; // End
 
     // 성공 코드의 '코드 상태'를 반환한다.

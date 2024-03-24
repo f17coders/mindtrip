@@ -10,7 +10,7 @@ import com.a303.memberms.global.api.response.BaseResponse;
 import com.a303.memberms.global.exception.BaseExceptionHandler;
 import com.a303.memberms.global.exception.code.ErrorCode;
 import com.a303.memberms.global.client.AuthClient;
-import jakarta.persistence.criteria.CriteriaBuilder.In;
+
 import jakarta.transaction.Transactional;
 import java.io.IOException;
 import java.util.List;
@@ -65,12 +65,6 @@ public class MemberServiceImpl implements MemberService {
 	@Override
     public String standardLogin(MemberStandardLoginReq memberStandardLoginReq) {
         //1. ID로 존재 여부 확인(사실상 일치 여부도 확인됨)
-//        String id = memberStandardLoginReq.id();
-//        log.debug("input_id: {}", id);
-
-//        log.debug("이거는 되려나: {}", memberRepository.findById(1));
-//        log.debug("이게 돼야 하는데: {}", memberRepository.findById(memberStandardLoginReq.id()));
-
         Member target = memberRepository.findById(memberStandardLoginReq.id())
             .orElseThrow(
                 () -> new BaseExceptionHandler(
@@ -92,17 +86,6 @@ public class MemberServiceImpl implements MemberService {
         }
 
         //3. FeignClient로 토큰 발급
-//        ResponseEntity<BaseResponse<String>> response = authClient.token(
-//            AuthTokenReq.builder()
-//                .memberId(target.getMemberId())
-//                .role(target.getRole().name())
-//                .build()
-//        );
-//        HttpHeaders headers = response.getHeaders();
-//        for (String key : headers.keySet()) {
-//            System.out.println(key + ": " + headers.get(key));
-//        }
-
         ResponseEntity<BaseResponse<String>> response = authClient.token(
             AuthTokenReq.builder()
                 .memberId(target.getMemberId())
@@ -110,7 +93,6 @@ public class MemberServiceImpl implements MemberService {
                 .build()
         );
 
-//        return headers.getFirst("Authorization");
         return response.getBody().getResult();
     }
 
@@ -125,29 +107,18 @@ public class MemberServiceImpl implements MemberService {
         //6. 패스워드 인코딩(MVP에서는 일단 안함)
         //7. DB에 넣기
 
-        String id = memberStandardRegisterReq.id();
-
         //2. ID 중복 체크
-        if(isDuplicateId(id)) {
-            throw new BaseExceptionHandler(
-                "ID 있어잉",
-                ErrorCode.DUPLICATED_ID_EXCEPTION
-            );
-        }
+		String id = memberStandardRegisterReq.id();
+        checkIdDuplication(id);
 
         //4. 닉네임 중복 체크
         String nickname = memberStandardRegisterReq.nickname();
-        if(isDuplicateNickname(nickname)) {
-            throw new BaseExceptionHandler(
-                "닉네임 있어잉",
-                ErrorCode.DUPLICATED_NICKNAME_EXCEPTION
-            );
-        }
+        checkNicknameDuplication(nickname);
 
         //6. 패스워드 인코딩
-        //...은 mapstruct에서 이루어진다.
+		//...은 나중에
 
-//        Member member = DtoToEntityMapper.MAPPER.toMember(memberStandardRegisterReq);
+		//7. DB에 넣기
         Member member = Member.createMember(
 			memberStandardRegisterReq.id(),
 			memberStandardRegisterReq.password(),
@@ -158,14 +129,23 @@ public class MemberServiceImpl implements MemberService {
         return true;
     }
 
-    public boolean isDuplicateId(String id) {
-        return memberRepository.existsById(id);
+	public void checkIdDuplication(String id) {
+        if(memberRepository.existsById(id)) {
+			throw new BaseExceptionHandler(
+				"이미 존재하는 아이디입니다.",
+				ErrorCode.ID_ALREADY_EXISTS_EXCEPTION
+			);
+		}
     }
 
-    public boolean isDuplicateNickname(String nickname) {
-        return memberRepository.existsByNickname(nickname);
+    public void checkNicknameDuplication(String nickname) {
+        if(memberRepository.existsByNickname(nickname)) {
+			throw new BaseExceptionHandler(
+				"이미 존재하는 닉네임입니다.",
+				ErrorCode.NICKNAME_ALREADY_EXISTS_EXCEPTION
+			);
+		}
     }
-
 
 }
 

@@ -56,6 +56,7 @@ public enum ErrorCode {
     // 파일 업로드 실패
     FAILED_TO_UPLOAD_FILE(600, "F001", "S3 파일 업로드 실패"),
 
+
     /**
      * ******************************* Business Error CodeList ***************************************
      */
@@ -75,8 +76,12 @@ public enum ErrorCode {
     NOT_FOUND_ARCHIVE_EXCEPTION(404, "B203", "존재하지 않는 아카이브입니다."),
 
     // 유저 중복
-    DUPLICATED_ID_EXCEPTION(400, "B300", "이미 존재하는 ID입니다."),
-    DUPLICATED_NICKNAME_EXCEPTION(400, "B301", "이미 존재하는 닉네임입니다."),
+    ID_ALREADY_EXISTS_EXCEPTION(400, "B300", "이미 존재하는 ID입니다."),
+    NICKNAME_ALREADY_EXISTS_EXCEPTION(400, "B301", "이미 존재하는 닉네임입니다."),
+
+    // 형식이 맞지 않는 등 사용 불가능한 사용자
+    UNAVAILABLE_NICKNAME(400, "B302", "UNAVAILABLE NICKNAME"),
+    UNAVAILABLE_ID(400, "B303", "UNAVAILABLE ID"),
 
     // 스터디룸 관련 에러코드
     FORBIDDEN_ERROR_STUDY(403, "B304", "스터디 가입자만 접근 가능합니다"),
