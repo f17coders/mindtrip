@@ -23,7 +23,7 @@ public class NotificationController {
 	private final NotificationService notificationService;
 
 	// 메시지 알림
-	@GetMapping("/v1/subscribe")
+	@GetMapping("/v0/subscribe")
 	public SseEmitter subscribe(
 		@RequestHeader("x-member-id") int memberId
 	) {
