@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient(name = "notificationms")
 public interface NotificationClient {
 
-    @PostMapping("api/notificationms/v0/dailymission")
+    @PostMapping("api/notifications/v0/dailymission")
     BaseResponse<Integer> dailyMissionScheduling();
 
 }
