@@ -26,24 +26,24 @@ public class NotificationController {
 	private final NotificationService notificationService;
 
 	// 메시지 알림
-//	@GetMapping("/v0/subscribe")
-//	public SseEmitter subscribe(
-//		@RequestHeader("x-member-id") int memberId
-//	) {
-//		SseEmitter sseEmitter = notificationService.subscribe(memberId);
-//
-//		notificationService.notifyCnt(memberId);
-//
-//		return sseEmitter;
-//	}
-
-	@GetMapping("/v1/subscribe")
-	public ResponseEntity<BaseResponse<String>> subscribe(
-			@RequestHeader("x-member-id") int memberId
+	@GetMapping("/v0/subscribe")
+	public SseEmitter subscribe(
+		@RequestHeader("x-member-id") int memberId
 	) {
+		SseEmitter sseEmitter = notificationService.subscribe(memberId);
 
-		return BaseResponse.success(SuccessCode.INSERT_SUCCESS, "im good!");
+		notificationService.notifyCnt(memberId);
+
+		return sseEmitter;
 	}
+
+//	@GetMapping("/v1/subscribe")
+//	public ResponseEntity<BaseResponse<String>> subscribe(
+//			@RequestHeader("x-member-id") int memberId
+//	) {
+//
+//		return BaseResponse.success(SuccessCode.INSERT_SUCCESS, "im good!");
+//	}
 
 
 }
