@@ -42,7 +42,7 @@ public class NotificationController {
 		return sseEmitter;
 	}
 
-	@GetMapping(value = "/v1/stream-sse", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+	@GetMapping(value = "/v0/stream-sse", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
 	public Flux<ServerSentEvent<String>> streamSseMvc() {
 		return Flux.interval(Duration.ofSeconds(1))
 				.map(sequence -> {
