@@ -15,4 +15,6 @@ public interface NotificationRepository extends JpaRepository<Notification, Inte
 
 	Long countByMemberIdAndAndIsWritten(int memberId, boolean isWritten);
 
+
+
 }

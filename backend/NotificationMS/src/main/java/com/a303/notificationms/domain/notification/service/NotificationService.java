@@ -1,5 +1,6 @@
 package com.a303.notificationms.domain.notification.service;
 
+import com.a303.notificationms.domain.notification.dto.response.NotificationMessageRes;
 import com.a303.notificationms.global.exception.BaseExceptionHandler;
 import java.io.IOException;
 import java.util.HashMap;
@@ -12,7 +13,14 @@ public interface NotificationService {
 
 	void notifyCnt(int memberId);
 
+	List<NotificationMessageRes> findNotificationsByMemberId(int memberId);
+
+	void setIsWrittenTrue(int memberId);
+
+	void dailyMissionScheduleEventHandler();
 
 
 
-}
+
+
+	}
