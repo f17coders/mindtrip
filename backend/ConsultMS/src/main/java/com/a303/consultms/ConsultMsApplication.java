@@ -24,6 +24,7 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 @RefreshScope
 @EnableDiscoveryClient
 @EnableFeignClients
+@EnableScheduling
 public class ConsultMsApplication {
 
 	public static void main(String[] args) {

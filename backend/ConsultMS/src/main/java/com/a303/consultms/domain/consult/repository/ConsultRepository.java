@@ -24,4 +24,6 @@ public interface ConsultRepository extends JpaRepository<Consult, Integer>,
 
     //대화중인 채팅방 목록 (내가 들어주는 고민상담소)
     List<Consult> findAllByMemberIdNotOrderByUpdateTimeDesc(int memberId);
+
+    List<Consult> findAllByCategoryIdOrderByUpdateTimeDesc(int categoryId);
 }

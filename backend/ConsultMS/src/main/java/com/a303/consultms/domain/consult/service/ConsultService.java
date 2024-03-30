@@ -1,6 +1,7 @@
 package com.a303.consultms.domain.consult.service;
 
 import com.a303.consultms.domain.channel.dto.request.ChannelReq;
+import com.a303.consultms.domain.consult.Consult;
 import com.a303.consultms.domain.consult.dto.request.ConsultCloseReq;
 import com.a303.consultms.domain.consult.dto.request.ConsultRegisterReq;
 import com.a303.consultms.domain.consult.dto.response.ConsultCategoryListRes;
@@ -9,6 +10,7 @@ import com.a303.consultms.domain.consult.dto.response.ConsultDetailRes;
 import com.a303.consultms.domain.consult.dto.response.ConsultListRes;
 import com.a303.consultms.global.exception.BaseExceptionHandler;
 import java.io.IOException;
+import java.util.List;
 
 public interface ConsultService {
 
@@ -56,4 +58,7 @@ public interface ConsultService {
 
     //공유된 고민 내용에 좋아요 삭제
     void deleteLikePostit(int consultId, int memberId);
+
+    //카테고리로 고민상담소 필터링
+    List<Consult> getConsultListByCategory(int categoryId);
 }

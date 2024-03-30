@@ -451,11 +451,15 @@ public class ConsultServiceImpl implements ConsultService {
                 throw new BaseExceptionHandler(ALREADY_CONSULT_LIKE_EXISTS);
             }
             hashOperations.put(key, field, String.valueOf(1));
+            //canLike = false로 변경하기
+            Consult consult = consultRepository.findById(consultId).get();
+            consult.setCanLike(false);
+
         } else {
             throw new BaseExceptionHandler(ALREADY_CONSULT_LIKE_EXISTS);
         }
 
-
+        log.debug("postLikeConsults method consultId: {} memberId:{} success ", consultId, memberId);
     }
 
     //공유된 고민상담 내용에 좋아요 등록 취소
@@ -484,5 +488,21 @@ public class ConsultServiceImpl implements ConsultService {
         } else {
             hashOperations.delete(key, field);
         }
+        log.debug("deleteLikeConsults method consultId: {} memberId:{} success ", consultId, memberId);
+    }
+
+    //카테고리로 고민상담소 필터링
+    @Override
+    public List<Consult> getConsultListByCategory(int categoryId) {
+
+        //카테고리ID가 1이면 전체 값 조회
+        if(categoryId == 1){
+            //consultRepository에 저장되어 있는 모든 값 가져오기
+            return consultRepository.findAllByOrderByCreateTimeDesc();
+        }
+        
+        //카테고리 ID가 그 외의 값이면 해당하는 값 조회
+        List<Consult> consultList = consultRepository.findAllByCategoryIdOrderByUpdateTimeDesc(categoryId);
+        return consultList;
     }
 }

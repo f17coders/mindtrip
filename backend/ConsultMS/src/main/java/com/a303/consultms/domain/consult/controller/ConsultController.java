@@ -1,6 +1,8 @@
 package com.a303.consultms.domain.consult.controller;
 
+import com.a303.consultms.domain.BaseEntity;
 import com.a303.consultms.domain.channel.service.ChannelService;
+import com.a303.consultms.domain.consult.Consult;
 import com.a303.consultms.domain.consult.dto.request.ConsultCloseReq;
 import com.a303.consultms.domain.consult.dto.request.ConsultRegisterReq;
 import com.a303.consultms.domain.consult.dto.response.ConsultCategoryListRes;
@@ -13,6 +15,7 @@ import com.a303.consultms.global.exception.code.SuccessCode;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import java.io.IOException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -124,6 +127,13 @@ public class ConsultController {
     }
 
     //카테고리로 고민상담소 필터링
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<BaseResponse<List<Consult>>> getConsultListByCategory(
+        @PathVariable int categoryId
+    ) {
+        List<Consult> consultListByCategory = consultService.getConsultListByCategory(categoryId);
+        return BaseResponse.success(SuccessCode.SELECT_SUCCESS, consultListByCategory);
+    }
 
     //제목+내용으로 고민상담소 검색
 
