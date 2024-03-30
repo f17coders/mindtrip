@@ -13,6 +13,7 @@ import com.a303.missionms.domain.mission.repository.MissionRepository;
 import com.a303.missionms.domain.missionLog.repository.MissionLogRepository;
 import com.a303.missionms.global.api.response.BaseResponse;
 import com.a303.missionms.global.client.MemberClient;
+import com.a303.missionms.global.client.NotificationClient;
 import com.a303.missionms.global.exception.BaseExceptionHandler;
 import com.a303.missionms.global.exception.code.ErrorCode;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -52,6 +53,7 @@ public class DailyMissionServiceImpl implements DailyMissionService {
 	private final MissionRepository missionRepository;
 	private final MissionBulkRepository missionBulkRepository;
 	private final MemberClient memberClient;
+	private final NotificationClient notificationClient;
 
 
 	// TODO missionId가 바뀌지는 않지만 만약 없는 미션아이디일 경우의 예외처리도 필요하다.
@@ -244,23 +246,24 @@ public class DailyMissionServiceImpl implements DailyMissionService {
 
 		// 알림 전송 kafka(notification에서는 알림테이블에 저장 + 실시간 알림 전송)
 
-		NotificationEventDto eventDto = NotificationEventDto.builder()
-			.eventType("DailyMissionSchedule")
-			.memberId(-1)
-			.build();
+//		NotificationEventDto eventDto = NotificationEventDto.builder()
+//			.eventType("DailyMissionSchedule")
+//			.memberId(-1)
+//			.build();
+//
+//		ObjectMapper objectMapper = new ObjectMapper();
+//		String jsonString;
+//		// 객체를 JSON 문자열로 변환
+//		try {
+//			jsonString = objectMapper.writeValueAsString(eventDto);
+//			notificationEventDtoKafkaTemplate.send("notification-topic", jsonString);
+//
+//		} catch (JsonProcessingException e) {
+//			e.printStackTrace();
+//		}
 
-		ObjectMapper objectMapper = new ObjectMapper();
-		String jsonString;
-		// 객체를 JSON 문자열로 변환
-		try {
-			jsonString = objectMapper.writeValueAsString(eventDto);
-			notificationEventDtoKafkaTemplate.send("notification-topic", jsonString);
-
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-		}
-
-		log.info("스케쥴링 완료 알림 전송. userId : 전체, message : {}", eventDto);
+		BaseResponse<Integer> res = notificationClient.dailyMissionScheduling();
+		log.info("스케쥴링 완료 알림 전송. userId : 전체");
 
 	}
 

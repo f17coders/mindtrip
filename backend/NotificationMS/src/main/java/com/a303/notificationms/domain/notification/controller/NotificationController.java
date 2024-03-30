@@ -1,10 +1,12 @@
 package com.a303.notificationms.domain.notification.controller;
 
+import com.a303.notificationms.domain.notification.dto.response.NotificationMessageRes;
 import com.a303.notificationms.domain.notification.service.NotificationService;
 import com.a303.notificationms.global.api.response.BaseResponse;
 import com.a303.notificationms.global.exception.code.SuccessCode;
 import java.time.Duration;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -42,25 +45,38 @@ public class NotificationController {
 		return sseEmitter;
 	}
 
-	@GetMapping(value = "/v0/stream-sse", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-	public Flux<ServerSentEvent<String>> streamSseMvc() {
-		return Flux.interval(Duration.ofSeconds(1))
-				.map(sequence -> {
-							if (sequence > 50) {
-								return ServerSentEvent.<String>builder().comment("stop sending").build();
-							} else {
-								// 正常发送 SSE 事件
-								return ServerSentEvent.<String>builder()
-										.id(String.valueOf(sequence))
-										.event("message")
-										.data("SSE - " + LocalTime.now())
-										.build();
-							}
-						}
-				)
-				.doOnCancel(() -> System.out.println("SSE connection cancelled"))
-				.doOnError(Throwable::printStackTrace)
-				.doOnComplete(() -> System.out.println("SSE connection completed"));
+	// 알림 읽음 처리
+	@PostMapping("/v1")
+	public ResponseEntity<BaseResponse<Integer>> setIsWrittenTrue(
+			@RequestHeader("x-member-id") int memberId
+	) {
+
+		notificationService.setIsWrittenTrue(memberId);
+
+
+		return BaseResponse.success(SuccessCode.UPDATE_SUCCESS, 1);
+	}
+
+	@GetMapping("/v1")
+	public ResponseEntity<BaseResponse<List<NotificationMessageRes>>> read(
+			@RequestHeader("x-member-id") int memberId
+	) {
+
+		List<NotificationMessageRes> notifications = notificationService.findNotificationsByMemberId(memberId);
+
+
+		return BaseResponse.success(SuccessCode.SELECT_SUCCESS, notifications);
+	}
+
+//	-------------------- feign -----------------------
+
+	@PostMapping("/v0/dailymission")
+	public ResponseEntity<BaseResponse<Integer>> dailyMissionScheduling(
+	) {
+
+		notificationService.dailyMissionScheduleEventHandler();
+
+		return BaseResponse.success(SuccessCode.INSERT_SUCCESS, 1);
 	}
 
 
