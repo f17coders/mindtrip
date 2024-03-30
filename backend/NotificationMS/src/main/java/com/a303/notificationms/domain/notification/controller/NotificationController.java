@@ -1,10 +1,13 @@
 package com.a303.notificationms.domain.notification.controller;
 
 import com.a303.notificationms.domain.notification.service.NotificationService;
+import com.a303.notificationms.global.api.response.BaseResponse;
+import com.a303.notificationms.global.exception.code.SuccessCode;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -23,15 +26,23 @@ public class NotificationController {
 	private final NotificationService notificationService;
 
 	// 메시지 알림
-	@GetMapping("/v0/subscribe")
-	public SseEmitter subscribe(
-		@RequestHeader("x-member-id") int memberId
+//	@GetMapping("/v0/subscribe")
+//	public SseEmitter subscribe(
+//		@RequestHeader("x-member-id") int memberId
+//	) {
+//		SseEmitter sseEmitter = notificationService.subscribe(memberId);
+//
+//		notificationService.notifyCnt(memberId);
+//
+//		return sseEmitter;
+//	}
+
+	@GetMapping("/v1/subscribe")
+	public ResponseEntity<BaseResponse<String>> subscribe(
+			@RequestHeader("x-member-id") int memberId
 	) {
-		SseEmitter sseEmitter = notificationService.subscribe(memberId);
 
-		notificationService.notifyCnt(memberId);
-
-		return sseEmitter;
+		return BaseResponse.success(SuccessCode.INSERT_SUCCESS, "im good!");
 	}
 
 
