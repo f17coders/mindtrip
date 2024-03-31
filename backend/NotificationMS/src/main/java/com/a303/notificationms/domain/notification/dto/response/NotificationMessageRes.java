@@ -5,7 +5,8 @@ import lombok.Builder;
 @Builder
 public record NotificationMessageRes(
 	String type,
-	String message
+	String message,
+	boolean isWritten
 ) {
 
 }

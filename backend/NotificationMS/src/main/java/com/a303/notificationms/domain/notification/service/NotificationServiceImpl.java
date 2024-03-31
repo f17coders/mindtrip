@@ -103,7 +103,7 @@ public class NotificationServiceImpl implements NotificationService {
 	@Override
 	public List<NotificationMessageRes> findNotificationsByMemberId(int memberId) {
 
-		Pageable pageable = PageRequest.of(0, 5);
+		Pageable pageable = PageRequest.of(0, 10);
 		List<Notification> notifications = notificationRepository.findByMemberId(memberId, pageable);
 
 		List<NotificationMessageRes> notificationMessageResList = new ArrayList<>();
@@ -112,6 +112,7 @@ public class NotificationServiceImpl implements NotificationService {
 			NotificationMessageRes res = NotificationMessageRes.builder()
 					.type("NOTIFICATION")
 					.message(noti.getContent())
+					.isWritten(noti.isWritten())
 					.build();
 			notificationMessageResList.add(res);
 		}
@@ -120,9 +121,13 @@ public class NotificationServiceImpl implements NotificationService {
 	}
 
 	@Override
-	public void setIsWrittenTrue(int memberId) {
+	public List<NotificationMessageRes> setIsWrittenTrue(int memberId) {
+
+		List<NotificationMessageRes> notificationMessageResList = findNotificationsByMemberId(memberId);
+
 		notificationBulkRepository.updateIsWrittenTrue(memberId);
 
+		return notificationMessageResList;
 	}
 
 	//	--------------------- kafka listener ------------------------
@@ -183,6 +188,7 @@ public class NotificationServiceImpl implements NotificationService {
 				NotificationMessageRes messageRes = NotificationMessageRes.builder()
 					.type("NOTIFICATION")
 					.message(now + " 날짜의 미션이 추가되었습니다. :)")
+					.isWritten(false)
 					.build();
 				sseEmitterReceiver.send(SseEmitter.event().name("message").data(messageRes));
 
@@ -190,6 +196,37 @@ public class NotificationServiceImpl implements NotificationService {
 				emitterRepository.removeByMemberId(entry.getKey());
 			}
 		}
+	}
+
+	@Override
+	public void makeNotification(int memberId) {
+		// Notification 저장
+		Domain domain = domainRepository.findByName("임시");
+		LocalDate now = LocalDate.now();
+
+
+		Notification notification = Notification.createNotification(
+				memberId,
+				domain,
+				false,
+				now + " 임시 알림 발송!"
+		);
+
+		notificationRepository.save(notification);
+
+		// 실시간 알람
+		try {
+			SseEmitter sseEmitter = emitterRepository.findByMemberId(memberId);
+			NotificationMessageRes messageRes = NotificationMessageRes.builder()
+					.type("NOTIFICATION")
+					.message(notification.getContent())
+					.isWritten(notification.isWritten())
+					.build();
+			sseEmitter.send(SseEmitter.event().name("message").data(messageRes));
+		} catch (Exception e) {
+			emitterRepository.removeByMemberId(memberId);
+		}
+
 	}
 
 }
