@@ -108,7 +108,7 @@ function PersonDraw({ goSurvey }: propsType1) {
   };
   
   const sendFile = async (data: FormData) => {
-    await axios.post('https://mindtrip.site/api/htp/v1/test/house', data, {
+    await axios.post('https://mindtrip.site/api/htp/v1/test/person', data, {
       headers: {
         tempAuthorization: tempAuthorization,
         "Content-Type": "multipart/form-data"
