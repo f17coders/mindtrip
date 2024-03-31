@@ -379,53 +379,37 @@ public class ConsultServiceImpl implements ConsultService {
     @Override
     public ConsultChattingListRes getOthersChattingRooms(int memberId) {
 
-        // 내가 들어주는 고민이 아닌 consult 정보 가져오기
-        List<Consult> consultList = consultRepository.findAllByMemberIdNotOrderByUpdateTimeDesc(
-            memberId);
-
-        // 없으면 null 출력
-        if (consultList == null || consultList.isEmpty()) {
-            return null;
-        }
-
-        // channelId가 null이 아닌 값들만 필터링
-        List<Consult> filteredConsultList = consultList.stream()
-            .filter(consult -> consult.getChannelId() != null).collect(Collectors.toList());
-
         // ConsultChattingRes 객체의 리스트를 저장할 변수 선언
         List<ConsultChattingRes> consultChattingResList = new ArrayList<>();
 
-        //channel에 대한 정보 가져오기 -> 없으면 에러처리
-        for (Consult consult : filteredConsultList) {
-            //채널 정보 가져오기
-            Channel channel = channelRepository.findById(consult.getChannelId()).get();
+        //내가 참여중인 채널의 정보 가져오기
+        List<Channel> channelList = channelRepository.findBySender(String.valueOf(memberId));
 
-            if (!channel.getMessageList().isEmpty()) {
-                //가장 최근 메세지 한개 가져오기
-                Message latestMessage = channel.getMessageList().get(0);
+        for(Channel c : channelList) {
 
-                // ConsultChattingRes 객체 생성 및 최근 메시지 설정
-                ConsultChattingRes consultChattingRes = ConsultChattingRes.builder()
-                    .consultId(consult.getConsultId()).memberId(consult.getMemberId())
-                    .nickname(memberClient.getMember(consult.getMemberId()).getResult().nickname())
-                    .title(consult.getTitle()).channelId(consult.getChannelId())
-                    .text(latestMessage.getText()) // 최근 메시지의 텍스트 설정
-                    .build();
+            Consult consult = consultRepository.findByChannelId(c.getChannelId());
 
-                // ConsultChattingRes 객체를 리스트에 추가
-                consultChattingResList.add(consultChattingRes);
-            } else {
-                // ConsultChattingRes 객체 생성 및 최근 메시지 설정
-                ConsultChattingRes consultChattingRes = ConsultChattingRes.builder()
-                    .consultId(consult.getConsultId()).memberId(consult.getMemberId())
-                    .nickname(memberClient.getMember(consult.getMemberId()).getResult().nickname())
-                    .title(consult.getTitle()).channelId(consult.getChannelId())
-                    .text(null) // 최근 메시지의 텍스트 설정
-                    .build();
-
-                // ConsultChattingRes 객체를 리스트에 추가
-                consultChattingResList.add(consultChattingRes);
+            //가장 최근 메세지 한개 가져오기
+            Message latestMessage = null;
+            if (!c.getMessageList().isEmpty()) {
+                latestMessage = c.getMessageList().get(0);
             }
+
+            String text = null;
+            if (latestMessage != null) {
+                text = latestMessage.getText();
+            }
+
+            // ConsultChattingRes 객체 생성 및 최근 메시지 설정
+            ConsultChattingRes consultChattingRes = ConsultChattingRes.builder()
+                .consultId(consult.getConsultId()).memberId(consult.getMemberId())
+                .nickname(memberClient.getMember(consult.getMemberId()).getResult().nickname())
+                .title(consult.getTitle()).channelId(consult.getChannelId())
+                .text(text) // 최근 메시지의 텍스트 설정
+                .build();
+
+            // ConsultChattingRes 객체를 리스트에 추가
+            consultChattingResList.add(consultChattingRes);
         }
 
         return ConsultChattingListRes.builder()

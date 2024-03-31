@@ -3,6 +3,7 @@ package com.a303.consultms.domain.channel.repository;
 import com.a303.consultms.domain.channel.Channel;
 import java.util.List;
 import lombok.AllArgsConstructor;
+import org.checkerframework.checker.units.qual.C;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -24,6 +25,17 @@ public class ChannelRepositoryImpl implements ChannelCustomRepository{
         Query query = new Query(criteria)
             .with(Sort.by(Direction.DESC, "createTime"));
 
+        return mongoTemplate.find(query, Channel.class);
+    }
+
+    @Override
+    public List<Channel> findBySender(String senderId){
+        Criteria criteria = new Criteria().orOperator(
+            new Criteria().andOperator(
+                Criteria.where("sender.memberId").is(senderId)
+            )
+        );
+        Query query = new Query(criteria);
         return mongoTemplate.find(query, Channel.class);
     }
 
