@@ -28,4 +28,6 @@ public interface ConsultRepository extends JpaRepository<Consult, Integer>,
     List<Consult> findAllByCategoryIdOrderByUpdateTimeDesc(int categoryId);
 
     List<Consult> findAllByCategoryIdAndIsSharedOrderByUpdateTimeDesc(int categoryId, boolean isShared);
+
+    Consult findByChannelId(String channelId);
 }
