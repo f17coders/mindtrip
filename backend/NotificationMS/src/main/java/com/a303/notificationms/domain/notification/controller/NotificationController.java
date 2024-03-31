@@ -76,6 +76,7 @@ public class NotificationController {
 
 		notificationService.dailyMissionScheduleEventHandler();
 
+
 		return BaseResponse.success(SuccessCode.INSERT_SUCCESS, 1);
 	}
 

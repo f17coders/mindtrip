@@ -265,6 +265,7 @@ public class DailyMissionServiceImpl implements DailyMissionService {
 		BaseResponse<Integer> res = notificationClient.dailyMissionScheduling();
 		log.info("스케쥴링 완료 알림 전송. userId : 전체");
 
+
 	}
 
 
