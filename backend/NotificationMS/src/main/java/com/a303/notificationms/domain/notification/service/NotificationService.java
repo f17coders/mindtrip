@@ -16,6 +16,8 @@ public interface NotificationService {
 
 	void dailyMissionScheduleEventHandler();
 
+	void makeNotification(int memberId);
+
 
 
 

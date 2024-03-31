@@ -103,7 +103,7 @@ public class NotificationServiceImpl implements NotificationService {
 	@Override
 	public List<NotificationMessageRes> findNotificationsByMemberId(int memberId) {
 
-		Pageable pageable = PageRequest.of(0, 5);
+		Pageable pageable = PageRequest.of(0, 10);
 		List<Notification> notifications = notificationRepository.findByMemberId(memberId, pageable);
 
 		List<NotificationMessageRes> notificationMessageResList = new ArrayList<>();
@@ -196,6 +196,37 @@ public class NotificationServiceImpl implements NotificationService {
 				emitterRepository.removeByMemberId(entry.getKey());
 			}
 		}
+	}
+
+	@Override
+	public void makeNotification(int memberId) {
+		// Notification 저장
+		Domain domain = domainRepository.findByName("임시");
+		LocalDate now = LocalDate.now();
+
+
+		Notification notification = Notification.createNotification(
+				memberId,
+				domain,
+				false,
+				now + " 임시 알림 발송!"
+		);
+
+		notificationRepository.save(notification);
+
+		// 실시간 알람
+		try {
+			SseEmitter sseEmitter = emitterRepository.findByMemberId(memberId);
+			NotificationMessageRes messageRes = NotificationMessageRes.builder()
+					.type("NOTIFICATION")
+					.message(notification.getContent())
+					.isWritten(notification.isWritten())
+					.build();
+			sseEmitter.send(SseEmitter.event().name("message").data(messageRes));
+		} catch (Exception e) {
+			emitterRepository.removeByMemberId(memberId);
+		}
+
 	}
 
 }
