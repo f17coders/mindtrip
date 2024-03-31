@@ -491,7 +491,7 @@ public class ConsultServiceImpl implements ConsultService {
         log.debug("deleteLikeConsults method consultId: {} memberId:{} success ", consultId, memberId);
     }
 
-    //카테고리로 고민상담소 필터링
+    //카테고리로 대화가능한 고민상담소 필터링
     @Override
     public List<Consult> getConsultListByCategory(int categoryId) {
 
@@ -503,6 +503,21 @@ public class ConsultServiceImpl implements ConsultService {
         
         //카테고리 ID가 그 외의 값이면 해당하는 값 조회
         List<Consult> consultList = consultRepository.findAllByCategoryIdOrderByUpdateTimeDesc(categoryId);
+        return consultList;
+    }
+
+    //카테고리로 공유된 고민상담소 필터링
+    @Override
+    public List<Consult> getSharedConsultListByCategory(int categoryId) {
+        
+        //카테고리ID가 1이면 전체 값 조회
+        if(categoryId == 1){
+            //consultRepository에 저장되어 있는 값들 중 공유된 고민상담소 가져오기
+            return consultRepository.findAllByIsSharedOrderByCreateTimeDesc(true);
+        }
+
+        //카테고리 ID가 그 외의 값이면 해당하는 값 조회
+        List<Consult> consultList = consultRepository.findAllByCategoryIdAndIsSharedOrderByUpdateTimeDesc(categoryId, true);
         return consultList;
     }
 }

@@ -126,7 +126,7 @@ public class ConsultController {
         return BaseResponse.success(SuccessCode.SELECT_SUCCESS, consultListRes);
     }
 
-    //카테고리로 고민상담소 필터링
+    //카테고리로 대화가능한 고민상담소 필터링
     @GetMapping("/category/{categoryId}")
     public ResponseEntity<BaseResponse<List<Consult>>> getConsultListByCategory(
         @PathVariable int categoryId
@@ -135,7 +135,14 @@ public class ConsultController {
         return BaseResponse.success(SuccessCode.SELECT_SUCCESS, consultListByCategory);
     }
 
-    //제목+내용으로 고민상담소 검색
+    //카테고리로 공유된 고민상담소 필터링
+    @GetMapping("/shared/{categoryId}")
+    public ResponseEntity<BaseResponse<List<Consult>>> getSharedConsultListByCategory(
+        @PathVariable int categoryId
+    ){
+        List<Consult> sharedConsultListByCategory = consultService.getSharedConsultListByCategory(categoryId);
+        return BaseResponse.success(SuccessCode.SELECT_SUCCESS, sharedConsultListByCategory);
+    }
 
 
     //공유된 고민내역 좋아요 등록
