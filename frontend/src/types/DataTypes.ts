@@ -32,7 +32,10 @@ type consultType = {
   content : string,
   categoryId : number,
   canLike: boolean,
-  channelId: string|null
+  likeCount: number,
+  channelId: string|null,
+  nickname: string,
+  closed : boolean
 }
 
 // 고민 카테고리 타입

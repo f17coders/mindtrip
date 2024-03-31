@@ -48,7 +48,6 @@ function Chatting() {
   const [isMine, setIsMine] = useState<Boolean|null>(true)
 
   useEffect(() => {
-    console.log(channelId)
     // 만약 채팅방의 user Id와 내 아이디가 같다면 내꺼임
     if (member.memberId === personalChat.sender.memberId) {
       setIsMine(true)

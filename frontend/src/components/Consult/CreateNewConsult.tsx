@@ -11,17 +11,18 @@ type propsType = {
 }
 
 function CreateNewConsult({ onClose, category }: propsType) {
+  const selectableCategory = category?.filter((item) => item.categoryId != 1)
 
-  let accessToken = useSelector((state:RootState) => state.accessToken)
+  let accessToken = useSelector((state: RootState) => state.accessToken)
 
   // 제목, 내용, 카테고리
   const [title, setTitle] = useState<string>('')
   const [content, setContent] = useState<string>('')
-  
+
   // 선택된 카테고리
-  const [selectedCategory, setSelectedCategory] = useState<categoryType|null>(null)
-  const handleCategory = (e :any) => {
-   setSelectedCategory(e.target.value)
+  const [selectedCategory, setSelectedCategory] = useState<categoryType | null>(null)
+  const handleCategory = (e: any) => {
+    setSelectedCategory(e.target.value)
   }
 
   // 유효성 검사용 변수들
@@ -41,10 +42,10 @@ function CreateNewConsult({ onClose, category }: propsType) {
       setContentErrorMessage('내용은 최대 100자입니다.')
     } else {
       setContentErrorMessage('')
-      
+
       //여기에 axios 통신
-      let temp :number|string|categoryType = selectedCategory ? selectedCategory : 0
-      
+      let temp: number | string | categoryType = selectedCategory ? selectedCategory : 0
+
       uploadConsult(accessToken, title, content, temp)
       onClose()
     }
@@ -76,28 +77,28 @@ function CreateNewConsult({ onClose, category }: propsType) {
       />
       {/* 카테고리들 */}
       {
-            category != null ? (
-              <Select
-                label='카테고리'
-                labelPlacement='outside'
-                placeholder='카테고리를 선택해주세요'
-                onChange={handleCategory}
-                className='w-[50vw]'
-              >
-                {
-                  category.map((oneCategory: categoryType) => {
-                    return (
-                      <SelectItem key={oneCategory.categoryId}>
-                        {oneCategory.categoryName}
-                      </SelectItem>
-                    )
-                  })
-                }
-              </Select>
-            ) : null
-          }
-      <Button 
-        onPress={submit} 
+        selectableCategory != null ? (
+          <Select
+            label='카테고리'
+            labelPlacement='outside'
+            placeholder='카테고리를 선택해주세요'
+            onChange={handleCategory}
+            className='w-[50vw]'
+          >
+            {
+              selectableCategory.map((oneCategory: categoryType) => {
+                  return (
+                    <SelectItem key={oneCategory.categoryId}>
+                      {oneCategory.categoryName}
+                    </SelectItem>
+                  )
+              })
+            }
+          </Select>
+        ) : null
+      }
+      <Button
+        onPress={submit}
         className="mt-7 ml-[70%] w-[30%]"
       >공유하기</Button>
     </div>

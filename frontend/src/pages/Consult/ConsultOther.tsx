@@ -15,6 +15,7 @@ import { villageBackgroundColor, villageTextColor } from '../../atoms/color';
 import Header from '../../components/Header';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 // 모달 제어용 타입 지정
 type useDisclosureType = {
@@ -44,15 +45,26 @@ function ConsultOther() {
   // 멤버정보
   let member = useSelector((state: RootState) => state.member)
   let accessToken = useSelector((state:RootState) => state.accessToken)
+
+
+   // 고민 받아서 저장할 변수
+  const [otherConsults, setOtherConsult] = useState<consultType[]>([])
+  
+  
   // 선택된 카테고리
   const [selectedCategory, setSelectedCategory] = useState<categoryType | null>(null)
   const handleCategory = (e: any) => {
     setSelectedCategory(e.target.value)
     console.log(selectedCategory)
+    axios.get(`https://mindtrip.site/api/consults/v1/category/${e.target.value}`,{
+      headers: {
+        Authorization: accessToken
+      }
+    }).then((res) => {
+      setOtherConsult(res.data.result)
+    }) .catch((err) => console.log(err))
   }
-
-  // 고민 받아서 저장할 변수
-  const [otherConsults, setOtherConsult] = useState<consultType[]>([])
+ 
 
   useEffect(() => {
     // 전체 고민 가져오기

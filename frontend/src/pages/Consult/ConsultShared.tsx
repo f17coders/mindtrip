@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react'
-import { Select, SelectItem, Input } from "@nextui-org/react";
+import { Select, SelectItem } from "@nextui-org/react";
 import { useNavigate } from 'react-router-dom';
 import SharedConsult from '../../components/Consult/SharedConsult';
-import SearchIcon from '../../atoms/Icons/SearchIcon';
 import { categoryType, consultType } from '../../types/DataTypes';
 import { useSelector } from "react-redux";
 import { RootState } from './../../store/store'
 import Header from '../../components/Header';
 import { getSharedConsult } from '../../api/consults';
 import Swal from 'sweetalert2';
+import axios from 'axios';
 
 function ConsultShared() {
   const navigate = useNavigate()
@@ -25,23 +25,25 @@ function ConsultShared() {
   const handleCategory = (e: any) => {
     setSelectedCategory(e.target.value)
     console.log(selectedCategory)
+    axios.get(`https://mindtrip.site/api/consults/v1/shared/${e.target.value}`, {
+      headers: {
+        Authorization: accessToken
+      }
+    }).then((res) => {
+      setShared(res.data.result)
+    }).catch((err) => console.log(err))
   }
 
+
+  // 로그인 안하면 막기
   useEffect(() => {
-
-    const navigate = useNavigate()
-
-    // 로그인 안하면 막기
-    useEffect(() => {
-      if (accessToken === '') {
-        Swal.fire({
-          text:'로그인이 필요합니다.'
-        }).then(() => {
-          navigate('/login')
-        })
-      }
-    }, [])
-
+    if (accessToken === '') {
+      Swal.fire({
+        text: '로그인이 필요합니다.'
+      }).then(() => {
+        navigate('/login')
+      })
+    }
     // 전체 고민 가져오기
     const fetchConsult = async () => {
       try {
@@ -53,13 +55,14 @@ function ConsultShared() {
       }
     }
     fetchConsult()
+
   }, [])
 
   return (
     <div className="w-full lg:w-3/4 mx-auto h-screen">
       <Header />
       <div className="px-3 min-h-[40%]">
-        <p className="text-2xl hover:cursor-pointer" onClick={() => navigate('/consult/shared')}>🔍공유된 고민 상담들 둘러보기</p>
+        <p className="text-2xl hover:cursor-pointer">🔍공유된 고민 상담들 둘러보기</p>
         <div className="flex items-center w-full mt-4 mb-2">
           {/* 카테고리들 */}
           <Select
@@ -78,16 +81,6 @@ function ConsultShared() {
             })
             }
           </Select>
-          <Input
-            isClearable
-            variant='underlined'
-            placeholder='검색'
-            size='sm'
-            startContent={
-              <SearchIcon />
-            }
-            className='ml-2 mt-0 w-48'
-          />
         </div>
         <div className='grid grid-cols-2'>
           {
@@ -99,10 +92,11 @@ function ConsultShared() {
               )
             })
           }
-          {
-            shared?.length === 0 ? (<div>아직 공유된 고민이 없습니다</div>) : null
-          }
+          
         </div>
+        {
+          shared?.length === 0 ? (<div>아직 공유된 고민이 없습니다</div>) : null
+        }
       </div>
     </div>
   )

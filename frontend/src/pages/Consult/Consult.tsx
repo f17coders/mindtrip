@@ -17,6 +17,7 @@ import { getConsults, getCategory, getSharedConsult } from './../../api/consults
 import { consultType, categoryType } from '../../types/DataTypes';
 import { villageBackgroundColor, villageTextColor } from '../../atoms/color';
 import Swal from 'sweetalert2';
+import axios from 'axios';
 
 // 고민상담소 첫 페이지
 function Consult() {
@@ -32,8 +33,6 @@ function Consult() {
       })
     }
   }, [])
-
-
 
   const dispatch = useDispatch()
 
@@ -129,6 +128,13 @@ function Others() {
   const handleCategory = (e: any) => {
     setSelectedCategory(e.target.value)
     console.log(selectedCategory)
+    axios.get(`https://mindtrip.site/api/consults/v1/category/${e.target.value}`,{
+      headers: {
+        Authorization: accessToken
+      }
+    }).then((res) => {
+      setOtherConsult(res.data.result)
+    }) .catch((err) => console.log(err))
   }
 
   useEffect(() => {
@@ -137,7 +143,6 @@ function Others() {
       try {
         let tempOtherConsult: consultType[] = await getConsults(accessToken)
         setOtherConsult(tempOtherConsult)
-        console.log(tempOtherConsult)
       } catch (err) {
         console.log(err)
       }
@@ -179,14 +184,14 @@ function Others() {
       </div>
       <div className='mt-2 flex overflow-x-auto'>
         {
-          otherConsults.map((consult, idx) => (
+          otherConsults?.map((consult, idx) => (
             <div className="w-44 h-[20vh] m-2 min-w-44" key={idx}>
-              <OtherConsult consult={consult} />
+              {consult.closed === false && <OtherConsult consult={consult} />}
             </div>
           ))
         }
         {
-          otherConsults.length === 0 ? (
+          otherConsults?.length === 0 ? (
             <div className='h-[20vh] text-gray-400'>
               아직 업로드된 고민이 없습니다!
             </div>
@@ -206,15 +211,23 @@ function Shared() {
   let category = useSelector((state: RootState) => state.consultSlice.category)
   let accessToken = useSelector((state: RootState) => state.accessToken)
 
-  
+  const [shared, setShared] = useState<consultType[]|null>(null)
+
   // 선택된 카테고리
   const [selectedCategory, setSelectedCategory] = useState<categoryType | null>(null)
   const handleCategory = (e: any) => {
     setSelectedCategory(e.target.value)
     console.log(selectedCategory)
+    axios.get(`https://mindtrip.site/api/consults/v1/shared/${e.target.value}`,{
+      headers: {
+        Authorization: accessToken
+      }
+    }).then((res) => {
+      setShared(res.data.result)
+    }) .catch((err) => console.log(err))
   }
 
-  const [shared, setShared] = useState<consultType[]|null>(null)
+  
 
   useEffect(() => {
     // 전체 고민 가져오기
@@ -222,7 +235,6 @@ function Shared() {
       try {
         let tempSharedConsult: consultType[] = await getSharedConsult(accessToken)
         setShared(tempSharedConsult)
-        console.log(tempSharedConsult)
       } catch (err) {
         console.log(err)
       }

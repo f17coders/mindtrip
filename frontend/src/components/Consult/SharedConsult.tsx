@@ -7,6 +7,7 @@ import { villageBackgroundColor, villageTextColor } from "../../atoms/color"
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import { consultType } from "../../types/DataTypes";
+import axios from "axios";
 
 
 type propsType = {
@@ -14,7 +15,7 @@ type propsType = {
 }
 
 function SharedConsult({consult} : propsType) {
-  const [like, setLike] = useState<boolean>(false)
+  const [like, setLike] = useState<boolean>(consult.canLike)
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
   const [openMoreInfo, setOpenMoreInfo] = useState<Boolean>(false)
 
@@ -23,6 +24,25 @@ function SharedConsult({consult} : propsType) {
   }, [])
 
   let member = useSelector((state: RootState) => state.member)
+  let accessToken = useSelector((state:RootState) => state.accessToken)
+
+  const handleLike = function() {
+    if (like) {
+      axios.delete(`https://mindtrip.site/api/consults/v1/like/${consult.consultId}`,{
+        headers: {
+          Authorization: accessToken
+        }
+      }) .then(() => setLike(!like))
+      .catch((err) => console.log(err))
+    } else {
+      axios.post(`https://mindtrip.site/api/consults/v1/like/${consult.consultId}`,null, {
+        headers: {
+          Authorization: accessToken
+        }
+      }) .then(() => setLike(!like))
+      .catch((err) => console.log(err))
+    }
+  }
 
   return(
     <div>
@@ -39,8 +59,8 @@ function SharedConsult({consult} : propsType) {
             size='sm'
             className={`${villageTextColor[member.villageName] || ''} bg-transparent max-w-16 min-w-14 absolute bottom-2 right-2`} 
             startContent={like ? <FullHeart/> : <EmptyHeart/>}
-            onClick={() => setLike(!like)}
-          >{like ? 21 : 20}</Button>
+            onClick={handleLike}
+          >{like ? consult.likeCount + 1 : consult.likeCount}</Button>
         </CardBody>
       </Card>
       <Modal 

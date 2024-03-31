@@ -4,6 +4,9 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import Draw from "../../components/HTP/Draw";
 import axios from 'axios'
+import { useDispatch, useSelector } from "react-redux";
+import { saveHouseAnswer } from "../../store/htpSlice";
+import { RootState } from "../../store/store";
 
 // props의 타입을 지정해주자
 
@@ -11,11 +14,11 @@ type propsType1 = {
   goSurvey: () => void
 }
 type survey = {
-  question_id:number,
-  content:string,
-  choices:{
-    choices_id:number,
-    content:string
+  quetion_id: number,
+  content: string,
+  choices: {
+    choice_id: number,
+    content: string
   }[]
 }
 type propsType = {
@@ -26,6 +29,7 @@ type propsType = {
 
 // 집 그림 그리고, 설문조사가 나오는 페이지
 function House() {
+  const dispatch = useDispatch()
   const [order, setOrder] = useState<number>(0)
   const goNext: () => void = () => {
     setOrder(order + 1);
@@ -37,12 +41,12 @@ function House() {
   }
 
   // 처음에 질문 불러오기
-  const [surveyList, setSurveyList] = useState<survey[]|null>(null)
-  async function loadSurvey(): Promise<survey[]|null>{
-    try{
-      const res = await axios.get('http://j10a303.p.ssafy.io:54353/api/htp/question/house')
+  const [surveyList, setSurveyList] = useState<survey[] | null>(null)
+  async function loadSurvey(): Promise<survey[] | null> {
+    try {
+      const res = await axios.get('https://mindtrip.site/api/htp/v0/question/house')
       return res.data
-    } catch(err) {
+    } catch (err) {
       console.log(err)
       return null
     }
@@ -51,34 +55,39 @@ function House() {
   useEffect(() => {
     const fetchSurvey = async () => {
       try {
-        let tempSurveys :survey[]|null = await loadSurvey() 
+        let tempSurveys: survey[] | null = await loadSurvey()
+        console.log(tempSurveys)
         tempSurveys ? setSurveyList(tempSurveys) : console.log('데이터가 없습니다!')
       } catch (err) {
         console.log(err)
       }
     }
     fetchSurvey()
-  } ,[])
+
+    // 처음에 들어오면 리덕스 초기화
+    dispatch(saveHouseAnswer([]))
+
+  }, [])
 
 
   return (
     <div className=''>
       {
         isSurvey === true ? (<div>
-        {
-          surveyList?.map((survey, idx) => {
-            if (order === idx) {
-              if (idx === surveyList.length - 1) {
-                return (<HouseSurvey goNext={goNext} survey={survey} isLast={true} key={idx}/>)
-              } else {
-                return (<HouseSurvey goNext={goNext} survey={survey} isLast={false} key={idx} />)
+          {
+            surveyList?.map((survey, idx) => {
+              if (order === idx) {
+                if (idx === surveyList.length - 1) {
+                  return (<HouseSurvey goNext={goNext} survey={survey} isLast={true} key={idx} />)
+                } else {
+                  return (<HouseSurvey goNext={goNext} survey={survey} isLast={false} key={idx} />)
+                }
               }
-            }
-          })
-        }
-        {
-          surveyList === null && <p>로딩중</p>
-        }
+            })
+          }
+          {
+            surveyList === null && <p>로딩중</p>
+          }
         </div>) : (<HouseDraw goSurvey={goSurvey} />)
       }
     </div>
@@ -87,6 +96,8 @@ function House() {
 export default House
 
 function HouseDraw({ goSurvey }: propsType1) {
+  let tempAuthorization = useSelector((state: RootState) => state.accessToken)
+
   // 파일 제어용
   const [file, setFile] = useState<File | null>(null)
   const fileInput = useRef<HTMLInputElement>(null);
@@ -97,14 +108,32 @@ function HouseDraw({ goSurvey }: propsType1) {
       setFile(files[0])
     }
   };
+
+  const sendFile = async (data: FormData) => {
+    await axios.post('https://mindtrip.site/api/htp/v1/test/house', data, {
+      headers: {
+        tempAuthorization: tempAuthorization,
+        "Content-Type": "multipart/form-data"
+      }
+    })
+  }
+  const handleFile = async (file: FormData) => {
+    await (sendFile(file))
+    Swal.fire({
+      title: '업로드완료',
+      icon: "success"
+    }).then(() => { goSurvey() })
+  }
+
   // 파일 써먹을려면
   useEffect(() => {
     if (file != null) {
-      console.log(file)
-      Swal.fire({
-        title: '업로드완료',
-        icon: "success"
-      }).then(() => { goSurvey() })
+      let formData = new FormData()
+      formData.append('file', file)
+      for (const value of formData.values()) {
+        console.log(value);
+      }
+      handleFile(formData)
     }
   }, [file])
 
@@ -131,13 +160,29 @@ function HouseDraw({ goSurvey }: propsType1) {
         </button>
       </div>
       {/* png형식의 파일만 올릴 수 있도록 함 */}
-      <input type="file" accept=".png" ref={fileInput} onChange={handleChange} style={{ display: 'none' }} />
+      <input type="file" name="file" accept=".png" ref={fileInput} onChange={handleChange} style={{ display: 'none' }} />
     </div>
   )
 }
 
 function HouseSurvey({ goNext, survey, isLast }: propsType) {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
+  let house = useSelector((state: RootState) => state.htpAnswer.house)
+
+  const handleClick = function (questionId: number, answerId: number) {
+    if (house === null) {
+      dispatch(saveHouseAnswer([{ question_id: questionId, choice_id: answerId }]))
+    } else {
+      dispatch(saveHouseAnswer([...house, { question_id: questionId, choice_id: answerId }]))
+    }
+
+    if (isLast) {
+      navigate('/htp/tree')
+    } else {
+      goNext()
+    }
+  }
 
   return (
     <div className="flex h-svh w-svh justify-center items-center flex-col">
@@ -149,11 +194,11 @@ function HouseSurvey({ goNext, survey, isLast }: propsType) {
               key={idx}
               variant="bordered"
               className='w-[90vw] lg:w-3/5 m-3 h-[10vh] px-3 text-md bg-white hover:bg-sky-800 hover:text-white shadow'
-              onClick={() => { isLast ? navigate('/htp/tree') : goNext() }}
+              onClick={() => { handleClick(survey.quetion_id, choice.choice_id) }}
             >
               {choice.content}
             </Button>
-            )
+          )
         })
       }
     </div>

@@ -1,14 +1,30 @@
 import { Link, useNavigate } from "react-router-dom"
 import Background from '../components/HTP/BackGround'
+import { useDispatch } from "react-redux"
+import { saveToken } from "../store/memberSlice"
+import axios from "axios"
+
 
 function Start() {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
+
+  const getTempToken = async () => {
+    const res = await axios.get('https://mindtrip.site/api/htp/v0/temp_token')
+    dispatch(saveToken(res.data.tempAuthorization))
+  }
+
+  const handleClick = async () => {
+    await getTempToken()
+    navigate('/htp/house')
+  }
+
   return (
     <div className="relative">
       <div className="flex items-center justify-center h-screen w-screen relative z-10">
         <div className="text-center pb-[50%] md:pb-[10%]">
           <p className="font-bold text-3xl leading-relaxed">HTP 검사를 통해<br />나를 위한 여정을 떠나보세요.</p>
-          <div className='my-2' onClick={() => { navigate('/htp/house') }}>
+          <div className='my-2' onClick={handleClick}>
             <MyBtn />
           </div>
           <p className="mt-3 text-sm text-slate-400">이미 검사를 진행하셨다면,<br />

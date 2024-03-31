@@ -28,7 +28,7 @@ function ChattingAdditionalInfo({isMine} : propsType) {
   const [chatInfo, setChatInfo] = useState<chatInfo|null>(null)
   const loadChatInfo = async () => {
     try {
-      const res = await axios.get(`https://mindtrip.site/api/channels/v1/${chat.selectedId}`, {
+      const res = await axios.get(`https://mindtrip.site/api/consults/v1/detail/${chat.selectedId}`, {
         headers: {
           Authorization: accessToken
         }

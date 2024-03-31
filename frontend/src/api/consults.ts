@@ -5,12 +5,12 @@ import Swal from "sweetalert2";
 // 입장가능한 고민 목록 가져오기
 async function getConsults(token: string): Promise<consultType[]> {
   try {
-    const res = await axios.get('https://mindtrip.site/api/consults/v1/available', {
+    const res = await axios.get('https://mindtrip.site/api/consults/v1/category/1', {
       headers: {
         Authorization: token
       }
     });
-    return res.data.result.consultList;
+    return res.data.result;
   } catch (err) {
     console.log(err);
     return [];
@@ -61,12 +61,12 @@ async function getCategory(token:string): Promise<categoryType[]> {
 // 입장가능한 고민 목록 가져오기
 async function getSharedConsult(token: string): Promise<consultType[]> {
   try {
-    const res = await axios.get('https://mindtrip.site/api/consults/v1/shared', {
+    const res = await axios.get('https://mindtrip.site/api/consults/v1/shared/1', {
       headers: {
         Authorization: token
       }
     });
-    return res.data.result.consultList;
+    return res.data.result;
   } catch (err) {
     console.log(err);
     return [];
@@ -76,7 +76,7 @@ async function getSharedConsult(token: string): Promise<consultType[]> {
 // 채팅방에 입장하기
 async function enterRoom(token: string, consultId: number): Promise<string|void> {
   try {
-    const res =await axios.post(`https://mindtrip.site/api/channels/v1/enter/${consultId}`, null, {
+    const res = await axios.post(`https://mindtrip.site/api/channels/v1/enter/${consultId}`, null, {
       headers: {
         Authorization: token
       }
@@ -96,8 +96,7 @@ async function loadChattingMine(token:string) :Promise<chattingRoom[]|null>{
         Authorization: token
       }
     })
-    console.log(token)
-    return res.data.result.consultChattingRes
+    return res.data.result
   } catch (err) {
     console.log(err)
     return null
@@ -107,14 +106,20 @@ async function loadChattingMine(token:string) :Promise<chattingRoom[]|null>{
 
 // 대화중인 채팅 목록 불러오기(다른사람꺼)
 async function loadChattingOthers(token:string) :Promise<chattingRoom[]|null>{
+  console.log(token)
   try{
     const res = await axios.get('https://mindtrip.site/api/consults/v1/others',{
       headers: {
         Authorization: token
       }
     })
-    console.log(token)
-    return res.data.result.consultChattingRes
+    console.log(res.data)
+    const temp = res.data.result.consultChattingRes
+    if (temp.length === 0) {
+      return null
+    } else {
+      return temp
+    }
   } catch (err) {
     console.log(err)
     return null

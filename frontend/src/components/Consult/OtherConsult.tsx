@@ -77,7 +77,7 @@ function OtherConsult({consult} : propsType) {
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="text-sm text-gray-500" style={{fontFamily:'JamsilThin'}}>닉네임(생기면)님의 고민</ModalHeader>
+              <ModalHeader className="text-sm text-gray-500" style={{fontFamily:'JamsilThin'}}>{consult.nickname}님의 고민</ModalHeader>
               <ModalBody className="flex-col items-center">
                 <div className="min-h-[25vh] text-center">
                   <p className="text-xl mb-3">{consult.title}</p>

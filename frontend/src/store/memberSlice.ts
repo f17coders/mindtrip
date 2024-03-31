@@ -10,8 +10,7 @@ const accessToken = createSlice({
   initialState: initialToken,
   reducers: {
     // 토큰 저장
-    saveToken(state, action:PayloadAction<string>) {
-      console.log(state)
+    saveToken(_state, action:PayloadAction<string>) {
       return action.payload
     }
   }

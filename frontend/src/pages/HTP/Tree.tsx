@@ -4,6 +4,9 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import Draw from "../../components/HTP/Draw";
 import axios from 'axios'
+import { useDispatch, useSelector } from "react-redux";
+import { saveTreeAnswer } from "../../store/htpSlice";
+import { RootState } from "../../store/store";
 
 // props의 타입을 지정해주자
 
@@ -11,11 +14,11 @@ type propsType1 = {
   goSurvey: () => void
 }
 type survey = {
-  question_id:number,
-  content:string,
-  choices:{
-    choices_id:number,
-    content:string
+  quetion_id: number,
+  content: string,
+  choices: {
+    choice_id: number,
+    content: string
   }[]
 }
 type propsType = {
@@ -26,6 +29,7 @@ type propsType = {
 
 // 나무 그림 그리고, 설문조사가 나오는 페이지
 function Tree() {
+  const dispatch = useDispatch()
   const [order, setOrder] = useState<number>(0)
   const goNext: () => void = () => {
     setOrder(order + 1);
@@ -36,29 +40,32 @@ function Tree() {
     setIsSurvey(true)
   }
 
-    // 처음에 질문 불러오기
-    const [surveyList, setSurveyList] = useState<survey[]|null>(null)
-    async function loadSurvey(): Promise<survey[]|null>{
-      try{
-        const res = await axios.get('http://j10a303.p.ssafy.io:54353/api/htp/question/tree')
-        return res.data
-      } catch(err) {
+  // 처음에 질문 불러오기
+  const [surveyList, setSurveyList] = useState<survey[] | null>(null)
+  async function loadSurvey(): Promise<survey[] | null> {
+    try {
+      const res = await axios.get('https://mindtrip.site/api/htp/v0/question/tree')
+      return res.data
+    } catch (err) {
+      console.log(err)
+      return null
+    }
+  }
+
+  useEffect(() => {
+    const fetchSurvey = async () => {
+      try {
+        let tempSurveys: survey[] | null = await loadSurvey()
+        tempSurveys ? setSurveyList(tempSurveys) : console.log('데이터가 없습니다!')
+      } catch (err) {
         console.log(err)
-        return null
       }
     }
-    
-    useEffect(() => {
-      const fetchSurvey = async () => {
-        try {
-          let tempSurveys :survey[]|null = await loadSurvey() 
-          tempSurveys ? setSurveyList(tempSurveys) : console.log('데이터가 없습니다!')
-        } catch (err) {
-          console.log(err)
-        }
-      }
-      fetchSurvey()
-    } ,[])
+    fetchSurvey()
+
+    // 처음에 들어오면 리덕스 초기화
+    dispatch(saveTreeAnswer([]))
+  }, [])
 
 
   return (
@@ -68,16 +75,16 @@ function Tree() {
           surveyList?.map((survey, idx) => {
             if (order === idx) {
               if (idx === surveyList.length - 1) {
-                return (<TreeSurvey goNext={goNext} survey={survey} isLast={true} key={idx}/>)
+                return (<TreeSurvey goNext={goNext} survey={survey} isLast={true} key={idx} />)
               } else {
                 return (<TreeSurvey goNext={goNext} survey={survey} isLast={false} key={idx} />)
               }
             }
           })
         }
-        {
-          surveyList === null && <p>로딩중</p>
-        }
+          {
+            surveyList === null && <p>로딩중</p>
+          }
         </div>) : (<TreeDraw goSurvey={goSurvey} />)
       }
     </div>
@@ -85,7 +92,11 @@ function Tree() {
 }
 export default Tree
 
+
+
 function TreeDraw({ goSurvey }: propsType1) {
+  let tempAuthorization = useSelector((state: RootState) => state.accessToken)
+
   // 파일 제어용
   const [file, setFile] = useState<File | null>(null)
   const fileInput = useRef<HTMLInputElement>(null);
@@ -96,17 +107,34 @@ function TreeDraw({ goSurvey }: propsType1) {
       setFile(files[0])
     }
   };
+
+  const sendFile = async (data: FormData) => {
+    await axios.post('https://mindtrip.site/api/htp/v1/test/tree', data, {
+      headers: {
+        tempAuthorization: tempAuthorization,
+        "Content-Type": "multipart/form-data"
+      }
+    })
+  }
+  const handleFile = async (file: FormData) => {
+    await (sendFile(file))
+    Swal.fire({
+      title: '업로드완료',
+      icon: "success"
+    }).then(() => { goSurvey() })
+  }
+
   // 파일 써먹을려면
   useEffect(() => {
     if (file != null) {
-      console.log(file)
-      Swal.fire({
-        title: '업로드완료',
-        icon: "success"
-      }).then(() => { goSurvey() })
+      let formData = new FormData()
+      formData.append('file', file)
+      for (const value of formData.values()) {
+        console.log(value);
+      }
+      handleFile(formData)
     }
   }, [file])
-
 
 
   return (
@@ -137,6 +165,23 @@ function TreeDraw({ goSurvey }: propsType1) {
 
 function TreeSurvey({ goNext, survey, isLast }: propsType) {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
+
+  let tree = useSelector((state: RootState) => state.htpAnswer.tree)
+
+  const handleClick = function (questionId: number, answerId: number) {
+    if (tree === null) {
+      dispatch(saveTreeAnswer([{ question_id: questionId, choice_id: answerId }]))
+    } else {
+      dispatch(saveTreeAnswer([...tree, { question_id: questionId, choice_id: answerId }]))
+    }
+
+    if (isLast) {
+      navigate('/htp/person')
+    } else {
+      goNext()
+    }
+  }
 
   return (
     <div className="flex h-svh w-svh justify-center items-center flex-col">
@@ -148,11 +193,11 @@ function TreeSurvey({ goNext, survey, isLast }: propsType) {
               key={idx}
               variant="bordered"
               className='w-[90vw] lg:w-3/5 m-3 h-[10vh] px-3 text-md bg-white hover:bg-sky-800 hover:text-white shadow'
-              onClick={() => { isLast ? navigate('/htp/person') : goNext() }}
+              onClick={() => { handleClick(survey.quetion_id, choice.choice_id) }}
             >
               {choice.content}
             </Button>
-            )
+          )
         })
       }
     </div>

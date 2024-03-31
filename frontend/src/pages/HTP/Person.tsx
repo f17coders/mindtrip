@@ -4,6 +4,9 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import Draw from "../../components/HTP/Draw";
 import axios from 'axios'
+import { useDispatch, useSelector } from "react-redux";
+import { savePersonAnswer } from "../../store/htpSlice";
+import { RootState } from "../../store/store";
 
 // props의 타입을 지정해주자
 
@@ -11,10 +14,10 @@ type propsType1 = {
   goSurvey: () => void
 }
 type survey = {
-  question_id:number,
+  quetion_id:number,
   content:string,
   choices:{
-    choices_id:number,
+    choice_id:number,
     content:string
   }[]
 }
@@ -26,6 +29,7 @@ type propsType = {
 
 // 사람 그림 그리고, 설문조사가 나오는 페이지
 function Person() {
+  const dispatch = useDispatch()
   const [order, setOrder] = useState<number>(0)
   const goNext: () => void = () => {
     setOrder(order + 1);
@@ -40,7 +44,7 @@ function Person() {
   const [surveyList, setSurveyList] = useState<survey[]|null>(null)
   async function loadSurvey(): Promise<survey[]|null>{
     try{
-      const res = await axios.get('http://j10a303.p.ssafy.io:54353/api/htp/question/person')
+      const res = await axios.get('https://mindtrip.site/api/htp/v0/question/person')
       return res.data
     } catch(err) {
       console.log(err)
@@ -59,6 +63,9 @@ function Person() {
       }
     }
     fetchSurvey()
+
+    // 처음에 들어오면 리덕스 초기화
+    dispatch(savePersonAnswer([]))
   } ,[])
 
 
@@ -87,6 +94,8 @@ function Person() {
 export default Person
 
 function PersonDraw({ goSurvey }: propsType1) {
+  let tempAuthorization = useSelector((state: RootState) => state.accessToken)
+
   // 파일 제어용
   const [file, setFile] = useState<File | null>(null)
   const fileInput = useRef<HTMLInputElement>(null);
@@ -97,14 +106,32 @@ function PersonDraw({ goSurvey }: propsType1) {
       setFile(files[0])
     }
   };
+  
+  const sendFile = async (data: FormData) => {
+    await axios.post('https://mindtrip.site/api/htp/v1/test/house', data, {
+      headers: {
+        tempAuthorization: tempAuthorization,
+        "Content-Type": "multipart/form-data"
+      }
+    })
+  }
+  const handleFile = async (file: FormData) => {
+    await (sendFile(file))
+    Swal.fire({
+      title: '업로드완료',
+      icon: "success"
+    }).then(() => { goSurvey() })
+  }
+
   // 파일 써먹을려면
   useEffect(() => {
     if (file != null) {
-      console.log(file)
-      Swal.fire({
-        title: '업로드완료',
-        icon: "success"
-      }).then(() => { goSurvey() })
+      let formData = new FormData()
+      formData.append('file', file)
+      for (const value of formData.values()) {
+        console.log(value);
+      }
+      handleFile(formData)
     }
   }, [file])
 
@@ -138,7 +165,41 @@ function PersonDraw({ goSurvey }: propsType1) {
 
 function PersonSurvey({ goNext, survey, isLast }: propsType) {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
+  let person = useSelector((state:RootState) => state.htpAnswer.person)
+  let answer = useSelector((state:RootState) => state.htpAnswer)
+  let accessToken = useSelector((state:RootState) => state.accessToken) 
 
+  const sendAnswer = async () => {
+    const res = await axios.post('https://mindtrip.site/api/htp/v1/answer', {
+      answer: {
+        house: answer.house,
+        tree: answer.tree,
+        person: answer.person
+      }
+    }, {
+      headers : {
+        tempAuthorization: accessToken
+      }
+    })
+    console.log(res)
+  }
+
+  const handleClick = async (questionId:number, answerId:number) => {
+    if (person === null) {
+      dispatch(savePersonAnswer([{question_id: questionId, choice_id: answerId}]))
+    } else {
+      dispatch(savePersonAnswer([...person, {question_id: questionId, choice_id: answerId}]))
+    }
+
+    if (isLast) {
+      await sendAnswer()
+      navigate('/htp/result')
+    } else {
+      goNext()
+    }
+  }
+  
   return (
     <div className="flex h-svh w-svh justify-center items-center flex-col">
       <p className="text-center mb-5 font-bold text-2xl">{survey.content}</p>
@@ -149,7 +210,7 @@ function PersonSurvey({ goNext, survey, isLast }: propsType) {
               key={idx}
               variant="bordered"
               className='w-[90vw] lg:w-3/5 m-3 h-[10vh] px-3 text-md bg-white hover:bg-sky-800 hover:text-white shadow'
-              onClick={() => { isLast ? navigate('/htp/result') : goNext() }}
+              onClick={() => {handleClick(survey.quetion_id, choice.choice_id)}}
             >
               {choice.content}
             </Button>
