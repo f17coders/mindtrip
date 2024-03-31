@@ -57,6 +57,17 @@ public class NotificationController {
 		return BaseResponse.success(SuccessCode.UPDATE_SUCCESS, notifications);
 	}
 
+	// 개발용 임시 api
+	@PostMapping("/v1/make-sample")
+	public ResponseEntity<BaseResponse<String>> makeNotification(
+			@RequestHeader("x-member-id") int memberId
+	) {
+
+		notificationService.makeNotification(memberId);
+
+		return BaseResponse.success(SuccessCode.UPDATE_SUCCESS, "알림 성공 생성");
+	}
+
 
 //	-------------------- feign -----------------------
 
