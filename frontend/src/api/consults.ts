@@ -113,7 +113,6 @@ async function loadChattingOthers(token:string) :Promise<chattingRoom[]|null>{
         Authorization: token
       }
     })
-    console.log(res.data)
     const temp = res.data.result.consultChattingRes
     if (temp.length === 0) {
       return null
