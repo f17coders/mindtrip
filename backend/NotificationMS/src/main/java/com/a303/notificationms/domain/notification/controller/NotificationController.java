@@ -47,26 +47,16 @@ public class NotificationController {
 
 	// 알림 읽음 처리
 	@PostMapping("/v1")
-	public ResponseEntity<BaseResponse<Integer>> setIsWrittenTrue(
+	public ResponseEntity<BaseResponse<List<NotificationMessageRes>>> setIsWrittenTrue(
 			@RequestHeader("x-member-id") int memberId
 	) {
 
-		notificationService.setIsWrittenTrue(memberId);
+		List<NotificationMessageRes> notifications = notificationService.setIsWrittenTrue(memberId);
 
 
-		return BaseResponse.success(SuccessCode.UPDATE_SUCCESS, 1);
+		return BaseResponse.success(SuccessCode.UPDATE_SUCCESS, notifications);
 	}
 
-	@GetMapping("/v1")
-	public ResponseEntity<BaseResponse<List<NotificationMessageRes>>> read(
-			@RequestHeader("x-member-id") int memberId
-	) {
-
-		List<NotificationMessageRes> notifications = notificationService.findNotificationsByMemberId(memberId);
-
-
-		return BaseResponse.success(SuccessCode.SELECT_SUCCESS, notifications);
-	}
 
 //	-------------------- feign -----------------------
 

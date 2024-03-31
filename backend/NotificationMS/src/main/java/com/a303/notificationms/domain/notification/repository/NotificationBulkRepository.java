@@ -19,7 +19,7 @@ public class NotificationBulkRepository {
 	private final JdbcTemplate jdbcTemplate;
 
 	public void updateIsWrittenTrue(int memberId) {
-		String sql = "update notification set is_written=true where memberId = ? and is_written=false";
+		String sql = "update notification set is_written=true where member_id = ? and is_written=false";
 
 		jdbcTemplate.update(sql, new PreparedStatementSetter() {
 			@Override
