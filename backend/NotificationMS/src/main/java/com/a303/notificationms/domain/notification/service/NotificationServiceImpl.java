@@ -112,6 +112,7 @@ public class NotificationServiceImpl implements NotificationService {
 			NotificationMessageRes res = NotificationMessageRes.builder()
 					.type("NOTIFICATION")
 					.message(noti.getContent())
+					.isWritten(noti.isWritten())
 					.build();
 			notificationMessageResList.add(res);
 		}
@@ -120,9 +121,13 @@ public class NotificationServiceImpl implements NotificationService {
 	}
 
 	@Override
-	public void setIsWrittenTrue(int memberId) {
+	public List<NotificationMessageRes> setIsWrittenTrue(int memberId) {
+
+		List<NotificationMessageRes> notificationMessageResList = findNotificationsByMemberId(memberId);
+
 		notificationBulkRepository.updateIsWrittenTrue(memberId);
 
+		return notificationMessageResList;
 	}
 
 	//	--------------------- kafka listener ------------------------
@@ -183,6 +188,7 @@ public class NotificationServiceImpl implements NotificationService {
 				NotificationMessageRes messageRes = NotificationMessageRes.builder()
 					.type("NOTIFICATION")
 					.message(now + " 날짜의 미션이 추가되었습니다. :)")
+					.isWritten(false)
 					.build();
 				sseEmitterReceiver.send(SseEmitter.event().name("message").data(messageRes));
 
