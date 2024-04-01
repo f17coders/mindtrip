@@ -385,9 +385,17 @@ public class ConsultServiceImpl implements ConsultService {
         //내가 참여중인 채널의 정보 가져오기
         List<Channel> channelList = channelRepository.findBySender(String.valueOf(memberId));
 
+        if(channelList.isEmpty()){
+            return null;
+        }
+
         for(Channel c : channelList) {
 
             Consult consult = consultRepository.findByChannelId(c.getChannelId());
+
+            if (consult == null) { // consult가 null일 때 예외 처리
+                return null;
+            }
 
             //가장 최근 메세지 한개 가져오기
             Message latestMessage = null;
