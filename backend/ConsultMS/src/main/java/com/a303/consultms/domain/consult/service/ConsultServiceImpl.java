@@ -56,49 +56,57 @@ public class ConsultServiceImpl implements ConsultService {
 
     //고민상담소 전체 조회
     @Override
-    public ConsultListRes getConsultingRooms() throws BaseExceptionHandler {
+    public ConsultListRes getConsultingRooms(int memberId)
+        throws BaseExceptionHandler {
+
         // createtime 기준으로 내림차순 정렬
         List<Consult> consultList = consultRepository.findAllByOrderByCreateTimeDesc();
 
+        if(consultList == null) {
+            return null;
+        }
+
         // Consult 객체의 리스트를 ConsultDetailRes 객체의 리스트로 변환
         List<ConsultDetailRes> consultDetailResList = consultList.stream().map(
-            consult -> ConsultDetailRes.builder().consultId(consult.getConsultId())
+            consult -> ConsultDetailRes.builder()
+                .consultId(consult.getConsultId())
                 .memberId(consult.getMemberId())
                 .nickname(memberClient.getMember(consult.getMemberId()).getResult().nickname())
-                .title(consult.getTitle()).content(consult.getContent())
-                .categoryId(consult.getCategoryId()).isClosed(consult.isClosed())
-                .isShared(consult.isShared()).canLike(consult.isCanLike())
-                .channelId(consult.getChannelId()).build()).collect(Collectors.toList());
+                .title(consult.getTitle())
+                .content(consult.getContent())
+                .categoryId(consult.getCategoryId())
+                .isClosed(consult.isClosed())
+                .isShared(consult.isShared())
+                .canLike(isLike(consult.getConsultId(), memberId))
+                .channelId(consult.getChannelId())
+                .build()).collect(Collectors.toList());
 
-        // TODO: 전체 페이지 수를 계산하는 로직 추가 필요
-//        int totalPages = 1;
 
         return ConsultListRes.builder().consultList(consultDetailResList)
-//            .totalPages(totalPages)
             .build();
     }
 
     //입장가능한 고민상담소 리스트 조회
     @Override
-    public ConsultListRes getAvailableConsultingRooms() {
+    public ConsultListRes getAvailableConsultingRooms(int memberId) {
         // createtime 기준으로 내림차순 정렬
         List<Consult> consultList = consultRepository.findAllByChannelIdOrderByCreateTimeDesc(null);
 
         // Consult 객체의 리스트를 ConsultDetailRes 객체의 리스트로 변환
         List<ConsultDetailRes> consultDetailResList = consultList.stream().map(
-            consult -> ConsultDetailRes.builder().consultId(consult.getConsultId())
+            consult -> ConsultDetailRes.builder()
+                .consultId(consult.getConsultId())
                 .memberId(consult.getMemberId())
                 .nickname(memberClient.getMember(consult.getMemberId()).getResult().nickname())
-                .title(consult.getTitle()).content(consult.getContent())
-                .categoryId(consult.getCategoryId()).isClosed(consult.isClosed())
-                .isShared(consult.isShared()).canLike(consult.isCanLike())
+                .title(consult.getTitle())
+                .content(consult.getContent())
+                .categoryId(consult.getCategoryId())
+                .isClosed(consult.isClosed())
+                .isShared(consult.isShared())
+                .canLike(isLike(consult.getConsultId(), memberId))
                 .channelId(consult.getChannelId()).build()).collect(Collectors.toList());
 
-        // TODO: 전체 페이지 수를 계산하는 로직 추가 필요
-//        int totalPages = 1;
-
         return ConsultListRes.builder().consultList(consultDetailResList)
-//            .totalPages(totalPages)
             .build();
     }
 
@@ -447,10 +455,6 @@ public class ConsultServiceImpl implements ConsultService {
                 throw new BaseExceptionHandler(ALREADY_CONSULT_LIKE_EXISTS);
             }
             hashOperations.put(key, field, String.valueOf(1));
-            //canLike = false로 변경하기
-            Consult consult = consultRepository.findById(consultId).get();
-            consult.setCanLike(false);
-
         } else {
             throw new BaseExceptionHandler(ALREADY_CONSULT_LIKE_EXISTS);
         }
@@ -485,6 +489,7 @@ public class ConsultServiceImpl implements ConsultService {
         } else {
             hashOperations.delete(key, field);
         }
+
         log.debug("deleteLikeConsults method consultId: {} memberId:{} success ", consultId,
             memberId);
     }
@@ -548,5 +553,19 @@ public class ConsultServiceImpl implements ConsultService {
 
         return ConsultListRes.builder().consultList(consultDetailResList)
             .build();
+    }
+
+    private boolean isLike(int consultId, int memberId) {
+
+        HashOperations<String, String, String> hashOperations = redisTemplate.opsForHash();
+
+        String key = "likeConsultId::" + String.valueOf(consultId);
+        String field = String.valueOf(memberId);
+
+        if (hashOperations.get(key, field) == null) {
+            return likeConsultRepository.findByConsultIdAndMemberId(consultId, memberId) != null;
+        } else {
+            return true;
+        }
     }
 }

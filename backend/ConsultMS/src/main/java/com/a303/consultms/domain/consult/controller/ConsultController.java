@@ -53,7 +53,7 @@ public class ConsultController {
     public ResponseEntity<BaseResponse<ConsultListRes>> getConsultList(
         @RequestHeader("x-member-id") int memberId
     ) {
-        ConsultListRes consultListRes = consultService.getConsultingRooms();
+        ConsultListRes consultListRes = consultService.getConsultingRooms(memberId);
         return BaseResponse.success(SuccessCode.SELECT_SUCCESS, consultListRes);
     }
 
@@ -62,7 +62,7 @@ public class ConsultController {
     public ResponseEntity<BaseResponse<ConsultListRes>> getAvailableConsultList(
         @RequestHeader("x-member-id") int memberId
     ) {
-        ConsultListRes consultListRes = consultService.getAvailableConsultingRooms();
+        ConsultListRes consultListRes = consultService.getAvailableConsultingRooms(memberId);
         return BaseResponse.success(SuccessCode.SELECT_SUCCESS, consultListRes);
     }
 

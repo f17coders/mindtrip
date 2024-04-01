@@ -134,15 +134,5 @@ public class ChannelServiceImpl implements ChannelService {
 //        return channel.getId();
 //    }
 
-    //회원 존재여부 유효성 검사
-    private void memberException(int memberId) {
-        //멤버 존재하는지 유효성 검사 추가하기
-    }
 
-    //고민상담소 존재여부 유효성 검사
-//    private void consultException(int consultId) {
-//        if (consultRepository.findConsultByConsultId(consultId) == null) {
-//            throw new BaseExceptionHandler(ErrorCode.NOT_FOUND_CONSULT_EXCEPTION);
-//        }
-//    }
 }
