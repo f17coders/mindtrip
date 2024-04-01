@@ -98,7 +98,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public boolean standardRegister(MemberStandardRegisterReq memberStandardRegisterReq) {
+    public int standardRegister(MemberStandardRegisterReq memberStandardRegisterReq) {
         //1. ID 형식 체크(MVP에서는 안함)
         //2. ID 중복 체크
         //3. 닉네임 형식 체크(MVP에서는 안함)
@@ -124,10 +124,10 @@ public class MemberServiceImpl implements MemberService {
 			memberStandardRegisterReq.password(),
 			memberStandardRegisterReq.nickname()
 		);
-        memberRepository.save(member);
+		Member registered = memberRepository.save(member);
 
-        return true;
-    }
+		return registered.getMemberId();
+	}
 
 	public void checkIdDuplication(String id) {
         if(memberRepository.existsById(id)) {

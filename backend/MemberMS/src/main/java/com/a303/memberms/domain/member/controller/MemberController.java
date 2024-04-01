@@ -90,15 +90,15 @@ public class MemberController {
 	}
 
 	@PostMapping("/v1/register")
-	public ResponseEntity<BaseResponse<String>> register(
+	public ResponseEntity<BaseResponse<Integer>> register(
 		@RequestBody
 		MemberStandardRegisterReq memberStandardRegisterReq
 	) {
-		memberService.standardRegister(memberStandardRegisterReq);
+		int registeredId = memberService.standardRegister(memberStandardRegisterReq);
 
 		return BaseResponse.success(
 			SuccessCode.INSERT_SUCCESS,
-			"회원가입 성공"
+			registeredId
 		);
 	}
 
