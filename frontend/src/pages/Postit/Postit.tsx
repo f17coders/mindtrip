@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import PostIt from "../../atoms/postit/postititem";
 import PostitModal from "../../components/MyPostit/PostitModal";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import Header from "../../components/Header";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
@@ -34,8 +34,8 @@ const PostitPage: React.FC = () => {
 
   const fetchData = async () => {
     try {
-      console.log("gi");
       const response = await axios.get(
+        // api 주소가 order=like면 좋아요 순 정렬 아니면 날짜 순 정렬
         `https://mindtrip.site/api/postits/v1?date=${formattedDate}&order=like&village=all&page=0&size=10`,
         {
           headers: {
