@@ -30,7 +30,7 @@ public class NotificationScheduler {
 					.localDateTime(LocalDateTime.now())
 					.build();
 				emitter.send(SseEmitter.event().name("message").data(messageRes));
-//				log.info("하트비트 메세지 전송");
+				log.info(key+"에게 하트비트 메세지 전송");
 			} catch (IOException e) {
 				emitterRepository.removeByMemberId(key);
 				log.error("하트비트 전송 실패: {}", e.getMessage());
