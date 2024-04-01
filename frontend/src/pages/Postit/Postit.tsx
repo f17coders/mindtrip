@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import Homebtn from "../../atoms/buttons/homebtn";
-import AlarmButton from '../../atoms/buttons/alambtn';
 import PostIt from '../../atoms/postit/postititem';
 import PostitModal from '../../components/MyPostit/PostitModal';
 import axios from 'axios';
+import Header from '../../components/Header';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store/store';
+import Swal from 'sweetalert2';
+import { accessToken } from '../../store/memberSlice';
 
 const PostitPage: React.FC = () => {
   const colors = ['#ffff88', '#ffcc00', '#ff9999', '#99ccff'];
@@ -11,12 +14,23 @@ const PostitPage: React.FC = () => {
   const [topic, setTopic] = useState<string>("");
   const [topicId, setTopicId] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  
+  const currentDate = new Date();
+  const year = currentDate.getFullYear();
+  const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // 1월: "01", 11월: "11"
+  const day = currentDate.getDate().toString().padStart(2, '0'); // 1일: "01", 11일: "11"
+
+  const formattedDate = `${year}-${month}-${day}`;
+  console.log(formattedDate)
+  
+  let member = useSelector((state:RootState) => state.member)
+  let accessToken = useSelector((state:RootState) => state.accessToken)
 
   const fetchData = async () => {
     try {
-      const response = await axios.get("https://mindtrip.site/api/postits/v1?date=2024-03-21&order=like&village=1", {
+      const response = await axios.get(`https://mindtrip.site/api/postits/v1?date=${formattedDate}&order=like&village=0&page=0&size=10`, {
         headers: {
-          "x-member-id": "4"
+          Authorization: accessToken
         }
       });
       console.log(response.data)
@@ -38,19 +52,23 @@ const PostitPage: React.FC = () => {
         "https://mindtrip.site/api/postits/v1",
         {
           topicId: topicId,
-          postitDate: "2024-03-21",
-          content: content
+          postitDate: formattedDate,
+          content: content,
+          viliage: member.villageName,
         },
         {
           headers: {
-            "x-member-id": "4"
+            Authorization: accessToken
           }
         }
       );
-      console.log("새 포스트잇:", response.data);
       setIsModalOpen(false); // 새로운 포스트잇을 추가한 후에 모달을 닫기
       fetchData(); // 모달을 닫은 후에 포스트잇 목록을 다시 불러오기
     } catch (error) {
+      Swal.fire({
+        text: "이미 오늘의 답변을 등록했어요",
+        icon: "warning"
+      });
       console.log("새 포스트잇 에러 :", error);
     }
   };
@@ -68,21 +86,20 @@ const PostitPage: React.FC = () => {
   };
 
   return (
-    <div className="bg-[#fff7e0] px-2 py-8">
+    <div className="bg-[#fff7e0] px-2 min-h-screen">
+        <Header />
       <div className="flex flex-col justify-center items-center mb-6">
-        <Homebtn />
-        <AlarmButton />
-        <h1 className="text-xl font-bold mt-20">{topic}</h1>
+        <h1 className="text-xl font-bold mt-20 w-4/5">{topic}</h1>
       </div>
       <div className="bg-white rounded-lg shadow-md p-6 mb-8 w-4/5 mx-auto">
         <div className="flex justify-center items-center flex-wrap list-none">
           <div className="m-2">
             <PostIt
-              color={colors[Math.floor(Math.random() * colors.length)]}
+              color={colors[2]}
               onClick={handleFirstPostitClick}
               style={{ transition: "transform 0.3s ease-in-out" }}
             >
-              추가하기
+              눌러서 대답하기
             </PostIt>
           </div>
           {postits.map((postit) => (

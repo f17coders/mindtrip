@@ -2,22 +2,28 @@ import { useState } from 'react';
 import { Avatar } from "@nextui-org/react";
 import { Card } from "@nextui-org/react";
 import { Link, Outlet } from "react-router-dom";
+import Header from '../../components/Header';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store/store';
 
 function Mypage() {
   const [menuOpen, setMenuOpen] = useState(false);
+
+  let member = useSelector((state:RootState) => state.member)
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6 bg-white rounded-lg shadow-md ">
-      <div className="flex justify-between h-[10vh] items-center">
+    <div className="max-w-6xl mx-auto bg-white rounded-lg shadow-md ">
+      <Header />
+      <div className="p-6 flex justify-between h-[10vh] items-center">
         <div className="flex space-x-4 items-center">
           <Avatar />
           <div className="flex flex-col justify-center">
-            <span className="text-sm font-semibold text-gray-700">나의마을 : 마을이름</span>
-            사용자님 환영합니다.
+            <span className="text-sm font-semibold text-gray-700">나의마을 : { member.villageName } </span>
+            { member.nickname }님 환영합니다.
           </div>
         </div>
         <div className="md:hidden">

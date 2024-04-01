@@ -3,6 +3,9 @@ import axios from "axios";
 import FixMissionBox from "../../components/missonbox/FixMissionBox";
 import { Link } from "react-router-dom";
 import { Button } from "@nextui-org/react";
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store/store';
+
 
 type Mission = {
   missionId: number;
@@ -28,12 +31,13 @@ type TodayMissionsResponse =  {
 function Fixmission() {
   const [missions, setMissions] = useState<CategoryMission[]>([]);
   const [todayMissions, setTodayMissions] = useState<Mission[]>([]);
+  let accessToken = useSelector((state:RootState) => state.accessToken)
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const allMissionsResponse = await axios.get<AllMissionsResponse>(
-          "https://mindtrip.site/api/missions/v1"
+          "https://mindtrip.site/api/missions/v0"
         );
         setMissions(allMissionsResponse.data.result.categoryMissionResList);
 
@@ -41,7 +45,7 @@ function Fixmission() {
           "https://mindtrip.site/api/missions/v1/mytable",
           {
             headers: {
-              "x-member-id": "1" // 사용자 ID를 적절히 설정하세요.
+              Authorization:accessToken               // 사용자 ID를 적절히 설정하세요.
             }
           }
         );
@@ -101,7 +105,7 @@ function Fixmission() {
         requestData,
         {
           headers: {
-            "x-member-id": "1" // 사용자 ID를 적절히 설정하세요.
+            Authorization: accessToken// 사용자 ID를 적절히 설정하세요.
           }
         }
       );

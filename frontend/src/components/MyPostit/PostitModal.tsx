@@ -13,7 +13,7 @@ const customModalStyles: Styles = {
   },
   content: {
     width: "360px",
-    height: "180px",
+    height: "210px",
     zIndex: 150,
     position: "absolute",
     top: "50%",
@@ -35,6 +35,7 @@ const PostitModal = ({ isOpen, onClose, onSubmit }: { isOpen: boolean, onClose: 
   const handleSubmit = () => {
     onSubmit(content);
     setContent('');
+    onClose(); // 모달 닫기
   };
 
   return (
@@ -44,9 +45,10 @@ const PostitModal = ({ isOpen, onClose, onSubmit }: { isOpen: boolean, onClose: 
       style={customModalStyles}
       contentLabel="Postit Modal"
     >
-      <button onClick={onClose} style={{ position: "absolute", top: "10px", right: "10px" }}>Close</button>
-      <textarea value={content} onChange={(e) => setContent(e.target.value)} style={{ width: "100%", height: "100px", marginBottom: "10px" }} />
-      <button onClick={handleSubmit}>Submit</button>
+      <textarea value={content} onChange={(e) => setContent(e.target.value)}
+      placeholder="여기에 내용을 입력하세요..." 
+      style={{ width: "100%", height: "100px", marginBottom: "10px" }} />
+      <button onClick={handleSubmit} style={{ width: "100%", padding: "10px", border: "1px solid #0f0f0f", borderRadius: "5px", cursor: "pointer" }}>Submit</button>
     </Modal>
   );
 };
