@@ -66,7 +66,7 @@ async function getSharedConsult(token: string): Promise<consultType[]> {
         Authorization: token
       }
     });
-    return res.data.result;
+    return res.data.result.consultList;
   } catch (err) {
     console.log(err);
     return [];

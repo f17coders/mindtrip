@@ -12,7 +12,7 @@ function Background() {
 
   // 카메라
   const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 100, 1000)
-  camera.position.set(10, 90, 250)
+  camera.position.set(0, 400, 250)
   camera.rotation.x -= 0.1
 
   // 조명
@@ -39,41 +39,23 @@ function Background() {
       renderer.setSize(window.innerWidth, window.innerHeight)
 
       // 모델 불러오기
-      loader.load('/ground.glb', function (gltf: any) {
-        // 정면 볼 수 있게 돌리기
-        gltf.scene.rotation.y -= 3.5
+      loader.load('/sphere.glb', function (gltf: any) {
         scene.add(gltf.scene)
 
         // 랜더링
         renderer.render(scene, camera)
 
-        // 카메라를 움직여보자
-        function animateCamera(startPosition:THREE.Vector3 ,targetPosition:THREE.Vector3, duration:number, callback:Function|null) :void {
-          const startTime:number = performance.now()
+        // 물체를 움직여보자
+        function animateScene() :void {
           function update() {
-            const elapsedTime:number = performance.now() - startTime
-            const progress:number = elapsedTime / duration
-            if (progress < 1) {
-              // 처음위치, 타겟위치, 얼마나 갈껀지
-              camera.position.lerpVectors(startPosition, targetPosition, progress);
-              requestAnimationFrame(update);
-            } else {
-              camera.position.copy(targetPosition);
-              if (callback) {callback()} else {
-                animateCamera(new THREE.Vector3(10, 90, 200), new THREE.Vector3(20, 90, 150), 2000, () => {
-                  animateCamera(new THREE.Vector3(20, 90, 150), new THREE.Vector3(10, 90, 100), 2000, null)
-                })
-              }
-            }
+            requestAnimationFrame(update);
+            gltf.scene.rotation.x += 0.002
             renderer.render(scene, camera);
           }
           update()
         }
-        animateCamera(new THREE.Vector3(10, 90, 200), new THREE.Vector3(20, 90, 150), 2000, () => {
-          animateCamera(new THREE.Vector3(20, 90, 150), new THREE.Vector3(10, 90, 100), 2000, null)
-        })
-        
-        
+
+        animateScene()
       }, undefined, function (err: any) {
         console.log(err)
       })

@@ -1,13 +1,14 @@
 import HomeIcon from "../atoms/Icons/HomeIcon"
 import MessageIcon from "../atoms/Icons/MessageIcon"
 import { useNavigate } from "react-router-dom"
-import {Button, Card, Badge} from "@nextui-org/react";
+import {Button, Card, Badge, CardBody} from "@nextui-org/react";
 import { useEffect, useState } from "react";
 import EventSource from "react-native-sse";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
 import { villageBackgroundColor } from "../atoms/color";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 
 type notificationType = {
@@ -20,40 +21,63 @@ function Header() {
   const [notifications, setnotifications] = useState<notificationType[]|null>(null)
 
   useEffect(() => {
+    // 처음엔 메세지창 닫아주고
     setOpenMessage(false)
+    // 서버 ON
     fetchSSE()
   }, [])
 
   let accessToken = useSelector((state:RootState) => state.accessToken)
   let member = useSelector((state:RootState) => state.member)
+  
 
+  const Toast = Swal.mixin({
+    toast: true,
+    position:'top',
+    timer: 1000
+  })
+  
   // 알림 서버 연결 및 데이터 가져오기
   const fetchSSE = () => {
+    let lastHeartbeat = Date.now()
+    console.log(lastHeartbeat)
     const eventSource = new EventSource('https://mindtrip.site/api/notifications/v1/subscribe', {
       headers: {
         Authorization: accessToken
       }
     })
 
-    eventSource.addEventListener("open", () => {
-      console.log('서버 연결완료')
-    })
+    // eventSource.addEventListener("open", () => {
+    //   console.log('알림서버 연결 지속중')
+    // })
 
     eventSource.addEventListener('message', (e) => {
       if (e.data) {
         const parsedData = JSON.parse(e.data)
-        console.log(parsedData)
+        // console.log(parsedData)
+        // 처음에 count갯수가 오면 바로 보여주고
         if (parsedData.type === 'COUNT') {
           setAlarmCount(parsedData.count)
         }
+        // 알림이 온다면 +1해주기
         else if (parsedData.type === 'NOTIFICATION') {
+          // console.log(parsedData)
           setAlarmCount(alarmCount + 1)
+          console.log(parsedData.message)
+          Toast.fire({
+            title: parsedData.message
+          })
+        }
+        // heartbeat를 수신하면 시간 업데이트
+        else if (parsedData.type === 'HEARTBEAT') {
+          lastHeartbeat = Date.now()
         }
       }
     })
 
     eventSource.addEventListener('error', (err) => {
       console.log(err)
+      fetchSSE()
     })
   }
 
@@ -99,11 +123,14 @@ function Header() {
         absolute w-[80vw] h-[30vh] p-3
         bg-white top-[8vh] right-[2vw] z-20`}
       >
-        {
-          notifications?.map((noti, idx) => {return(
-            <div key={idx}>{noti.message}</div>
-          )})
-        }
+        <CardBody>
+          {
+            notifications?.map((noti, idx) => {return(
+              <div key={idx} className="py-1">{noti.message}</div>
+            )})
+          }
+        </CardBody>
+        
       </Card>
     </div>
     

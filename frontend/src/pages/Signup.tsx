@@ -7,6 +7,8 @@ import { memberType } from "../types/DataTypes";
 import { saveToken, saveUserInfo } from "../store/memberSlice";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import axios from 'axios'
+import Swal from "sweetalert2";
 
 // 회원가입 페이지
 
@@ -17,16 +19,90 @@ function Signup () {
   // 아이디
   const [id, setId] = useState<string>('')
   const [checkId, setCheckId] = useState<boolean|null>(null)
-  const idTest = function() {
+  const [errorMessageId, setErrorMessageId] = useState<string>('')
+
+  const idTest =  async () => {
+    if (id.length > 10) {
+      Swal.fire({
+        text: '아이디는 10자 이내여야 합니다.'
+      })
+      setCheckId(false)
+      setErrorMessageId('10자 이하의 아이디를 입력해주세요')
+      return
+    }
+    if (id === '') {
+      Swal.fire({
+        text: '아이디를 입력해주세요'
+      })
+      setCheckId(false)
+      setErrorMessageId('아이디를 입력해주세요')
+      return
+    }
     // 여기서 중복 검사하고
-    setCheckId(true)
+    try {
+      await axios.get(`https://mindtrip.site/api/members/v0/availability/id?id=${id}`)
+      Swal.fire({
+        text: '사용가능한 아이디입니다.',
+        icon:'success'
+      })
+      setCheckId(true)
+    } catch (err :any) {
+      switch (err.response?.data?.code) {
+        case 'B300':
+          Swal.fire({
+            text: '이미 존재하는 아이디입니다.'
+          })
+          setErrorMessageId('다시 입력해주세요')
+          setCheckId(false)
+          break
+        default:
+          console.log(err)
+      }
+    }
   }
   // 닉네임
   const [nickname, setNickname] = useState<string>('')
   const [checkNickname, setCheckNickname] = useState<boolean|null>(null)
-  const nicknameTest = function() {
-    // 여기서 중복검사
-    setCheckNickname(true)
+  const [errorMessageNickname, setErrorMessageNickname] = useState<string>('')
+  
+  const nicknameTest = async () => {
+    if (nickname.length > 10) {
+      Swal.fire({
+        text: '닉네임은 10자 이내여야 합니다.'
+      })
+      setCheckNickname(false)
+      setErrorMessageNickname('10자 이하의 아이디를 입력해주세요')
+      return
+    }
+    if (nickname === '') {
+      Swal.fire({
+        text: '닉네임을 입력해주세요'
+      })
+      setCheckNickname(false)
+      setErrorMessageNickname('아이디를 입력해주세요')
+      return
+    }
+    // 여기서 중복 검사하고
+    try {
+      await axios.get(`https://mindtrip.site/api/members/v0/availability/nickname?nickname=${nickname}`)
+      Swal.fire({
+        text: '사용가능한 닉네임입니다.',
+        icon:'success'
+      })
+      setCheckNickname(true)
+    } catch (err :any) {
+      switch (err.response?.data?.code) {
+        case 'B301':
+          Swal.fire({
+            text: '이미 존재하는 닉네임입니다.'
+          })
+          setErrorMessageNickname('다시 입력해주세요')
+          setCheckNickname(false)
+          break
+        default:
+          console.log(err)
+      }
+    }
   }
 
   // 비밀번호1
@@ -127,7 +203,7 @@ function Signup () {
             variant="underlined" 
             label='아이디' 
             isInvalid={checkId === false ? true : false}
-            errorMessage={checkId === false ? '중복 검사를 실행해주세요' : null}
+            errorMessage={checkId === false ? errorMessageId : null}
             className="mr-4"
           />
           <Button variant="ghost" className="mt-5" onClick={idTest}>중복 검사</Button>
@@ -141,7 +217,7 @@ function Signup () {
             variant="underlined" 
             label='닉네임' 
             isInvalid={checkNickname === false ? true : false}
-            errorMessage={checkNickname === false ? '중복 검사를 실행해주세요' : null}
+            errorMessage={checkNickname === false ? errorMessageNickname : null}
             // placeholder="사용할 닉네임을 입력해주세요."
             className="mr-5"
           />

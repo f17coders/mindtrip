@@ -197,7 +197,7 @@ function Shared() {
   let category = useSelector((state: RootState) => state.consultSlice.category)
   let accessToken = useSelector((state: RootState) => state.accessToken)
 
-  const [shared, setShared] = useState<consultType[]|null>(null)
+  const [shared, setShared] = useState<consultType[]>([])
 
   // 선택된 카테고리
   const [selectedCategory, setSelectedCategory] = useState<categoryType | null>(null)
@@ -209,6 +209,7 @@ function Shared() {
         Authorization: accessToken
       }
     }).then((res) => {
+      console.log(res)
       setShared(res.data.result)
     }) .catch((err) => console.log(err))
   }
@@ -220,6 +221,7 @@ function Shared() {
     const fetchConsult = async () => {
       try {
         let tempSharedConsult: consultType[] = await getSharedConsult(accessToken)
+        console.log(tempSharedConsult)
         setShared(tempSharedConsult)
       } catch (err) {
         console.log(err)
@@ -272,7 +274,7 @@ function Shared() {
       </div>
       <div className='mt-2 flex overflow-x-auto'>
         {
-          shared?.map((consult, idx) => {
+          shared.map((consult, idx) => {
             return(
                 <div className="w-44 m-2 min-w-44" key={idx}>
                   <SharedConsult consult={consult}/>
