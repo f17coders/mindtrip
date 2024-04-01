@@ -16,12 +16,12 @@ function ChatList() {
   let member = useSelector((state: RootState) => state.member)
   let accessToken = useSelector((state:RootState) => state.accessToken)
 
-  const [myChattings, setMyChattings] = useState<chattingRoom[]|null>(null)
+  const [myChattings, setMyChattings] = useState<chattingRoom[]>([])
   // 내 채팅 불러오는 함수
   const loadMyChatting = async () => {
     try{
       let tempList:chattingRoom[]|null = await loadChattingMine(accessToken)
-      if (typeof tempList != null) {
+      if (tempList) {
         setMyChattings(tempList)
       }
     } catch (err) {
@@ -29,12 +29,12 @@ function ChatList() {
     }
   }
 
-  const [otherChattings, setOtherChattings] = useState<chattingRoom[]|null>(null)
+  const [otherChattings, setOtherChattings] = useState<chattingRoom[]>([])
   // 내 채팅 불러오는 함수
   const loadOtherChatting = async () => {
     try{
       let tempList:chattingRoom[]|null = await loadChattingOthers(accessToken)
-      if (typeof tempList != null) {
+      if (tempList) {
         setOtherChattings(tempList)
       }
     } catch (err) {
@@ -62,14 +62,14 @@ function ChatList() {
         pickFirst && (
           <div className='overflow-y-auto h-full pb-[200px]'>
             {
-              myChattings?.map((chatting, idx) => {
+              myChattings.map((chatting, idx) => {
                 return(
                   <Chatting key={idx} title={chatting.title} content={chatting.text} channelId={chatting.channelId}/>
                 )
               })
             }
             {
-              myChattings === null && (<p>고민을 아직 생성하지 않았거나, 참여한 사람이 없습니다!</p>)
+              (myChattings === null || myChattings.length === 0) && (<p>고민을 아직 생성하지 않았거나, 참여한 사람이 없습니다!</p>)
             }
           </div>
         )
@@ -85,7 +85,7 @@ function ChatList() {
               })
             }
             {
-              otherChattings === null && (<p>아직 참여한 채팅이 없습니다!</p>)
+              (otherChattings === null || otherChattings.length == 0) && (<p>아직 참여한 채팅이 없습니다!</p>)
             }
           </div>
         )
@@ -98,7 +98,7 @@ export default ChatList
 
 type propstype = {
   readonly title: string,
-  readonly content: string,
+  readonly content: string|null,
   readonly channelId: string // channelId 추가
 }
 
@@ -114,9 +114,6 @@ function Chatting({title, content, channelId} :propstype) {
     <div className="relative border-b h-20 p-3 hover:bg-gray-100" onClick={() => handleClick(channelId)}>
       <p className="text-lg">{title}</p>
       <p className="text-sm overflow-hidden">{content}</p>
-      {/* <div className={`absolute right-[5%] top-[30%] rounded-full ${villageBackgroundColor[member.villageName]} w-10 h-10 text-center`}>
-        <p className="mt-2.5 text-sm">{alert > 300 ? '300+' : alert}</p>
-      </div> */}
     </div>
   )
 }
