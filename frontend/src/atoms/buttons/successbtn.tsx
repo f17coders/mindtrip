@@ -1,7 +1,5 @@
 // SuccessButton 컴포넌트
 
-import { useState } from "react";
-import axios from "axios";
 import { Button } from "@nextui-org/react";
 
 interface SuccessButtonProps {
