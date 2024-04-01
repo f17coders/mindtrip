@@ -4,6 +4,9 @@ import { Link } from 'react-router-dom';
 import Successbtn from '../../atoms/buttons/successbtn';
 import Homebtn from "../../atoms/buttons/homebtn";
 import MissionTree from "../../components/Loading/MissionTree";
+import Header from "../../components/Header";
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store/store';
 
 
 // 미션 타입 정의
@@ -18,6 +21,7 @@ function Mission() {
   const [missions, setMissions] = useState<Mission[]>([]); // 미션 타입을 명시
 
   const [isMidnight, setIsMidnight] = useState<boolean>(false) 
+  let accessToken = useSelector((state:RootState) => state.accessToken)
   
  
 
@@ -28,10 +32,10 @@ function Mission() {
         // 미션 데이터를 가져오는 GET 요청
         const response = await axios.get("https://mindtrip.site/api/missions/v1/mytable", {
           headers: {
-            "x-member-id": "1"
+            Authorization: accessToken
           }
         });
-        console.log(response.data)
+        console.log('미션',response.data)
         // 가져온 미션 데이터를 상태에 설정
         setMissions(response.data.result);
       } catch (error) {
@@ -65,18 +69,31 @@ function Mission() {
         {},
         {
           headers: {
-            "x-member-id": "1"
+            Authorization: accessToken
           }
         }
       );
-      console.log("Success:", response.data);
       
+      const successCount = await axios.get('https://mindtrip.site/api/members/v1/mission-count',
+        {
+          headers: {
+            Authorization: accessToken
+          }
+        }
+      );
+      
+     
       // 상태 업데이트: 해당 미션의 isFinish를 true로 변경
       setMissions(prevMissions => 
         prevMissions.map(mission => 
           mission.missionId === missionId ? {...mission, isFinish: true} : mission
         )
       );
+
+       if (successCount.data.result % 10 === 0) {
+        // 미션 성공 메세지 띄워주기  \
+        alert("이야 성공 축하한다 니");
+      }
     } catch (error) {
       console.error("Error updating mission:", error);
     }
@@ -85,7 +102,7 @@ function Mission() {
 
   return (
     <div className="bg-[#fff7e0] px-2 py-8 h-screen ">
-      <Homebtn />
+      <Header />
       <div className="flex flex-col justify-center items-center mb-6">
         <h1 className="text-5xl font-bold mt-20">오늘의 미션</h1>
       </div>
@@ -107,7 +124,7 @@ function Mission() {
               {/* 미션 이름 출력 */}
               <span className="text-lg">{mission.name}</span>
               {/* 성공 버튼 */}
-              <Successbtn isFinish={mission.isFinish} missionId={mission.missionId} onClick={() => handleMissionSuccess(mission.missionId)} />
+              <Successbtn isFinish={mission.isFinish} missionId={mission.missionId} onClick={handleMissionSuccess} />
             </div>
           ))}
         </div>

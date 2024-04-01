@@ -1,6 +1,7 @@
 // Postititem.tsx
 import React from 'react';
 import './postit.css';
+import PostitLikeBtn from '../buttons/PostitLikeBtn';
 
 type PostitProps = {
   color: string;
@@ -17,6 +18,7 @@ const Postit: React.FC<PostitProps> = ({ color, onClick, children, style }) => {
 
   return (
     <div className="rgyPostIt" style={postitStyle} onClick={onClick}>
+      <PostitLikeBtn/>
       <p>{children}</p>
     </div>
   );

@@ -2,21 +2,25 @@ import MyProgress from "../../../components/Progress/Progress";
 import Testcal from "../../../components/Calendar/testcal";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { RootState } from "../../../store/store";
+import { useSelector } from "react-redux";
 
 function MypageProgress() {
   const [percent, setPercent] = useState(0); // percent 상태 추가
   const [missionData, setMissionData] = useState(null); // 미션 데이터 상태 추가
   const currentDate = new Date();
+  console.log(currentDate)
   const currentYear = currentDate.getFullYear();
   const currentMonth = currentDate.getMonth() + 1;
 
+  let accessToken = useSelector((state:RootState) => state.accessToken)
   useEffect(() => {
     // API에서 데이터 가져오는 함수
     const fetchData = async () => {
       try {
         // API 요청 시 사용할 헤더 설정
         const headers = {
-          "x-member-id": "1", // 회원 아이디
+          Authorization: accessToken // 회원 아이디
         };
 
         // API 요청 보내기
