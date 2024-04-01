@@ -48,6 +48,21 @@ public class MemberController {
 		return BaseResponse.success(SuccessCode.CHECK_SUCCESS, count);
 	}
 
+	@PutMapping("/v1/nickname")
+	public ResponseEntity<BaseResponse<MemberBaseRes>> changeNickname(
+		@RequestHeader("x-member-id") int memberId,
+		@RequestParam("nickname") String nickname
+	) throws IOException {
+
+		log.debug("members/v1/nickname PUT api accepted with memberId:{}", memberId);
+
+		MemberBaseRes memberBaseRes = memberService.changeNickname(memberId, nickname);
+
+		log.debug("members/v1/nickname PUT api successed with memberId:{}", memberId);
+
+		return BaseResponse.success(SuccessCode.CHECK_SUCCESS, memberBaseRes);
+	}
+
 
 	//------------------------- 다른 msa와 통신 -------------------------------
 	//    @Operation(summary = "멤버아이디로 멤버 조회")

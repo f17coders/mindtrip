@@ -1,26 +1,71 @@
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import { getResult1, getResult2, changeLang } from "../../api/htp";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store/store";
 
 function Result() {
+  let tempToken = useSelector((state: RootState) => state.accessToken)
+
+  const [result1, setResult1] = useState<string>('')
+  const [result2, setResult2] = useState<string>('')
+
+  // 결과
+  const fetchResult1 = async () => {
+    try {
+      let tempResult = await getResult1(tempToken)
+      if (tempResult) {
+        setResult1(tempResult)
+      }
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  // 마을
+  const fetchResult2 = async () => {
+    try {
+      let tempResult = await getResult2(tempToken)
+      console.log(tempResult)
+      if (tempResult) {
+        setResult2(tempResult)
+      }
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+
+  useEffect(() => {
+   // 처음 검사결과 가져오기
+   fetchResult1()
+   fetchResult2()
+  }, [])
+
+
   return(
   <div className="">
-      <p className="text-center text-4xl py-10">결과 두두둥</p>
-      <div className="w-full lg:w-[70vw] mx-auto text-center border-3 rounded-md bg-white min-h-[65vh] p-5">
-        <p className="min-h-[55vh]">결과는 여기에 들어감</p>
+      <p className="text-center text-4xl py-10">검사 결과</p>
+      <div className="w-full lg:w-[70vw] mx-auto text-center border-3 rounded-md bg-white min-h-[65vh] p-7">
+        <p className="min-h-[55vh] text-lg" style={{fontFamily: 'JamsilThin'}}>{result1}</p>
       </div>
-    <MyBtn/>
+    <MyBtn village={result2}/>
   </div>
   )
 }
 
 export default Result
 
-function MyBtn() {
+type propsType = {
+  village :string
+}
+function MyBtn({village} :propsType) {
   const navigate = useNavigate()
 
   const checkVillage = () :void => {
     Swal.fire({
-      title: '당신은 오렌지 마을입니다~'
+      text: `당신은 ${changeLang(village)} 마을에 도착했습니다.`
     }).then(() => {
       navigate('/main')
     })
