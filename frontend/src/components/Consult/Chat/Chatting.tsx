@@ -12,6 +12,7 @@ import { villageBackgroundColor } from '../../../atoms/color'
 // 채팅방
 import { getPersonalChat, send } from '../../../services/chat';
 import ChattingAdditionalInfo from './ChattingAddtionalInfo';
+import SockJS from "sockjs-client";
 
 
 function Chatting() {
@@ -73,9 +74,11 @@ function Chatting() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
     const chatPrivateConnect = () => {
+      const serverURL = `https://mindtrip.site/api/chat`;
+      let socket = new SockJS(serverURL);
       const stomp = new Client({
         // brokerURL: 'ws://localhost:8000/api/chat',
-        brokerURL: 'wss://mindtrip.site/api/chat',
+        // brokerURL: 'wss://mindtrip.site/api/chat',
         
         // connectHeaders: {
         //   Authorization: `${accessToken}`,
@@ -84,10 +87,11 @@ function Chatting() {
         debug: (str: string) => {
           console.log(str)
         },
+        webSocketFactory: () => socket
         // reconnectDelay: 5000, //자동 재 연결
       });
 
-      // const serverURL = `https://i10a810.p.ssafy.io/api/chat`;
+      
       
       setIsLoading(true);
 

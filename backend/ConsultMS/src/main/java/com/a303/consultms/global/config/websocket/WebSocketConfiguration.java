@@ -36,8 +36,8 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/api/chat") //STOMP 엔드포인트 설정
 //            .setAllowedOrigins("*");
-              .setAllowedOriginPatterns("http://localhost:5173", "https://mindtrip.site");
-//            .withSockJS(); //SockJS 사용가능 설정
+            .setAllowedOriginPatterns("http://localhost:5173", "https://mindtrip.site")
+            .withSockJS(); //SockJS 사용가능 설정
     }
 
     // 클라이언트 인바운드 채널을 구성하는 메서드
