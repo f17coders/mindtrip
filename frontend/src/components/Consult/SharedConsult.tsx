@@ -6,7 +6,7 @@ import MoreIcon from "../../atoms/Icons/MoreIcon";
 import { villageBackgroundColor, villageTextColor } from "../../atoms/color"
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
-import { chattingRoom, consultType } from "../../types/DataTypes";
+import { consultType } from "../../types/DataTypes";
 import axios from "axios";
 
 

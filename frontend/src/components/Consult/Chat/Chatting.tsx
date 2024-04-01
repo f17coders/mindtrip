@@ -22,7 +22,7 @@ function Chatting() {
   console.log(channelId);
 
   // 토큰
-  let memberId = useSelector((state: RootState) => state.member.memberId);
+  // let memberId = useSelector((state: RootState) => state.member.memberId);
 	let accessToken = useSelector((state: RootState) => state.accessToken.value);
 
   // 추가정보 열고 닫고
