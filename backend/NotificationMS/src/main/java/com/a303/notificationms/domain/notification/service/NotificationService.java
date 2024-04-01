@@ -16,6 +16,8 @@ public interface NotificationService {
 
 	void dailyMissionScheduleEventHandler();
 
+	void makeConsultNotification(String type, int memberId);
+
 	void makeNotification(int memberId);
 
 

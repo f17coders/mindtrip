@@ -48,11 +48,10 @@ public class NotificationController {
 	// 알림 읽음 처리
 	@PostMapping("/v1")
 	public ResponseEntity<BaseResponse<List<NotificationMessageRes>>> setIsWrittenTrue(
-			@RequestHeader("x-member-id") int memberId
+		@RequestHeader("x-member-id") int memberId
 	) {
 
 		List<NotificationMessageRes> notifications = notificationService.setIsWrittenTrue(memberId);
-
 
 		return BaseResponse.success(SuccessCode.UPDATE_SUCCESS, notifications);
 	}
@@ -60,14 +59,13 @@ public class NotificationController {
 	// 개발용 임시 api
 	@PostMapping("/v1/make-sample")
 	public ResponseEntity<BaseResponse<String>> makeNotification(
-			@RequestHeader("x-member-id") int memberId
+		@RequestHeader("x-member-id") int memberId
 	) {
 
 		notificationService.makeNotification(memberId);
 
 		return BaseResponse.success(SuccessCode.UPDATE_SUCCESS, "알림 성공 생성");
 	}
-
 
 //	-------------------- feign -----------------------
 
@@ -77,10 +75,19 @@ public class NotificationController {
 
 		notificationService.dailyMissionScheduleEventHandler();
 
-
 		return BaseResponse.success(SuccessCode.INSERT_SUCCESS, 1);
 	}
 
+	@PostMapping("/v0/consult")
+	public ResponseEntity<BaseResponse<Integer>> consultNotification(
+		@RequestParam("type") String type,
+		@RequestParam("memberId") int memberId
+	) {
+
+		notificationService.makeConsultNotification(type, memberId);
+
+		return BaseResponse.success(SuccessCode.INSERT_SUCCESS, 1);
+	}
 
 //	@GetMapping("/v1/subscribe")
 //	public ResponseEntity<BaseResponse<String>> subscribe(
