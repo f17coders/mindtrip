@@ -17,7 +17,7 @@ const Postit: React.FC<PostitProps> = ({ color, onClick, children, style }) => {
   };
 
   return (
-    <div className="rgyPostIt" style={postitStyle} onClick={onClick}>
+    <div className="rgyPostIt relative"  onClick={onClick}>
       <PostitLikeBtn/>
       <p>{children}</p>
     </div>

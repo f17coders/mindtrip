@@ -89,3 +89,7 @@ function MyPostit() {
 }
 
 export default MyPostit;
+
+// 여기서 달력 안쓰는걸로 달력 쓰면 진척도 부분 달력이 깨짐 데이트피커 쓰기로
+
+  

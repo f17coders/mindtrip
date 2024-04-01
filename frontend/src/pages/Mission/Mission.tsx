@@ -6,7 +6,8 @@ import MissionTree from "../../components/Loading/MissionTree";
 import Header from "../../components/Header";
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store/store';
-
+import Swal from "sweetalert2";
+import '../../assets/levelupbadge/새싹.png'
 
 
 // 미션 타입 정의
@@ -91,10 +92,62 @@ function Mission() {
             : mission
         )
       );
+      console.log("성공개수:",successCount.data.result)
 
-      if (successCount.data.result % 10 === 0) {
+      if (successCount.data.result === 3) {
         // 미션 성공 메세지 띄워주기  \
-        alert("이야 성공 축하한다 니");
+        Swal.fire({
+          title: "레벨업!",
+          text: "새싹으로 레벨업 했습니다.",
+          imageUrl: "../../assets/levelupbadge/새싹.png",
+          imageWidth: 200,
+          imageHeight: 200,
+          imageAlt: "새싹"
+        });
+      }
+      if (successCount.data.result === 9) {
+        // 미션 성공 메세지 띄워주기  \
+        Swal.fire({
+          title: "레벨업!",
+          text: "잎새로 레벨업 했습니다.",
+          imageUrl: "../../assets/levelupbadge/잎새.png",
+          imageWidth: 200,
+          imageHeight: 200,
+          imageAlt: "잎새"
+        });
+      }
+      if (successCount.data.result === 15) {
+        // 미션 성공 메세지 띄워주기  \
+        Swal.fire({
+          title: "레벨업!",
+          text: "나뭇가지로 레벨업 했습니다.",
+          imageUrl: "../../assets/levelupbadge/나뭇가지.png",
+          imageWidth: 200,
+          imageHeight: 200,
+          imageAlt: "나뭇가지"
+        });
+      }
+      if (successCount.data.result === 21) {
+        // 미션 성공 메세지 띄워주기  \
+        Swal.fire({
+          title: "레벨업!",
+          text: "열매로 레벨업 했습니다.",
+          imageUrl: "../../assets/levelupbadge/열매.png",
+          imageWidth: 200,
+          imageHeight: 200,
+          imageAlt: "열매"
+        });
+      }
+      if (successCount.data.result === 30) {
+        // 미션 성공 메세지 띄워주기  \
+        Swal.fire({
+          title: "레벨업!",
+          text: "나무로 레벨업 했습니다. 레벨업 최대치에 도착했습니다!",
+          imageUrl: "../../assets/levelupbadge/나무.png",
+          imageWidth: 200,
+          imageHeight: 200,
+          imageAlt: "나무"
+        });
       }
     } catch (error) {
       console.error("Error updating mission:", error);

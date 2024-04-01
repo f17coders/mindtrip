@@ -1,108 +1,17 @@
-.datePickerWrapper {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
 .datePicker {
   display: flex;
   align-items: center;
-  border: 1px solid #f4f4f4; /* colors.$GRAY6 */
+  border: 1px solid #CCCCCC; /* colors.$GRAY6 값을 대체 */
   border-radius: 4px;
-  background-color: #000000; /* colors.$BG_COLOR */
+  background-color: #F5F5F5; /* colors.$BG_COLOR 값을 대체 */
   box-sizing: border-box;
-  width: 100%;
+  width: 90%;
   height: 46px;
-  color: #ffffff; /* colors.$WHITE */
+  color: #000000; /* colors.$WHITE 값을 대체 */
   text-align: center;
-  padding-right: 14px;
-
-  &:focus {
-    border: 2px solid #f59e0b; /* colors.$ORANGE */
-  }
-}
-.react-datepicker__day--outside-month {
-  cursor: default;
-  visibility: hidden;
+  /* padding-right: 14px; */
 }
 
-.customHeaderContainer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #000000; /* colors.$BG_COLOR */
-  height: 100%;
-  margin-top: 8px;
-  padding: 0 12px 0 24px;
-}
-
-.month {
-  font-size: 16px;
-  font-weight: 500;
-}
-
-.year {
-  background-color: #000000; /* colors.$BG_COLOR */
-  color: #ffffff; /* colors.$WHITE */
-  border: none;
-  font-size: 16px;
-  font-weight: 500;
-  padding-right: 5px;
-  cursor: pointer;
-  font-family: 'Noto Sans KR', serif;
-}
-
-.monthButton {
-  width: 34px;
-  height: 34px;
-  padding: 5px;
-  border-radius: 50%;
-
-  + .monthButton {
-    margin-left: 24px;
-  }
-
-  &:hover {
-    background-color: rgba(255, 255, 255, 0.08); /* colors.$WHITE */
-  }
-
-  &:disabled {
-    cursor: default;
-    background-color: #000000; /* colors.$BG_COLOR */
-
-    svg {
-      fill: #575757;
-    }
-  }
-}
-
-.calenderWrapper {
-  background-color: #000000; /* colors.$BG_COLOR */
-  color: #ffffff; /* colors.$WHITE */
-}
-
-.selectedDay,
-.unselectedDay {
-  color: #ffffff; /* colors.$WHITE */
-  padding: 3px 1px 0 0;
-  width: 36px;
-  height: 36px;
-}
-
-.selectedDay {
-  background-color: #f59e0b; /* colors.$ORANGE */
-  border-radius: 50%;
-
-  &:hover {
-    border-radius: 50%;
-    background-color: #c27101;
-  }
-}
-
-.unselectedDay {
-  &:hover {
-    border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.11); /* colors.$WHITE */
-  }
+.datePicker:focus {
+  border: 2px solid #FFA500; /* colors.$ORANGE 값을 대체 */
 }
