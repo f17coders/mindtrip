@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { RootState } from "../../../store/store";
 import { useSelector } from "react-redux";
+import "react-calendar/dist/Calendar.css";
 
 function MypageProgress() {
   const [percent, setPercent] = useState(0); // percent 상태 추가

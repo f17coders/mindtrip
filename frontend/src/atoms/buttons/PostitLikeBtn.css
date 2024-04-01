@@ -13,13 +13,14 @@
   font-size: 20px;
   user-select: none;
   transition: 100ms;
+
 }
 
 .checkmark {
   top: 0;
   left: 0;
-  height: 2em;
-  width: 2em;
+  height: 1.5em;
+  width: 1.5em;
   transition: 100ms;
   animation: dislike_effect 400ms ease;
 }

@@ -1,23 +1,27 @@
-import React, { useState } from 'react';
+// import React, { useState } from 'react';
 import './PostitLikeBtn.css'
 
 // 좋아요 버튼 컴포넌트
-const PostitLikeBtn: React.FC = () => {
-  const [isChecked, setIsChecked] = useState<boolean>(true); // 초기값은 체크되지 않은 상태로 설정
+interface PostitLikeBtnProps {
+  isLike: boolean
+  setIsLike: (isLike: boolean) => void
+}
+
+const PostitLikeBtn = ({isLike, setIsLike}: PostitLikeBtnProps) => {
 
   // 체크박스 클릭 시 상태 변경
   // const handleCheckboxClick = (event: React.MouseEvent<any>) => {
   //   event.stopPropagation(); // 이벤트 버블링을 막음
   //   setIsChecked(!isChecked); // 현재 상태의 반대로 변경
   // };
-  const a =() =>{    
-      setIsChecked(!isChecked)
-  }
+  const handleOnChange = () => {
+      setIsLike(!isLike)
+};
 
   return (
     <label className="container" >
-      <input type="checkbox" checked={isChecked}  />
-      <div className="checkmark" onClick={a}>
+      <input type="checkbox" checked={isLike} onChange={handleOnChange}/>
+      <div className="checkmark" >
         <svg viewBox="0 0 256 256">
           <rect fill="none" height="256" width="256"></rect>
           <path

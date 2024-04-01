@@ -10,9 +10,10 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import styles from "../../components/Calendar/Calendar.module.css";
 import { villageBackgroundColor } from "../../atoms/color";
+// import { formatDate } from "date-fns/format";
 
 
-type postitType = {
+export interface postitType  {
   content: string,
   id: string,
   isLike: boolean,
@@ -28,14 +29,17 @@ const PostitPage: React.FC = () => {
   const [topicId, setTopicId] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   
+  const formatDate = (date: Date | null): string => {
+    if (!date) return '';
+
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // getMonth()는 0부터 시작하기 때문에 +1
+    const day = date.getDate().toString().padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+  };
   //  api에서 오늘 날짜 가져오는 부분
   const currentDate = new Date();
-  const year = currentDate.getFullYear();
-  const month = (currentDate.getMonth() + 1).toString().padStart(2, "0"); // 1월: "01", 11월: "11"
-  const day = currentDate.getDate().toString().padStart(2, "0"); // 1일: "01", 11일: "11"
-  const formattedDate = `${year}-${month}-${day}`;
-  console.log(formattedDate);
-  
   //datepicker 관련
   const [startDate, setStartDate] = useState<Date | null>(currentDate);
   console.log(startDate,"시작날짜")
@@ -47,14 +51,13 @@ const PostitPage: React.FC = () => {
     try {
       const response = await axios.get(
         // api 주소가 order=like면 좋아요 순 정렬 아니면 날짜 순 정렬
-        `https://mindtrip.site/api/postits/v1?date=${formattedDate}&order=like&village=all&page=0&size=10`,
+        `https://mindtrip.site/api/postits/v1?date=${formatDate(startDate)}&order=like&village=all&page=0&size=10`,
         {
           headers: {
             Authorization: accessToken,
           },
         }
       );
-      console.log("feat");
       console.log(response.data);
       setPostits(response.data.result.postitResList);
       setTopic(response.data.result.topic);
@@ -67,7 +70,7 @@ const PostitPage: React.FC = () => {
   useEffect(() => {
     console.log("useEffect");
     fetchData();
-  }, []);
+  }, [startDate]);
 
   const addPostit = async (content: string) => {
     try {
@@ -76,7 +79,7 @@ const PostitPage: React.FC = () => {
         "https://mindtrip.site/api/postits/v1",
         {
           topicId: topicId,
-          postitDate: formattedDate,
+          postitDate: formatDate(startDate),
           content: content,
           village: member.villageName,
         },
@@ -149,17 +152,21 @@ const PostitPage: React.FC = () => {
       <div className="bg-white rounded-lg shadow-md p-6 mb-8 w-4/5 mx-auto">
         <div className="flex justify-center items-center flex-wrap list-none">
           <div className="m-2">
-            <PostIt
-              color={villageBackgroundColor[member.villageName]}
-              onClick={handleFirstPostitClick}
-              style={{ transition: "transform 0.3s ease-in-out" }}
-            >
-              눌러서 대답하기
-            </PostIt>
+          { formatDate(startDate) === formatDate(currentDate) &&
+              <PostIt
+                accessToken={accessToken}
+                color={villageBackgroundColor[member.villageName]}
+                onClick={handleFirstPostitClick}
+                style={{ transition: "transform 0.3s ease-in-out" }}
+                firstData={true}
+              >
+                눌러서 대답하기
+              </PostIt>
+            }
           </div>
           {postits.map((postit) => (
             <div className="m-2" key={postit.id}>
-              <PostIt color={villageBackgroundColor[postit.village]}>{postit.content}</PostIt>
+              <PostIt accessToken={accessToken} postItem={postit} color={villageBackgroundColor[postit.village]}>{postit.content}</PostIt>
             </div>
           ))}
         </div>

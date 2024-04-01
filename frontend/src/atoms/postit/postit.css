@@ -15,6 +15,23 @@ div.rgyPostIt {
   height: 175px; 
 }
 
+div.report-button {
+  background-color: #f44336;
+  /* Red */
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 5px;
+  display: inline-flex;
+  align-items: center;
+}
+
+div.report-button i {
+  margin-right: 8px;
+}
+
 div.rgyPostIt::after {
   content: " ";
   position: absolute;
@@ -47,7 +64,6 @@ div.rgyPostIt:hover::after {
 div.rgyPostIt > p {
   padding: 5px 0 !important;
 }
-
 /* div.rgyPostIt > p::before {
   content:"\f198";
   margin-right: 7px;
