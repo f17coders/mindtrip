@@ -75,7 +75,7 @@ function Chatting() {
     const chatPrivateConnect = () => {
       const stomp = new Client({
         // brokerURL: 'ws://localhost:8000/api/chat',
-        brokerURL: 'ws://mindtrip.site/api/chat',
+        brokerURL: 'wss://mindtrip.site/api/chat',
         
         // connectHeaders: {
         //   Authorization: `${accessToken}`,
