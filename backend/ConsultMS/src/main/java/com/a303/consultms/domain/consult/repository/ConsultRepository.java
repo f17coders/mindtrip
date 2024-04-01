@@ -31,4 +31,8 @@ public interface ConsultRepository extends JpaRepository<Consult, Integer>,
 
     Consult findByChannelId(String channelId);
 
+    List<Consult> findAllByIsClosedAndChannelIdOrderByCreateTimeDesc(boolean isClosed, String channelId);
+
+    List<Consult> findAllByCategoryIdAndIsClosedAndChannelIdOrderByUpdateTimeDesc(int categoryId, boolean isClosed, String channelId);
+
 }

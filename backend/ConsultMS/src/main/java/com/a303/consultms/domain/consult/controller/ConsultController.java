@@ -128,19 +128,19 @@ public class ConsultController {
 
     //카테고리로 대화가능한 고민상담소 필터링
     @GetMapping("/category/{categoryId}")
-    public ResponseEntity<BaseResponse<List<Consult>>> getConsultListByCategory(
+    public ResponseEntity<BaseResponse<ConsultListRes>> getConsultListByCategory(
         @PathVariable int categoryId
     ) {
-        List<Consult> consultListByCategory = consultService.getConsultListByCategory(categoryId);
+        ConsultListRes consultListByCategory = consultService.getConsultListByCategory(categoryId);
         return BaseResponse.success(SuccessCode.SELECT_SUCCESS, consultListByCategory);
     }
 
     //카테고리로 공유된 고민상담소 필터링
     @GetMapping("/shared/{categoryId}")
-    public ResponseEntity<BaseResponse<List<Consult>>> getSharedConsultListByCategory(
+    public ResponseEntity<BaseResponse<ConsultListRes>> getSharedConsultListByCategory(
         @PathVariable int categoryId
     ){
-        List<Consult> sharedConsultListByCategory = consultService.getSharedConsultListByCategory(categoryId);
+        ConsultListRes sharedConsultListByCategory = consultService.getSharedConsultListByCategory(categoryId);
         return BaseResponse.success(SuccessCode.SELECT_SUCCESS, sharedConsultListByCategory);
     }
 

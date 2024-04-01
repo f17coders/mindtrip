@@ -181,9 +181,11 @@ public class ConsultServiceImpl implements ConsultService {
     @Override
     public ConsultDetailRes getConsultingRoom(String channelId) {
 
-        Consult consult = consultRepository.findAllByChannelIdOrderByCreateTimeDesc(channelId).get(0);
+        Consult consult = consultRepository.findAllByChannelIdOrderByCreateTimeDesc(channelId)
+            .get(0);
 
-        return ConsultDetailRes.builder().consultId(consult.getConsultId()).memberId(consult.getMemberId())
+        return ConsultDetailRes.builder().consultId(consult.getConsultId())
+            .memberId(consult.getMemberId())
             .nickname(consult.getNickname()).title(consult.getTitle()).content(consult.getContent())
             .categoryId(consult.getCategoryId()).isClosed(consult.isClosed())
             .isShared(consult.isShared()).canLike(consult.isCanLike())
@@ -385,11 +387,13 @@ public class ConsultServiceImpl implements ConsultService {
         //내가 참여중인 채널의 정보 가져오기
         List<Channel> channelList = channelRepository.findBySender(String.valueOf(memberId));
 
-        if(channelList.isEmpty()){
+
+        if (channelList.isEmpty()) {
             return null;
         }
 
-        for(Channel c : channelList) {
+        for (Channel c : channelList) {
+
 
             Consult consult = consultRepository.findByChannelId(c.getChannelId());
 
@@ -451,7 +455,8 @@ public class ConsultServiceImpl implements ConsultService {
             throw new BaseExceptionHandler(ALREADY_CONSULT_LIKE_EXISTS);
         }
 
-        log.debug("postLikeConsults method consultId: {} memberId:{} success ", consultId, memberId);
+        log.debug("postLikeConsults method consultId: {} memberId:{} success ", consultId,
+            memberId);
     }
 
     //공유된 고민상담 내용에 좋아요 등록 취소
@@ -470,7 +475,7 @@ public class ConsultServiceImpl implements ConsultService {
             //좋아요가 등록이 안되어 있는 경우
             if (likeConsult == null) {
                 throw new BaseExceptionHandler(NOT_FOUND_CONSULT_LIKE_EXISTS);
-            } else{
+            } else {
                 likeConsultRepository.delete(likeConsult);
                 Consult consult = consultRepository.findById(consultId).get();
                 int likeCount = consult.getLikeCount() - 1;
@@ -480,36 +485,68 @@ public class ConsultServiceImpl implements ConsultService {
         } else {
             hashOperations.delete(key, field);
         }
-        log.debug("deleteLikeConsults method consultId: {} memberId:{} success ", consultId, memberId);
+        log.debug("deleteLikeConsults method consultId: {} memberId:{} success ", consultId,
+            memberId);
     }
 
     //카테고리로 대화가능한 고민상담소 필터링
     @Override
-    public List<Consult> getConsultListByCategory(int categoryId) {
+    public ConsultListRes getConsultListByCategory(int categoryId) {
+
+        List<Consult> consultList = new ArrayList<>();
 
         //카테고리ID가 1이면 전체 값 조회
-        if(categoryId == 1){
+        if (categoryId == 1) {
             //consultRepository에 저장되어 있는 모든 값 가져오기
-            return consultRepository.findAllByOrderByCreateTimeDesc();
+            consultList = consultRepository.findAllByIsClosedAndChannelIdOrderByCreateTimeDesc(false, null);
+        } else {
+            //카테고리 ID가 그 외의 값이면 해당하는 값 조회
+            consultList = consultRepository.findAllByCategoryIdAndIsClosedAndChannelIdOrderByUpdateTimeDesc(categoryId, false, null);
         }
-        
-        //카테고리 ID가 그 외의 값이면 해당하는 값 조회
-        List<Consult> consultList = consultRepository.findAllByCategoryIdOrderByUpdateTimeDesc(categoryId);
-        return consultList;
+
+        // Consult 객체의 리스트를 ConsultDetailRes 객체의 리스트로 변환
+        List<ConsultDetailRes> consultDetailResList = consultList.stream().map(
+            consult -> ConsultDetailRes.builder().consultId(consult.getConsultId())
+                .memberId(consult.getMemberId())
+                .nickname(memberClient.getMember(consult.getMemberId()).getResult().nickname())
+                .title(consult.getTitle()).content(consult.getContent())
+                .categoryId(consult.getCategoryId()).isClosed(consult.isClosed())
+                .isShared(consult.isShared()).canLike(consult.isCanLike())
+                .channelId(consult.getChannelId()).build()).collect(Collectors.toList());
+
+        return ConsultListRes.builder().consultList(consultDetailResList)
+            .build();
+
     }
 
     //카테고리로 공유된 고민상담소 필터링
     @Override
-    public List<Consult> getSharedConsultListByCategory(int categoryId) {
-        
+    public ConsultListRes getSharedConsultListByCategory(int categoryId) {
+
+        List<Consult> consultList = new ArrayList<>();
+
         //카테고리ID가 1이면 전체 값 조회
-        if(categoryId == 1){
+        if (categoryId == 1) {
             //consultRepository에 저장되어 있는 값들 중 공유된 고민상담소 가져오기
-            return consultRepository.findAllByIsSharedOrderByCreateTimeDesc(true);
+            consultList = consultRepository.findAllByIsSharedOrderByCreateTimeDesc(true);
+        } else {
+            //카테고리 ID가 그 외의 값이면 해당하는 값 조회
+            consultList = consultRepository.findAllByCategoryIdAndIsSharedOrderByUpdateTimeDesc(
+                categoryId, true);
         }
 
-        //카테고리 ID가 그 외의 값이면 해당하는 값 조회
-        List<Consult> consultList = consultRepository.findAllByCategoryIdAndIsSharedOrderByUpdateTimeDesc(categoryId, true);
-        return consultList;
+        // Consult 객체의 리스트를 ConsultDetailRes 객체의 리스트로 변환
+        List<ConsultDetailRes> consultDetailResList = consultList.stream().map(
+            consult -> ConsultDetailRes.builder().consultId(consult.getConsultId())
+                .memberId(consult.getMemberId())
+                .nickname(memberClient.getMember(consult.getMemberId()).getResult().nickname())
+                .title(consult.getTitle()).content(consult.getContent())
+                .categoryId(consult.getCategoryId()).isClosed(consult.isClosed())
+                .isShared(consult.isShared()).canLike(consult.isCanLike())
+                .likeCount(consult.getLikeCount())
+                .channelId(consult.getChannelId()).build()).collect(Collectors.toList());
+
+        return ConsultListRes.builder().consultList(consultDetailResList)
+            .build();
     }
 }
