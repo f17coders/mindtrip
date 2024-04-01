@@ -16,24 +16,10 @@ import { getConsultCategory } from '../../store/consultSlice';
 import { getConsults, getCategory, getSharedConsult } from './../../api/consults'
 import { consultType, categoryType } from '../../types/DataTypes';
 import { villageBackgroundColor, villageTextColor } from '../../atoms/color';
-import Swal from 'sweetalert2';
 import axios from 'axios';
 
 // 고민상담소 첫 페이지
 function Consult() {
-  const navigate = useNavigate()
-
-  // 로그인 안하면 막기
-  useEffect(() => {
-    if (accessToken === '') {
-      Swal.fire({
-        text:'로그인이 필요합니다.'
-      }).then(() => {
-        navigate('/login')
-      })
-    }
-  }, [])
-
   const dispatch = useDispatch()
 
   // 채팅창 관련 가져오기
@@ -186,7 +172,7 @@ function Others() {
         {
           otherConsults?.map((consult, idx) => (
             <div className="w-44 h-[20vh] m-2 min-w-44" key={idx}>
-              {consult.closed === false && <OtherConsult consult={consult} />}
+              {consult.isClosed === false && <OtherConsult consult={consult} />}
             </div>
           ))
         }

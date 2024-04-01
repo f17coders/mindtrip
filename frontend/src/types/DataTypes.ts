@@ -35,7 +35,7 @@ type consultType = {
   likeCount: number,
   channelId: string|null,
   nickname: string,
-  closed : boolean
+  isClosed : boolean
 }
 
 // 고민 카테고리 타입
@@ -51,7 +51,7 @@ type chattingRoom = {
   nickname: string,
   title:string,
   channelId: string,
-  text: string
+  text: string|null
 }
 
 

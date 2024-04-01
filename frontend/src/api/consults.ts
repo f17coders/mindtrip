@@ -5,12 +5,12 @@ import Swal from "sweetalert2";
 // 입장가능한 고민 목록 가져오기
 async function getConsults(token: string): Promise<consultType[]> {
   try {
-    const res = await axios.get('https://mindtrip.site/api/consults/v1/category/1', {
+    const res = await axios.get('https://mindtrip.site/api/consults/v1/available', {
       headers: {
         Authorization: token
       }
     });
-    return res.data.result;
+    return res.data.result.consultList;
   } catch (err) {
     console.log(err);
     return [];
@@ -96,7 +96,12 @@ async function loadChattingMine(token:string) :Promise<chattingRoom[]|null>{
         Authorization: token
       }
     })
-    return res.data.result
+    const tempRes = res.data.result
+    if (tempRes) {
+      return tempRes.consultChattingRes
+    } else {
+      return null
+    }
   } catch (err) {
     console.log(err)
     return null
@@ -113,8 +118,9 @@ async function loadChattingOthers(token:string) :Promise<chattingRoom[]|null>{
         Authorization: token
       }
     })
-    const temp = res.data.result.consultChattingRes
-    if (temp.length === 0) {
+    console.log(res)
+    const temp = res.data.result
+    if (temp === null) {
       return null
     } else {
       return temp
