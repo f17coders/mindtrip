@@ -12,12 +12,11 @@ type PostitProps = {
 
 const Postit: React.FC<PostitProps> = ({ color, onClick, children, style }) => {
   const postitStyle: React.CSSProperties = {
-    backgroundColor: color,
     ...style // 전달받은 style을 포함합니다.
   };
 
   return (
-    <div className="rgyPostIt" style={postitStyle} onClick={onClick}>
+    <div className={`${color} rgyPostIt`} style={postitStyle} onClick={onClick}>
       <PostitLikeBtn/>
       <p>{children}</p>
     </div>

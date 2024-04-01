@@ -119,7 +119,7 @@ function Others() {
         Authorization: accessToken
       }
     }).then((res) => {
-      setOtherConsult(res.data.result)
+      setOtherConsult(res.data.result.consultList)
     }) .catch((err) => console.log(err))
   }
 
@@ -209,8 +209,7 @@ function Shared() {
         Authorization: accessToken
       }
     }).then((res) => {
-      console.log(res)
-      setShared(res.data.result)
+      setShared(res.data.result.consultList)
     }) .catch((err) => console.log(err))
   }
 

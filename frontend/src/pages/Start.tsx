@@ -22,7 +22,7 @@ function Start() {
   return (
     <div className="relative">
       <div className="flex items-center justify-center h-screen w-screen relative z-10">
-        <div className="text-center pb-[50%] md:pb-[10%]">
+        <div className="text-center pb-[45%] md:pb-[30%]">
           <p className="font-bold text-3xl leading-relaxed">HTP 검사를 통해<br />나를 위한 여정을 떠나보세요.</p>
           <div className='my-2' onClick={handleClick}>
             <MyBtn />

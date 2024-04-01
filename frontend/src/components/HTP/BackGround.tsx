@@ -49,7 +49,7 @@ function Background() {
         function animateScene() :void {
           function update() {
             requestAnimationFrame(update);
-            gltf.scene.rotation.x += 0.002
+            gltf.scene.rotation.x += 0.001
             renderer.render(scene, camera);
           }
           update()

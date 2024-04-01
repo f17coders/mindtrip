@@ -9,10 +9,21 @@ import Swal from "sweetalert2";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import styles from "../../components/Calendar/Calendar.module.css";
+import { villageBackgroundColor } from "../../atoms/color";
+
+
+type postitType = {
+  content: string,
+  id: string,
+  isLike: boolean,
+  isReport: boolean,
+  likeCount: number,
+  reportCount: number,
+  village: 'apple'|'orange'|'pineapple'|'watermelon'|'grape'|'peach'|'blueberry'|'kakao'
+}
 
 const PostitPage: React.FC = () => {
-  const colors = ["#ffff88", "#ffcc00", "#ff9999", "#99ccff"];
-  const [postits, setPostits] = useState<any[]>([]);
+  const [postits, setPostits] = useState<postitType[]>([]);
   const [topic, setTopic] = useState<string>("");
   const [topicId, setTopicId] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -139,7 +150,7 @@ const PostitPage: React.FC = () => {
         <div className="flex justify-center items-center flex-wrap list-none">
           <div className="m-2">
             <PostIt
-              color={colors[2]}
+              color={villageBackgroundColor[member.villageName]}
               onClick={handleFirstPostitClick}
               style={{ transition: "transform 0.3s ease-in-out" }}
             >
@@ -148,7 +159,7 @@ const PostitPage: React.FC = () => {
           </div>
           {postits.map((postit) => (
             <div className="m-2" key={postit.id}>
-              <PostIt color={postit.color}>{postit.content}</PostIt>
+              <PostIt color={villageBackgroundColor[postit.village]}>{postit.content}</PostIt>
             </div>
           ))}
         </div>
