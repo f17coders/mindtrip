@@ -60,8 +60,8 @@ public interface ConsultService {
     void deleteLikePostit(int consultId, int memberId);
 
     //카테고리로 대화가능한 고민상담소 필터링
-    List<Consult> getConsultListByCategory(int categoryId);
+    ConsultListRes getConsultListByCategory(int categoryId);
 
     //카테고리로 공유된 고민상담소 필터링
-    List<Consult> getSharedConsultListByCategory(int categoryId);
+    ConsultListRes getSharedConsultListByCategory(int categoryId);
 }
