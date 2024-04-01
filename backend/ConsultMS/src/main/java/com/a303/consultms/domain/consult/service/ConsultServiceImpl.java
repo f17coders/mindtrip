@@ -58,7 +58,7 @@ public class ConsultServiceImpl implements ConsultService {
 
     //고민상담소 전체 조회
     @Override
-    public ConsultListRes getConsultingRooms() throws BaseExceptionHandler {
+    public ConsultListRes getConsultingRooms(int memberId) throws BaseExceptionHandler {
         // createtime 기준으로 내림차순 정렬
         List<Consult> consultList = consultRepository.findAllByOrderByCreateTimeDesc();
 
