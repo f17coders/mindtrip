@@ -29,6 +29,7 @@ import com.a303.consultms.domain.member.dto.response.MemberBaseRes;
 import com.a303.consultms.domain.message.Message;
 import com.a303.consultms.global.api.response.BaseResponse;
 import com.a303.consultms.global.client.MemberClient;
+import com.a303.consultms.global.client.NotificationClient;
 import com.a303.consultms.global.exception.BaseExceptionHandler;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
@@ -47,18 +48,17 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ConsultServiceImpl implements ConsultService {
 
-    private final ConsultRepository consultRepository;
-    private final ConsultCategoryRepository consultCategoryRepository;
-    private final MemberClient memberClient;
-    private final ChannelRepository channelRepository;
-    private final LikeConsultRepository likeConsultRepository;
-    private final RedisTemplate<String, String> redisTemplate;
+	private final ConsultRepository consultRepository;
+	private final ConsultCategoryRepository consultCategoryRepository;
+	private final MemberClient memberClient;
+	private final ChannelRepository channelRepository;
+	private final LikeConsultRepository likeConsultRepository;
+	private final RedisTemplate<String, String> redisTemplate;
+	private final NotificationClient notificationClient;
 
     //고민상담소 전체 조회
     @Override
-    public ConsultListRes getConsultingRooms(int memberId)
-        throws BaseExceptionHandler {
-
+    public ConsultListRes getConsultingRooms() throws BaseExceptionHandler {
         // createtime 기준으로 내림차순 정렬
         List<Consult> consultList = consultRepository.findAllByOrderByCreateTimeDesc();
 
@@ -177,13 +177,18 @@ public class ConsultServiceImpl implements ConsultService {
             consult.setChannelId(channel.getChannelId());
             consultRepository.save(consult);
 
-            return channel.getChannelId();
-        }
-        //등록된 채널 있으면 예외 발생
-        else {
-            throw new BaseExceptionHandler(ALREADY_FULL_CONSULTROOM);
-        }
-    }
+			// 알림 발생 : notificationms에 전송
+			notificationClient.consultNotification("ENTER", consult.getMemberId());
+
+			return channel.getChannelId();
+		}
+		//등록된 채널 있으면 예외 발생
+		else {
+			throw new BaseExceptionHandler(ALREADY_FULL_CONSULTROOM);
+		}
+
+
+	}
 
     //고민상담소 개별 조회
     @Override
@@ -233,8 +238,12 @@ public class ConsultServiceImpl implements ConsultService {
         channel.setClosed(true); //채널 종료여부 저장
         channelRepository.save(channel);
 
-        return consult.getConsultId();
-    }
+		// 알림 발생 : notificationms에 전송
+		notificationClient.consultNotification("END",
+			Integer.parseInt(channel.getReceiver().get("memberId")));
+
+		return consult.getConsultId();
+	}
 
     //고민상담소 카테고리 조회
     @Override
@@ -296,9 +305,12 @@ public class ConsultServiceImpl implements ConsultService {
             throw new BaseExceptionHandler(UNAUTHORIZED_USER_EXCEPTION);
         }
 
-        //channelId가 있다면 삭제
-        consult.setChannelId(null);
-    }
+		//channelId가 있다면 삭제
+		consult.setChannelId(null);
+
+		// 알림 발생 : notificationms에 전송
+		notificationClient.consultNotification("EXIT", consult.getMemberId());
+	}
 
     //참여자 강제로 추방시키기
     @Override
@@ -323,9 +335,15 @@ public class ConsultServiceImpl implements ConsultService {
             throw new BaseExceptionHandler(UNAUTHORIZED_USER_EXCEPTION);
         }
 
-        //channelId가 있다면 삭제
-        consult.setChannelId(null);
-    }
+		//channelId가 있다면 삭제
+		consult.setChannelId(null);
+
+		// 알림 발생 : notificationms에 전송
+		Channel channel = channelRepository.findById(channelId).get();
+		notificationClient.consultNotification("BANNED",
+			Integer.parseInt(channel.getReceiver().get("memberId")));
+
+	}
 
     //대화중인 채팅방 목록(나의 고민)
     @Override

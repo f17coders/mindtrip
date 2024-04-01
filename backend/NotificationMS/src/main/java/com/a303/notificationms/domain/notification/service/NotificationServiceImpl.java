@@ -52,7 +52,7 @@ public class NotificationServiceImpl implements NotificationService {
 	public SseEmitter subscribe(int memberId) {
 
 		// 1. 현재 클라이언트를 위한 sseEmitter 객체 생성
-		SseEmitter sseEmitter = new SseEmitter((long)(60 * 1000));
+		SseEmitter sseEmitter = new SseEmitter((long) (2 * 1000));
 
 		// 2. 연결
 		try {
@@ -106,17 +106,18 @@ public class NotificationServiceImpl implements NotificationService {
 	public List<NotificationMessageRes> findNotificationsByMemberId(int memberId) {
 
 		Pageable pageable = PageRequest.of(0, 10);
-		List<Notification> notifications = notificationRepository.findByMemberId(memberId, pageable);
+		List<Notification> notifications = notificationRepository.findByMemberId(memberId,
+			pageable);
 
 		List<NotificationMessageRes> notificationMessageResList = new ArrayList<>();
-		for (Notification noti:notifications
+		for (Notification noti : notifications
 		) {
 			NotificationMessageRes res = NotificationMessageRes.builder()
-					.type("NOTIFICATION")
-					.message(noti.getContent())
-					.isWritten(noti.isWritten())
-					.localDateTime(noti.getCreateTime())
-					.build();
+				.type("NOTIFICATION")
+				.message(noti.getContent())
+				.isWritten(noti.isWritten())
+				.localDateTime(noti.getCreateTime())
+				.build();
 			notificationMessageResList.add(res);
 		}
 
@@ -126,7 +127,8 @@ public class NotificationServiceImpl implements NotificationService {
 	@Override
 	public List<NotificationMessageRes> setIsWrittenTrue(int memberId) {
 
-		List<NotificationMessageRes> notificationMessageResList = findNotificationsByMemberId(memberId);
+		List<NotificationMessageRes> notificationMessageResList = findNotificationsByMemberId(
+			memberId);
 
 		notificationBulkRepository.updateIsWrittenTrue(memberId);
 
@@ -203,17 +205,71 @@ public class NotificationServiceImpl implements NotificationService {
 	}
 
 	@Override
+	public void makeConsultNotification(String type, int memberId) {
+
+		String content = "";
+
+		// 채팅방에 누가 입장했어요 : 방 주인에게 알림 ENTER
+		if (type.equals("ENTER")) {
+			content = "고민상담소 채팅방에 상담자가 입장했어요.";
+		}
+		// 채팅방에 누가 나갔어요 : 방 주인에게 알림 EXIT
+		if (type.equals("EXIT")) {
+			content = "상담자가 퇴장했어요. 다른 상담자를 얼른 찾아드릴게요.";
+		}
+		// 고민이 종료되었어요 : 참여자에게 알림 END
+		if (type.equals("END")) {
+			content = "고민상담소 채팅이 종료되었어요. 친절한 상담 감사합니다.";
+		}
+		// 님 쫓겨났어요 : 참여자에게 알림 BANNED
+		if (type.equals("BANNED")) {
+			content = "고민상담소 채팅방에서 퇴장당하셨습니다.";
+		}
+		// 카톡 왔어요 : 그냥 왔다는것만 알려주자. TALK
+		if (type.equals("TALK")) {
+			// TODO 메시지 작성
+		} else {
+			throw new BaseExceptionHandler(type + "에 해당하는 type은 존재하지 않습니다.",
+				ErrorCode.NOT_VALID_CODE);
+		}
+
+		Domain domain = domainRepository.findByName("고민상담소");
+		Notification notification = Notification.createNotification(
+			memberId,
+			domain,
+			false,
+			content
+		);
+		notificationRepository.save(notification);
+
+		// 실시간 알람
+		try {
+			SseEmitter sseEmitter = emitterRepository.findByMemberId(memberId);
+			NotificationMessageRes messageRes = NotificationMessageRes.builder()
+				.type("NOTIFICATION")
+				.message(notification.getContent())
+				.isWritten(notification.isWritten())
+				.localDateTime(notification.getCreateTime())
+				.build();
+			sseEmitter.send(SseEmitter.event().name("message").data(messageRes));
+		} catch (Exception e) {
+			emitterRepository.removeByMemberId(memberId);
+		}
+
+	}
+
+
+	@Override
 	public void makeNotification(int memberId) {
 		// Notification 저장
 		Domain domain = domainRepository.findByName("임시");
 		LocalDate now = LocalDate.now();
 
-
 		Notification notification = Notification.createNotification(
-				memberId,
-				domain,
-				false,
-				now + " 임시 알림 발송!"
+			memberId,
+			domain,
+			false,
+			now + " 임시 알림 발송!"
 		);
 
 		notificationRepository.save(notification);
@@ -222,11 +278,11 @@ public class NotificationServiceImpl implements NotificationService {
 		try {
 			SseEmitter sseEmitter = emitterRepository.findByMemberId(memberId);
 			NotificationMessageRes messageRes = NotificationMessageRes.builder()
-					.type("NOTIFICATION")
-					.message(notification.getContent())
-					.isWritten(notification.isWritten())
-					.localDateTime(notification.getCreateTime())
-					.build();
+				.type("NOTIFICATION")
+				.message(notification.getContent())
+				.isWritten(notification.isWritten())
+				.localDateTime(notification.getCreateTime())
+				.build();
 			sseEmitter.send(SseEmitter.event().name("message").data(messageRes));
 		} catch (Exception e) {
 			emitterRepository.removeByMemberId(memberId);
