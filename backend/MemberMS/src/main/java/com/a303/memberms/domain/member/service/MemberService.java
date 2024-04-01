@@ -25,4 +25,6 @@ public interface MemberService {
 	void increaseMissionCountByMemberId(int memberId);
 
 	int getMissionCount(int memberId);
+
+	MemberBaseRes changeNickname(int memberId, String nickname);
 }

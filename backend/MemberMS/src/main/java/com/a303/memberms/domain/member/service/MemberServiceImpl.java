@@ -32,20 +32,21 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Transactional
 public class MemberServiceImpl implements MemberService {
+
 	private final MemberRepository memberRepository;
 	private final PasswordEncoder passwordEncoder;
 
 	private final AuthClient authClient;
 	private final VillageClient villageClient;
 
-    @Override
-    public MemberBaseRes getMemberByMemberId(int memberId)
-        throws BaseExceptionHandler, IOException {
-        Member member = memberRepository.findByMemberId(memberId).orElseThrow(
-            () -> new BaseExceptionHandler(
-                ErrorCode.NOT_FOUND_USER_EXCEPTION
-            )
-        );
+	@Override
+	public MemberBaseRes getMemberByMemberId(int memberId)
+		throws BaseExceptionHandler, IOException {
+		Member member = memberRepository.findByMemberId(memberId).orElseThrow(
+			() -> new BaseExceptionHandler(
+				ErrorCode.NOT_FOUND_USER_EXCEPTION
+			)
+		);
 
 		VillageBaseRes villageBaseRes;
 		if (member.getVillageId() == null) {
@@ -70,66 +71,66 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 
-    @Override
-    public List<Integer> getMemberIdList() throws BaseExceptionHandler, IOException {
-        List<Integer> memberIdList = memberRepository.findDistinctMemberId();
+	@Override
+	public List<Integer> getMemberIdList() throws BaseExceptionHandler, IOException {
+		List<Integer> memberIdList = memberRepository.findDistinctMemberId();
 
-        return memberIdList;
-    }
+		return memberIdList;
+	}
 
 
-    @Override
-    public String standardLogin(MemberStandardLoginReq memberStandardLoginReq) {
-        //ID로 존재 여부 확인(사실상 일치 여부도 확인됨)
-        Member target = memberRepository.findById(memberStandardLoginReq.id())
-            .orElseThrow(
-                () -> new BaseExceptionHandler(
-                    "아이디를 확인해주세요.",
-                    ErrorCode.NOT_FOUND_USER_EXCEPTION
-                )
-            );
+	@Override
+	public String standardLogin(MemberStandardLoginReq memberStandardLoginReq) {
+		//ID로 존재 여부 확인(사실상 일치 여부도 확인됨)
+		Member target = memberRepository.findById(memberStandardLoginReq.id())
+			.orElseThrow(
+				() -> new BaseExceptionHandler(
+					"아이디를 확인해주세요.",
+					ErrorCode.NOT_FOUND_USER_EXCEPTION
+				)
+			);
 
-        //패스워드 일치 확인
-        if (!passwordEncoder.matches(
-            memberStandardLoginReq.password(),
-            target.getPassword()
-        )) {
-            throw new BaseExceptionHandler(
-                "패스워드를 확인해주세요.",
-                ErrorCode.NOT_FOUND_USER_EXCEPTION
-            );
-        }
+		//패스워드 일치 확인
+		if (!passwordEncoder.matches(
+			memberStandardLoginReq.password(),
+			target.getPassword()
+		)) {
+			throw new BaseExceptionHandler(
+				"패스워드를 확인해주세요.",
+				ErrorCode.NOT_FOUND_USER_EXCEPTION
+			);
+		}
 
-        //FeignClient로 토큰 발급
-        ResponseEntity<BaseResponse<String>> response = authClient.token(
-            AuthTokenReq.builder()
-                .memberId(target.getMemberId())
-                .role(target.getRole().name())
-                .build()
-        );
+		//FeignClient로 토큰 발급
+		ResponseEntity<BaseResponse<String>> response = authClient.token(
+			AuthTokenReq.builder()
+				.memberId(target.getMemberId())
+				.role(target.getRole().name())
+				.build()
+		);
 
 		return response.getBody().getResult();
 	}
 
 
-    @Override
-    @Transactional
-    public boolean standardRegister(MemberStandardRegisterReq memberStandardRegisterReq) {
-        //ID 중복 체크
-        String id = memberStandardRegisterReq.id();
-        checkIdDuplication(id);
+	@Override
+	@Transactional
+	public boolean standardRegister(MemberStandardRegisterReq memberStandardRegisterReq) {
+		//ID 중복 체크
+		String id = memberStandardRegisterReq.id();
+		checkIdDuplication(id);
 
-        //닉네임 중복 체크
-        String nickname = memberStandardRegisterReq.nickname();
-        checkNicknameDuplication(nickname);
+		//닉네임 중복 체크
+		String nickname = memberStandardRegisterReq.nickname();
+		checkNicknameDuplication(nickname);
 
-        //패스워드 인코딩 + DB에 넣기
-        Member member = Member.createMember(
-            memberStandardRegisterReq.id(),
-            passwordEncoder.encode(memberStandardRegisterReq.password()),
-            memberStandardRegisterReq.nickname()
-        );
-        memberRepository.save(member);
+		//패스워드 인코딩 + DB에 넣기
+		Member member = Member.createMember(
+			memberStandardRegisterReq.id(),
+			passwordEncoder.encode(memberStandardRegisterReq.password()),
+			memberStandardRegisterReq.nickname()
+		);
+		memberRepository.save(member);
 
 		return true;
 	}
@@ -173,6 +174,39 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	public int getMissionCount(int memberId) {
 		return memberRepository.findMissionCountByMemberId(memberId);
+	}
+
+	@Override
+	public MemberBaseRes changeNickname(int memberId, String nickname) {
+
+		Member member = memberRepository.findByMemberId(memberId).orElseThrow(
+			() -> new BaseExceptionHandler(
+				ErrorCode.NOT_FOUND_USER_EXCEPTION
+			)
+		);
+
+		member.setNickname(nickname);
+
+		VillageBaseRes villageBaseRes;
+		if (member.getVillageId() == null) {
+			villageBaseRes = VillageBaseRes.builder().build();
+		} else {
+			villageBaseRes = villageClient.getVillage(member.getVillageId()).getResult();
+		}
+
+		return MemberBaseRes.builder()
+			.memberId(memberId)
+			.id(member.getId())
+			.password(member.getPassword())
+			.socialId(member.getSocialId())
+			.nickname(member.getNickname())
+			.villageId(villageBaseRes.villageId())
+			.villageName(villageBaseRes.villageName())
+			.level(member.getLevel())
+			.missionCount(member.getMissionCount())
+			.reportCount(member.getReportCount())
+			.role(member.getRole())
+			.build();
 	}
 
 }
