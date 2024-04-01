@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -92,6 +93,7 @@ public class NotificationServiceImpl implements NotificationService {
 			CountNotificationMessageRes messageRes = CountNotificationMessageRes.builder()
 				.type("COUNT")
 				.count(notificationCnt)
+				.localDateTime(LocalDateTime.now())
 				.build();
 			sseEmitterReceiver.send(SseEmitter.event().name("message").data(messageRes));
 
@@ -113,6 +115,7 @@ public class NotificationServiceImpl implements NotificationService {
 					.type("NOTIFICATION")
 					.message(noti.getContent())
 					.isWritten(noti.isWritten())
+					.localDateTime(noti.getCreateTime())
 					.build();
 			notificationMessageResList.add(res);
 		}
@@ -189,6 +192,7 @@ public class NotificationServiceImpl implements NotificationService {
 					.type("NOTIFICATION")
 					.message(now + " 날짜의 미션이 추가되었습니다. :)")
 					.isWritten(false)
+					.localDateTime(LocalDateTime.now())
 					.build();
 				sseEmitterReceiver.send(SseEmitter.event().name("message").data(messageRes));
 
@@ -221,6 +225,7 @@ public class NotificationServiceImpl implements NotificationService {
 					.type("NOTIFICATION")
 					.message(notification.getContent())
 					.isWritten(notification.isWritten())
+					.localDateTime(notification.getCreateTime())
 					.build();
 			sseEmitter.send(SseEmitter.event().name("message").data(messageRes));
 		} catch (Exception e) {

@@ -553,6 +553,7 @@ public class ConsultServiceImpl implements ConsultService {
 
         return ConsultListRes.builder().consultList(consultDetailResList)
             .build();
+
     }
 
     private boolean isLike(int consultId, int memberId) {
@@ -567,5 +568,6 @@ public class ConsultServiceImpl implements ConsultService {
         } else {
             return true;
         }
+
     }
 }
