@@ -115,7 +115,7 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	@Transactional
-	public boolean standardRegister(MemberStandardRegisterReq memberStandardRegisterReq) {
+	public int standardRegister(MemberStandardRegisterReq memberStandardRegisterReq) {
 		//ID 중복 체크
 		String id = memberStandardRegisterReq.id();
 		checkIdDuplication(id);
@@ -130,9 +130,9 @@ public class MemberServiceImpl implements MemberService {
 			passwordEncoder.encode(memberStandardRegisterReq.password()),
 			memberStandardRegisterReq.nickname()
 		);
-		memberRepository.save(member);
+		Member registeredMember = memberRepository.save(member);
 
-		return true;
+		return registeredMember.getMemberId();
 	}
 
 
