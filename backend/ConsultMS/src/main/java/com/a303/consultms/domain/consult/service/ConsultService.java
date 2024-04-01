@@ -15,7 +15,7 @@ import java.util.List;
 public interface ConsultService {
 
     //전체 고민상담소 조회
-    ConsultListRes getConsultingRooms() throws BaseExceptionHandler;
+    ConsultListRes getConsultingRooms(int memberId) throws BaseExceptionHandler;
 
     //고민상담소 등록
     int registerConsultingRoom(ConsultRegisterReq consultRegisterReq, int memberId)
@@ -42,7 +42,7 @@ public interface ConsultService {
     void exitConsultingRoom(int consultId, int sender);
 
     //입장가능한 고민상담소 리스트 조회
-    ConsultListRes getAvailableConsultingRooms();
+    ConsultListRes getAvailableConsultingRooms(int memberId);
 
     //참여자 강제로 추방시키기
     void expelConsultingRoom(int consultId, int sender);
