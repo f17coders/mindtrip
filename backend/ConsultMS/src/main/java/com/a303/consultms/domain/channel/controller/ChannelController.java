@@ -40,8 +40,12 @@ public class ChannelController {
     ) throws IOException {
 
         //고민상담소 입장
-        String channelId = consultService.registerChannel(consultId, sender);
-        return BaseResponse.success(SuccessCode.INSERT_SUCCESS, channelId);
+        Channel channel = consultService.registerChannel(consultId, sender);
+
+        // TODO 동준이가 나중에 해결
+//        consultService.makeNotification("ENTER", Integer.parseInt(channel.getReceiver().get("memberId")));
+
+        return BaseResponse.success(SuccessCode.INSERT_SUCCESS, channel.getChannelId());
     }
 
     //참여중인 채팅방 목록
@@ -83,7 +87,7 @@ public class ChannelController {
     public ResponseEntity<BaseResponse<String>> expelPersonalChat(
         @PathVariable int consultId,
         @RequestHeader("x-member-id") int sender //추방시키는 사람(방장인지 확인필요)
-    ){
+    ) {
 
         //강제로 추방시키기
         consultService.expelConsultingRoom(consultId, sender);

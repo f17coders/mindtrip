@@ -1,7 +1,6 @@
 package com.a303.consultms.domain.consult.service;
 
-import com.a303.consultms.domain.channel.dto.request.ChannelReq;
-import com.a303.consultms.domain.consult.Consult;
+import com.a303.consultms.domain.channel.Channel;
 import com.a303.consultms.domain.consult.dto.request.ConsultCloseReq;
 import com.a303.consultms.domain.consult.dto.request.ConsultRegisterReq;
 import com.a303.consultms.domain.consult.dto.response.ConsultCategoryListRes;
@@ -9,8 +8,6 @@ import com.a303.consultms.domain.consult.dto.response.ConsultChattingListRes;
 import com.a303.consultms.domain.consult.dto.response.ConsultDetailRes;
 import com.a303.consultms.domain.consult.dto.response.ConsultListRes;
 import com.a303.consultms.global.exception.BaseExceptionHandler;
-import java.io.IOException;
-import java.util.List;
 
 public interface ConsultService {
 
@@ -23,7 +20,7 @@ public interface ConsultService {
 
     //고민상담소에 채널 등록
 //    String registerChannel(ChannelReq channelReq, int consultId, int sender);
-    String registerChannel(int consultId, int sender);
+    Channel registerChannel(int consultId, int sender);
 
     //고민상담소 개별 조회
     ConsultDetailRes getConsultingRoom(String channelId);
@@ -64,4 +61,7 @@ public interface ConsultService {
 
     //카테고리로 공유된 고민상담소 필터링
     ConsultListRes getSharedConsultListByCategory(int categoryId);
+
+    // 입장 알림 전송
+    void makeNotification(String type, int memberId);
 }

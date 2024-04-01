@@ -48,13 +48,13 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ConsultServiceImpl implements ConsultService {
 
-	private final ConsultRepository consultRepository;
-	private final ConsultCategoryRepository consultCategoryRepository;
-	private final MemberClient memberClient;
-	private final ChannelRepository channelRepository;
-	private final LikeConsultRepository likeConsultRepository;
-	private final RedisTemplate<String, String> redisTemplate;
-	private final NotificationClient notificationClient;
+    private final ConsultRepository consultRepository;
+    private final ConsultCategoryRepository consultCategoryRepository;
+    private final MemberClient memberClient;
+    private final ChannelRepository channelRepository;
+    private final LikeConsultRepository likeConsultRepository;
+    private final RedisTemplate<String, String> redisTemplate;
+    private final NotificationClient notificationClient;
 
     //고민상담소 전체 조회
     @Override
@@ -62,7 +62,7 @@ public class ConsultServiceImpl implements ConsultService {
         // createtime 기준으로 내림차순 정렬
         List<Consult> consultList = consultRepository.findAllByOrderByCreateTimeDesc();
 
-        if(consultList == null) {
+        if (consultList == null) {
             return null;
         }
 
@@ -80,7 +80,6 @@ public class ConsultServiceImpl implements ConsultService {
                 .canLike(isLike(consult.getConsultId(), memberId))
                 .channelId(consult.getChannelId())
                 .build()).collect(Collectors.toList());
-
 
         return ConsultListRes.builder().consultList(consultDetailResList)
             .build();
@@ -138,7 +137,7 @@ public class ConsultServiceImpl implements ConsultService {
     @Override
     @Transactional
 //    public String registerChannel(ChannelReq channelReq, int consultId, int senderId) {
-    public String registerChannel(int consultId, int senderId) throws BaseExceptionHandler {
+    public Channel registerChannel(int consultId, int senderId) throws BaseExceptionHandler {
         //senderId는 입장하는 사람 ID
         //고민상담소에 기존 채널 등록되어 있는지 확인
         Consult consult = consultRepository.findById(consultId).get();
@@ -153,42 +152,40 @@ public class ConsultServiceImpl implements ConsultService {
             throw new BaseExceptionHandler(UNAUTHORIZED_USER_EXCEPTION);
         }
 
+        if (consult.getChannelId() != null) {
+            //등록된 채널 있으면 예외 발생
+
+            throw new BaseExceptionHandler(ALREADY_FULL_CONSULTROOM);
+
+        }
+
         //등록된 채널 없으면 새로운 채널 생성하여 등록
-        if (consult.getChannelId() == null) {
-            Map<String, String> receiver = new HashMap<>();
-            //receiver 정보 받아오기
-            MemberBaseRes receiverMember = memberClient.getMember(consult.getMemberId())
-                .getResult();
-            receiver.put("memberId", String.valueOf(consult.getMemberId()));
-            receiver.put("nickname", receiverMember.nickname());
+        Map<String, String> receiver = new HashMap<>();
+        //receiver 정보 받아오기
+        MemberBaseRes receiverMember = memberClient.getMember(consult.getMemberId())
+            .getResult();
+        receiver.put("memberId", String.valueOf(consult.getMemberId()));
+        receiver.put("nickname", receiverMember.nickname());
 
-            Map<String, String> sender = new HashMap<>();
-            //sender 정보 받아오기
-            MemberBaseRes senderMember = memberClient.getMember(senderId).getResult();
-            sender.put("memberId", String.valueOf(senderId));
-            sender.put("nickname", senderMember.nickname());
+        Map<String, String> sender = new HashMap<>();
+        //sender 정보 받아오기
+        MemberBaseRes senderMember = memberClient.getMember(senderId).getResult();
+        sender.put("memberId", String.valueOf(senderId));
+        sender.put("nickname", senderMember.nickname());
 
-            //새로운 채널 생성
-            Channel channel = Channel.createChannel(consultId, receiver, sender, new ArrayList<>());
-            //채널 저장
-            channelRepository.save(channel);
+        //새로운 채널 생성
+        Channel channel = Channel.createChannel(consultId, receiver, sender, new ArrayList<>());
+        //채널 저장
+        channelRepository.save(channel);
 
-            //생성된 채널의 ID를 consult에 저장
-            consult.setChannelId(channel.getChannelId());
-            consultRepository.save(consult);
+        //생성된 채널의 ID를 consult에 저장
+        consult.setChannelId(channel.getChannelId());
+        consultRepository.save(consult);
 
-			// 알림 발생 : notificationms에 전송
-			notificationClient.consultNotification("ENTER", consult.getMemberId());
-
-			return channel.getChannelId();
-		}
-		//등록된 채널 있으면 예외 발생
-		else {
-			throw new BaseExceptionHandler(ALREADY_FULL_CONSULTROOM);
-		}
+        return channel;
 
 
-	}
+    }
 
     //고민상담소 개별 조회
     @Override
@@ -238,12 +235,12 @@ public class ConsultServiceImpl implements ConsultService {
         channel.setClosed(true); //채널 종료여부 저장
         channelRepository.save(channel);
 
-		// 알림 발생 : notificationms에 전송
-		notificationClient.consultNotification("END",
-			Integer.parseInt(channel.getReceiver().get("memberId")));
+        // TODO 알림 발생 : notificationms에 전송
+//        notificationClient.consultNotification("END",
+//            Integer.parseInt(channel.getReceiver().get("memberId")));
 
-		return consult.getConsultId();
-	}
+        return consult.getConsultId();
+    }
 
     //고민상담소 카테고리 조회
     @Override
@@ -305,12 +302,12 @@ public class ConsultServiceImpl implements ConsultService {
             throw new BaseExceptionHandler(UNAUTHORIZED_USER_EXCEPTION);
         }
 
-		//channelId가 있다면 삭제
-		consult.setChannelId(null);
+        //channelId가 있다면 삭제
+        consult.setChannelId(null);
 
-		// 알림 발생 : notificationms에 전송
-		notificationClient.consultNotification("EXIT", consult.getMemberId());
-	}
+        // TODO 알림 발생 : notificationms에 전송
+//        notificationClient.consultNotification("EXIT", consult.getMemberId());
+    }
 
     //참여자 강제로 추방시키기
     @Override
@@ -335,15 +332,15 @@ public class ConsultServiceImpl implements ConsultService {
             throw new BaseExceptionHandler(UNAUTHORIZED_USER_EXCEPTION);
         }
 
-		//channelId가 있다면 삭제
-		consult.setChannelId(null);
+        //channelId가 있다면 삭제
+        consult.setChannelId(null);
 
-		// 알림 발생 : notificationms에 전송
-		Channel channel = channelRepository.findById(channelId).get();
-		notificationClient.consultNotification("BANNED",
-			Integer.parseInt(channel.getReceiver().get("memberId")));
+        // TODO 알림 발생 : notificationms에 전송
+//        Channel channel = channelRepository.findById(channelId).get();
+//        notificationClient.consultNotification("BANNED",
+//            Integer.parseInt(channel.getReceiver().get("memberId")));
 
-	}
+    }
 
     //대화중인 채팅방 목록(나의 고민)
     @Override
@@ -413,13 +410,11 @@ public class ConsultServiceImpl implements ConsultService {
         //내가 참여중인 채널의 정보 가져오기
         List<Channel> channelList = channelRepository.findBySender(String.valueOf(memberId));
 
-
         if (channelList.isEmpty()) {
             return null;
         }
 
         for (Channel c : channelList) {
-
 
             Consult consult = consultRepository.findByChannelId(c.getChannelId());
 
@@ -521,10 +516,12 @@ public class ConsultServiceImpl implements ConsultService {
         //카테고리ID가 1이면 전체 값 조회
         if (categoryId == 1) {
             //consultRepository에 저장되어 있는 모든 값 가져오기
-            consultList = consultRepository.findAllByIsClosedAndChannelIdOrderByCreateTimeDesc(false, null);
+            consultList = consultRepository.findAllByIsClosedAndChannelIdOrderByCreateTimeDesc(
+                false, null);
         } else {
             //카테고리 ID가 그 외의 값이면 해당하는 값 조회
-            consultList = consultRepository.findAllByCategoryIdAndIsClosedAndChannelIdOrderByUpdateTimeDesc(categoryId, false, null);
+            consultList = consultRepository.findAllByCategoryIdAndIsClosedAndChannelIdOrderByUpdateTimeDesc(
+                categoryId, false, null);
         }
 
         // Consult 객체의 리스트를 ConsultDetailRes 객체의 리스트로 변환
@@ -572,6 +569,12 @@ public class ConsultServiceImpl implements ConsultService {
         return ConsultListRes.builder().consultList(consultDetailResList)
             .build();
 
+    }
+
+    @Override
+    public void makeNotification(String type, int memberId) {
+        // 알림 발생 : notificationms에 전송
+        notificationClient.consultNotification("ENTER", memberId);
     }
 
     private boolean isLike(int consultId, int memberId) {
