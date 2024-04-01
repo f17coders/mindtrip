@@ -2,6 +2,7 @@
 import { Button } from "@nextui-org/react";
 import HTPPicture from "../../../components/MypageHTP/HTPPicture";
 import './MypageCss/MypageHTP.css';
+import { Link } from "react-router-dom";
 
 function MypageHTP() {
   return (
@@ -14,7 +15,9 @@ function MypageHTP() {
           나올
           예정
         </div>
+        <Link to="/htp/house">
         <Button className="w-full">새 검사 하러가기</Button>
+        </Link>
       </div>
       <div className="gap-4 ml-4 ">
         <HTPPicture title="Home" />

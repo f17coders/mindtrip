@@ -2,9 +2,10 @@ import { useState } from 'react';
 import { Avatar } from "@nextui-org/react";
 import { Card } from "@nextui-org/react";
 import { Link, Outlet } from "react-router-dom";
-import Header from '../../components/Header';
+import Header from '../../components/Header'
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store/store';
+import { changeLang } from '../../api/htp';
 
 function Mypage() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -22,7 +23,7 @@ function Mypage() {
         <div className="flex space-x-4 items-center">
           <Avatar />
           <div className="flex flex-col justify-center">
-            <span className="text-sm font-semibold text-gray-700">나의마을 : { member.villageName } </span>
+            <span className="text-sm font-semibold text-gray-700">나의마을 : { changeLang(member.villageName) } </span>
             { member.nickname }님 환영합니다.
           </div>
         </div>
