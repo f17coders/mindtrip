@@ -29,7 +29,7 @@ function SharedConsult({consult} : propsType) {
     setOpenMoreInfo(false);
 
     //공유된 채팅 내역 가져오기
-    axios.get(`http://localhost:8000/api/channels/v1/shared/${consult.channelId}`, {
+    axios.get(`https://mindtrip.site/api/channels/v1/shared/${consult.channelId}`, {
         headers: {
             Authorization: accessToken
         }
