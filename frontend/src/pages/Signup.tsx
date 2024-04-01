@@ -1,20 +1,26 @@
 import { Input, Card, CardBody, Button } from "@nextui-org/react";
 import { useEffect, useState } from 'react';
-import { loadUser, login, signup } from "../api/member";
+import { loadUser, login, signup, registerResult } from "../api/member";
 import kakao from './../assets/login/kakao.png'
 import google from './../assets/login/google.png'
 import { memberType } from "../types/DataTypes";
 import { saveToken, saveUserInfo } from "../store/memberSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios'
 import Swal from "sweetalert2";
+import { RootState } from "../store/store";
+import { changeLang } from "../api/htp";
 
 // 회원가입 페이지
 
 function Signup () {
   const dispatch = useDispatch()
   const navigate = useNavigate()
+
+  // 임시토큰
+  let tempToken = useSelector((state:RootState) => state.accessToken.value)
+  let tempUserVillage = useSelector((state:RootState) => state.member.villageName)
 
   // 아이디
   const [id, setId] = useState<string>('')
@@ -162,20 +168,30 @@ function Signup () {
 
   // 회원가입....
   const handleSignup = async() => {
-      const successSignup:boolean = await signup(id, password1, nickname) 
-      // 회원가입에 성공했다면, 로그인해주고, 토큰따오고 유저정보 가져오기
-      if (successSignup === true) {
-        handleLogin()
+      const tempMemberId:number|null = await signup(id, password1, nickname) 
+      // 회원가입에 성공했다면, 결과 등록해주고
+      if (typeof tempMemberId == 'number') {
+        registerVillage(tempMemberId)
       }
   }
   
+  // 유저아이디와 토큰으로 결과 register
+  const registerVillage = async function (tempMemberId:number) {
+    const registerCheck = await registerResult(tempMemberId, tempToken)
+    // 결과 등록까지 했다면 로그인해주자
+    if (registerCheck) {
+      handleLogin()
+    }
+  }
 
   // 유저 정보 저장
-  const saveUser = async function() {
+  const saveUser = async function() :Promise<string|null> {
     const userInfo:memberType|void = await loadUser()
     if (userInfo) {
       dispatch(saveUserInfo(userInfo))
+      return userInfo.villageName
     }
+    return null
   }
 
   // 로그인 로직
@@ -184,7 +200,17 @@ function Signup () {
     if (typeof token == 'string') {
       dispatch(saveToken(token))
       saveUser()
-      navigate('/htp/result')
+      if (tempUserVillage) {
+        Swal.fire({
+          text: `당신은 ${changeLang(tempUserVillage)}마을에 도착했습니다`
+        }).then(() => {
+          navigate('/main')
+        })
+      } else {
+        console.log('회원정보 저장이 안된듯?')
+        navigate('/main')
+      }
+      
     }
   }
   

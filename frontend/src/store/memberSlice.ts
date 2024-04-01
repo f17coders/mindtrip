@@ -52,11 +52,17 @@ const memberSlice = createSlice({
         ...action.payload
       })
     },
+    saveVillage(state, action: PayloadAction<'apple'|'orange'|'pineapple'|'watermelon'|'grape'|'peach'|'blueberry'|'kakao'>) {
+      return({
+        ...state,
+        villageName: action.payload
+      })
+    }
   }
 })
 
 // 4. 함수들 내보내기
-export const {saveUserInfo} = memberSlice.actions;
+export const {saveUserInfo, saveVillage} = memberSlice.actions;
 
 
 export {memberSlice, accessToken}

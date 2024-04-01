@@ -22,6 +22,8 @@ type villageType = {
   kakao: string
 }
 
+// 가능한 마을의 타입
+type villageNameType = 'apple'|'orange'|'pineapple'|'watermelon'|'grape'|'peach'|'blueberry'|'kakao'
 
 
 // 고민 타입
@@ -55,4 +57,4 @@ type chattingRoom = {
 }
 
 
-export type {consultType, categoryType, memberType, villageType, chattingRoom}
+export type {consultType, categoryType, memberType, villageType, chattingRoom, villageNameType}

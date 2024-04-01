@@ -1,5 +1,5 @@
 import axios from 'axios'
-
+import { villageNameType } from '../types/DataTypes'
 
 // 검사 결과 문장으로 가져오기
 async function getResult1(token: string): Promise<string|null> {
@@ -18,7 +18,7 @@ async function getResult1(token: string): Promise<string|null> {
 
 
 // 검사 결과 마을 가져오기
-async function getResult2(token: string): Promise<string|null> {
+async function getResult2(token: string): Promise<villageNameType|null> {
   try {
     const res = await axios.get('https://mindtrip.site/api/htp/v1/result/village', {
       headers: {

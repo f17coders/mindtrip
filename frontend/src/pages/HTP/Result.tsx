@@ -4,9 +4,13 @@ import { getResult1, getResult2, changeLang } from "../../api/htp";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
+import { saveVillage } from "../../store/memberSlice";
+import { useDispatch } from "react-redux";
+import { villageNameType } from "../../types/DataTypes";
 
 function Result() {
   let tempToken = useSelector((state: RootState) => state.accessToken.value)
+  const dispatch = useDispatch()
 
   const [result1, setResult1] = useState<string>('')
   const [result2, setResult2] = useState<string>('')
@@ -26,10 +30,11 @@ function Result() {
   // 마을
   const fetchResult2 = async () => {
     try {
-      let tempResult = await getResult2(tempToken)
+      let tempResult:villageNameType|null = await getResult2(tempToken)
       console.log(tempResult)
-      if (tempResult) {
+      if (tempResult != null) {
         setResult2(tempResult)
+        dispatch(saveVillage(tempResult))
       }
     } catch (err) {
       console.log(err)
@@ -63,18 +68,26 @@ type propsType = {
 function MyBtn({village} :propsType) {
   const navigate = useNavigate()
 
-  const checkVillage = () :void => {
+  let member = useSelector((state:RootState) => state.member)
+  const goSignup = () :void => {
+    if (member.memberId) {
+      Swal.fire({
+        text:`당신은 ${changeLang(village)}마을에 도착했습니다!`
+      }).then(()=>{
+        navigate('/main')
+      })
+    }
     Swal.fire({
-      text: `당신은 ${changeLang(village)} 마을에 도착했습니다.`
+      text: '회원가입 후에 마을을 확인할 수 있습니다!'
     }).then(() => {
-      navigate('/main')
+      navigate('/signup')
     })
   }
 
   return(
     <button
       className="fixed bottom-10 left-1/2 translate-x-[-50%] py-2 px-8 h-14 w-48 text-black text-base font-bold nded-full overflow-hidden bg-white rounded-full transition-all duration-400 ease-in-out shadow-md hover:scale-105 hover:text-white hover:shadow-lg active:scale-90 before:absolute before:top-0 before:-left-full before:w-full before:h-full before:bg-gradient-to-r before:from-blue-500 before:to-blue-300 before:transition-all before:duration-500 before:ease-in-out before:z-[-1] before:rounded-full hover:before:left-0"
-      onClick={checkVillage}
+      onClick={goSignup}
     >
       <p>내 마을 확인하기</p>
     </button>
