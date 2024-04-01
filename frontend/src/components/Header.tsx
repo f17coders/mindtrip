@@ -27,7 +27,7 @@ function Header() {
     fetchSSE()
   }, [])
 
-  let accessToken = useSelector((state:RootState) => state.accessToken)
+  let accessToken = useSelector((state:RootState) => state.accessToken.value)
   let member = useSelector((state:RootState) => state.member)
   
 

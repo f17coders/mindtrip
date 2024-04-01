@@ -3,7 +3,7 @@ import Background from '../components/HTP/BackGround'
 import { useDispatch } from "react-redux"
 import { saveToken } from "../store/memberSlice"
 import axios from "axios"
-
+import logo from './../assets/logo.png'
 
 function Start() {
   const navigate = useNavigate()
@@ -11,7 +11,7 @@ function Start() {
 
   const getTempToken = async () => {
     const res = await axios.get('https://mindtrip.site/api/htp/v0/temp_token')
-    dispatch(saveToken(res.data.tempAuthorization))
+    dispatch(saveToken(res.data.Authorization))
   }
 
   const handleClick = async () => {
@@ -23,7 +23,8 @@ function Start() {
     <div className="relative">
       <div className="flex items-center justify-center h-screen w-screen relative z-10">
         <div className="text-center pb-[45%] md:pb-[30%]">
-          <p className="font-bold text-3xl leading-relaxed">HTP 검사를 통해<br />나를 위한 여정을 떠나보세요.</p>
+          <img src={logo} alt="logo_img" className="w-[30vw] mx-auto mb-3"/>
+          <p className="font-bold text-2xl leading-relaxed">HTP 검사를 통해<br />나를 위한 여정을 떠나보세요.</p>
           <div className='my-2' onClick={handleClick}>
             <MyBtn />
           </div>

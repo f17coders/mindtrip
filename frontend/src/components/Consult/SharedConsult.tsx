@@ -24,7 +24,7 @@ function SharedConsult({consult} : propsType) {
   }, [])
 
   let member = useSelector((state: RootState) => state.member)
-  let accessToken = useSelector((state:RootState) => state.accessToken)
+  let accessToken = useSelector((state:RootState) => state.accessToken.value)
 
   const handleLike = function() {
     if (like) {

@@ -6,7 +6,7 @@ async function getResult1(token: string): Promise<string|null> {
   try {
     const res = await axios.get('https://mindtrip.site/api/htp/v1/result/sentence', {
       headers: {
-        tempAuthorization: token
+        Authorization: token
       }
     })
     return res.data.data
@@ -22,7 +22,7 @@ async function getResult2(token: string): Promise<string|null> {
   try {
     const res = await axios.get('https://mindtrip.site/api/htp/v1/result/village', {
       headers: {
-        tempAuthorization: token
+        Authorization: token
       }
     });
     return res.data.data

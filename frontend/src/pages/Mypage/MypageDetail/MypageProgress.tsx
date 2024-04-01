@@ -13,7 +13,7 @@ function MypageProgress() {
   const currentYear = currentDate.getFullYear();
   const currentMonth = currentDate.getMonth() + 1;
 
-  let accessToken = useSelector((state:RootState) => state.accessToken)
+  let accessToken = useSelector((state:RootState) => state.accessToken.value)
   useEffect(() => {
     // API에서 데이터 가져오는 함수
     const fetchData = async () => {

@@ -74,7 +74,7 @@ async function getSharedConsult(token: string): Promise<consultType[]> {
 }
 
 // 채팅방에 입장하기
-async function enterRoom(token: string, consultId: number): Promise<string|void> {
+async function enterRoom(token: string, consultId: number): Promise<string|null> {
   try {
     const res = await axios.post(`https://mindtrip.site/api/channels/v1/enter/${consultId}`, null, {
       headers: {
@@ -82,8 +82,17 @@ async function enterRoom(token: string, consultId: number): Promise<string|void>
       }
     })
     return res.data.result
-  } catch (err) {
-    console.log(err)
+  } catch (err :any) {
+    switch (err.response?.data?.code) {
+      case 'B100':
+        Swal.fire({
+          text: '권한이 없는 사용자입니다.'
+        })
+        break
+      default:
+      console.log(err)
+    }
+    return null
   }
 }
 

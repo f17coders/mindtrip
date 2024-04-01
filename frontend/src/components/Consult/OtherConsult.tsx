@@ -32,14 +32,19 @@ function OtherConsult({consult} : propsType) {
   const dispatch = useDispatch()
 
   let member = useSelector((state:RootState)=> state.member)
-  let accessToken = useSelector((state:RootState) => state.accessToken)
+  let accessToken = useSelector((state:RootState) => state.accessToken.value)
   const handleEnter = async (consultId:number) => {
     try {
       const tempChannelId = await enterRoom(accessToken, consultId)
-      // 이거 저장
-      console.log(tempChannelId)
       if (typeof tempChannelId == 'string') {
+        // 채널 아이디 알려주고
         dispatch(changeSelectedId(tempChannelId))
+        // 만약 채팅창이 닫혀있는 상태라면 열어주고
+        if (chat.isOpen === false) {
+          dispatch(toggleOpen())
+        } 
+        // 채팅방으로 옮겨주자
+        dispatch(changeList(false))
       }
     } catch (err) {
       console.log(err)
@@ -52,12 +57,7 @@ function OtherConsult({consult} : propsType) {
     if (consult.consultId != null) {
       handleEnter(consult.consultId)
     }
-    // 만약 채팅창이 닫혀있는 상태라면 열어주고
-    if (chat.isOpen === false) {
-      dispatch(toggleOpen())
-    } 
-    // 채팅방으로 옮겨주자
-    dispatch(changeList(false))
+    
   }
 
   return (

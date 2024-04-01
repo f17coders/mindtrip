@@ -22,7 +22,7 @@ function Mission() {
   const [missions, setMissions] = useState<Mission[]>([]); // 미션 타입을 명시
 
   const [isMidnight, setIsMidnight] = useState<boolean>(false);
-  let accessToken = useSelector((state: RootState) => state.accessToken);
+  let accessToken = useSelector((state: RootState) => state.accessToken.value);
 
   // 페이지가 로드될 때 미션 데이터를 가져오는 useEffect 훅
   useEffect(() => {

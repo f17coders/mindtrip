@@ -9,7 +9,7 @@ import Swal from "sweetalert2";
 
 function Main() {
   const navigate = useNavigate()
-  let accessToken = useSelector((state:RootState) => state.accessToken)
+  let accessToken = useSelector((state:RootState) => state.accessToken.value)
 
   // 로그인 안하면 막기
   useEffect(() => {

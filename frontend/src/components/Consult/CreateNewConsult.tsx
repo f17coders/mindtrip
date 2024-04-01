@@ -13,7 +13,7 @@ type propsType = {
 function CreateNewConsult({ onClose, category }: propsType) {
   const selectableCategory = category?.filter((item) => item.categoryId != 1)
 
-  let accessToken = useSelector((state: RootState) => state.accessToken)
+  let accessToken = useSelector((state: RootState) => state.accessToken.value)
 
   // 제목, 내용, 카테고리
   const [title, setTitle] = useState<string>('')

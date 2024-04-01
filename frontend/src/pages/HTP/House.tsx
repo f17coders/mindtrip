@@ -14,7 +14,7 @@ type propsType1 = {
   goSurvey: () => void
 }
 type survey = {
-  quetion_id: number,
+  question_id: number,
   content: string,
   choices: {
     choice_id: number,
@@ -96,7 +96,7 @@ function House() {
 export default House
 
 function HouseDraw({ goSurvey }: propsType1) {
-  let tempAuthorization = useSelector((state: RootState) => state.accessToken)
+  let tempAuthorization = useSelector((state: RootState) => state.accessToken.value)
 
   // 파일 제어용
   const [file, setFile] = useState<File | null>(null)
@@ -112,7 +112,7 @@ function HouseDraw({ goSurvey }: propsType1) {
   const sendFile = async (data: FormData) => {
     await axios.post('https://mindtrip.site/api/htp/v1/test/house', data, {
       headers: {
-        tempAuthorization: tempAuthorization,
+        Authorization: tempAuthorization,
         "Content-Type": "multipart/form-data"
       }
     })
@@ -142,12 +142,8 @@ function HouseDraw({ goSurvey }: propsType1) {
   return (
     <div className="flex h-svh w-svh justify-center items-center flex-col">
       <p className="text-center mb-8 font-bold text-3xl">집을 그려주세요.</p>
-      <div className="relative border-2 rounded h-2/3 lg:w-2/3 w-full bg-white">
-        <Draw />
-        <Button
-          className={`absolute bottom-0 right-0 m-3 opacity-50`}
-          onClick={goSurvey}
-        >다 그렸어요</Button>
+      <div className="border-2 rounded h-2/3 lg:w-2/3 w-full bg-white">
+        <Draw now='house' goSurvey={goSurvey} tempAuthorization={tempAuthorization}/>
       </div>
       <div className="flex items-center text-slate-500 mt-2">
         <p className="mr-3">그리기 힘들다면?</p>
@@ -194,7 +190,7 @@ function HouseSurvey({ goNext, survey, isLast }: propsType) {
               key={idx}
               variant="bordered"
               className='w-[90vw] lg:w-3/5 m-3 h-[10vh] px-3 text-md bg-white hover:bg-sky-800 hover:text-white shadow'
-              onClick={() => { handleClick(survey.quetion_id, choice.choice_id) }}
+              onClick={() => { handleClick(survey.question_id, choice.choice_id) }}
             >
               {choice.content}
             </Button>

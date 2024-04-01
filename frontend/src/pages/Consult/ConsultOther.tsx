@@ -13,8 +13,6 @@ import { getConsults } from '../../api/consults';
 import CreateNewConsult from '../../components/Consult/CreateNewConsult';
 import { villageBackgroundColor, villageTextColor } from '../../atoms/color';
 import Header from '../../components/Header';
-import Swal from 'sweetalert2';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 // 모달 제어용 타입 지정
@@ -26,25 +24,13 @@ type useDisclosureType = {
 
 function ConsultOther() {
   const dispatch = useDispatch()
-  const navigate = useNavigate()
-
-  // 로그인 안하면 막기
-  useEffect(() => {
-    if (accessToken === '') {
-      Swal.fire({
-        text:'로그인이 필요합니다.'
-      }).then(() => {
-        navigate('/login')
-      })
-    }
-  }, [])
 
   // 카테고리 받기
   let category = useSelector((state: RootState) => state.consultSlice.category)
 
   // 멤버정보
   let member = useSelector((state: RootState) => state.member)
-  let accessToken = useSelector((state:RootState) => state.accessToken)
+  let accessToken = useSelector((state:RootState) => state.accessToken.value)
 
 
    // 고민 받아서 저장할 변수

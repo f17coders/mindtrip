@@ -1,21 +1,17 @@
 import { useState, useEffect } from 'react'
 import { Select, SelectItem } from "@nextui-org/react";
-import { useNavigate } from 'react-router-dom';
 import SharedConsult from '../../components/Consult/SharedConsult';
 import { categoryType, consultType } from '../../types/DataTypes';
 import { useSelector } from "react-redux";
 import { RootState } from './../../store/store'
 import Header from '../../components/Header';
 import { getSharedConsult } from '../../api/consults';
-import Swal from 'sweetalert2';
 import axios from 'axios';
 
 function ConsultShared() {
-  const navigate = useNavigate()
-
   // 카테고리 받기
   let category = useSelector((state: RootState) => state.consultSlice.category)
-  let accessToken = useSelector((state: RootState) => state.accessToken)
+  let accessToken = useSelector((state: RootState) => state.accessToken.value)
 
   // 리스트
   const [shared, setShared] = useState<consultType[] | null>(null)
@@ -37,13 +33,6 @@ function ConsultShared() {
 
   // 로그인 안하면 막기
   useEffect(() => {
-    if (accessToken === '') {
-      Swal.fire({
-        text: '로그인이 필요합니다.'
-      }).then(() => {
-        navigate('/login')
-      })
-    }
     // 전체 고민 가져오기
     const fetchConsult = async () => {
       try {

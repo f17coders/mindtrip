@@ -23,7 +23,7 @@ function ChattingAdditionalInfo({isMine} : propsType) {
   const dispatch = useDispatch()
 
   let chat = useSelector((state : RootState) => state.chat)
-  let accessToken = useSelector((state:RootState) => state.accessToken)
+  let accessToken = useSelector((state:RootState) => state.accessToken.value)
 
   const [chatInfo, setChatInfo] = useState<chatInfo|null>(null)
   const loadChatInfo = async () => {

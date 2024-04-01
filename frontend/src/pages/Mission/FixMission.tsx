@@ -31,7 +31,7 @@ type TodayMissionsResponse =  {
 function Fixmission() {
   const [missions, setMissions] = useState<CategoryMission[]>([]);
   const [todayMissions, setTodayMissions] = useState<Mission[]>([]);
-  let accessToken = useSelector((state:RootState) => state.accessToken)
+  let accessToken = useSelector((state:RootState) => state.accessToken.value)
 
   useEffect(() => {
     const fetchData = async () => {

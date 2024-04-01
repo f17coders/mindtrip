@@ -14,7 +14,7 @@ function ChatList() {
   // const [personalChatId, setPersonalChatId] = useState<string>("")
 
   let member = useSelector((state: RootState) => state.member)
-  let accessToken = useSelector((state:RootState) => state.accessToken)
+  let accessToken = useSelector((state:RootState) => state.accessToken.value)
 
   const [myChattings, setMyChattings] = useState<chattingRoom[]>([])
   // 내 채팅 불러오는 함수

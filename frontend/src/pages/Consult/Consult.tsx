@@ -27,7 +27,7 @@ function Consult() {
 
   // 회원 정보
   let member = useSelector((state: RootState) => state.member)
-  let accessToken = useSelector((state:RootState) => state.accessToken)
+  let accessToken = useSelector((state:RootState) => state.accessToken.value)
 
   // 카테고리 받기
   let category = useSelector((state: RootState) => state.consultSlice.category)
@@ -101,7 +101,7 @@ export default Consult
 // 다른 사람들의 고민
 function Others() {
   const navigate = useNavigate()
-  let accessToken = useSelector((state: RootState) => state.accessToken)
+  let accessToken = useSelector((state: RootState) => state.accessToken.value)
 
   // 카테고리 받기
   let category = useSelector((state: RootState) => state.consultSlice.category)
@@ -195,7 +195,7 @@ function Shared() {
 
   // 카테고리 받기
   let category = useSelector((state: RootState) => state.consultSlice.category)
-  let accessToken = useSelector((state: RootState) => state.accessToken)
+  let accessToken = useSelector((state: RootState) => state.accessToken.value)
 
   const [shared, setShared] = useState<consultType[]>([])
 

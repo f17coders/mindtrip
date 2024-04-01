@@ -41,7 +41,7 @@ const PostitPage: React.FC = () => {
   console.log(startDate,"시작날짜")
   
   let member = useSelector((state: RootState) => state.member);
-  let accessToken = useSelector((state: RootState) => state.accessToken);
+  let accessToken = useSelector((state: RootState) => state.accessToken.value);
 
   const fetchData = async () => {
     try {

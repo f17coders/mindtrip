@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 
 function Result() {
-  let tempToken = useSelector((state: RootState) => state.accessToken)
+  let tempToken = useSelector((state: RootState) => state.accessToken.value)
 
   const [result1, setResult1] = useState<string>('')
   const [result2, setResult2] = useState<string>('')

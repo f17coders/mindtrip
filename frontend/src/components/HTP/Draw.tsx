@@ -1,29 +1,39 @@
 import { useRef, useState, useEffect, useCallback } from 'react'
 import { Button } from '@nextui-org/react';
+import axios from 'axios'
+import Swal from 'sweetalert2';
 
-function Draw() {
+
+type propsType = {
+  now: string
+  goSurvey: () => void,
+  tempAuthorization:string
+}
+
+
+function Draw({now, goSurvey, tempAuthorization}:propsType) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [isDrawing, setIsDrawing] = useState<boolean>(false)
   const [penColor, setPencolor] = useState<string>('black')
 
 // 좌표 정보를 얻는 함수
-const getCoordinates = (canvas :HTMLCanvasElement, event :MouseEvent|TouchEvent) => {
-  if ('touches' in event) {
-    // 터치 이벤트의 경우
-    const rect = canvas.getBoundingClientRect();
-    return {
-      offsetX: event.touches[0].clientX - rect.left,
-      offsetY: event.touches[0].clientY - rect.top,
-    };
-  } else {
-    // 마우스 이벤트의 경우
-    const mouseEvent = event as MouseEvent;
-    return {
-      offsetX: mouseEvent.offsetX,
-      offsetY: mouseEvent.offsetY,
-    };
-  }
-};
+  const getCoordinates = (canvas :HTMLCanvasElement, event :MouseEvent|TouchEvent) => {
+    if ('touches' in event) {
+      // 터치 이벤트의 경우
+      const rect = canvas.getBoundingClientRect();
+      return {
+        offsetX: event.touches[0].clientX - rect.left,
+        offsetY: event.touches[0].clientY - rect.top,
+      };
+    } else {
+      // 마우스 이벤트의 경우
+      const mouseEvent = event as MouseEvent;
+      return {
+        offsetX: mouseEvent.offsetX,
+        offsetY: mouseEvent.offsetY,
+      };
+    }
+  };
 
   // 그림 그리기 시작
   const startDrawing = useCallback((e: MouseEvent | TouchEvent): void => {
@@ -116,6 +126,34 @@ const getCoordinates = (canvas :HTMLCanvasElement, event :MouseEvent|TouchEvent)
     };
   }, [startDrawing, draw, stopDrawing]);
 
+
+  // 버튼 눌렀을 때 실행되는 함수
+  const handleButton = () => {
+    const canvas = canvasRef.current
+    canvas?.toBlob(async function(blob) {
+      if (blob){
+        const file = new File([blob], `${now}.png`, {type:'image/png'})
+        const formData = new FormData()
+        formData.append('file', file)
+        console.log(file)
+        try {
+          await axios.post(`https://mindtrip.site/api/htp/v1/test/${now}`, formData, {
+            headers: {
+              Authorization: tempAuthorization
+            }
+          })
+          Swal.fire({
+            text: '그림 업로드 완료!',
+            icon: "success"
+          }).then(() => { goSurvey() })
+        } catch(err) {
+          console.log(err)
+        }
+      }
+    })
+  }
+
+
   return (
     <div className="relative w-full h-full">
       <canvas ref={canvasRef} className="w-full h-full cursor-crosshair" />
@@ -146,6 +184,10 @@ const getCoordinates = (canvas :HTMLCanvasElement, event :MouseEvent|TouchEvent)
         onClick={() => setPencolor('rgb(113 63 18)')}
         className='w-8 h-8 rounded-full bg-yellow-900 mx-2 hover:cursor-pointer'/>
       </div>
+      <Button
+        className={`absolute bottom-0 right-0 m-3 opacity-50`}
+        onClick={handleButton}
+      >다 그렸어요</Button>
     </div>
   )
 }
