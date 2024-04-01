@@ -2,14 +2,15 @@ import axios, { AxiosResponse } from 'axios';
 
 // 채팅방 조회
 const getPersonalChat = async (
-    // accessToken: string, 
-    memberId : number,
+    accessToken: string,
+    // memberId : number,
     channelId: string
     ): Promise<any> => {
     try {
         const res: AxiosResponse = await axios.get(`https://mindtrip.site/api/channels/v1/${channelId}`,{
             headers: {
-                "x-member-id": memberId,
+                // "x-member-id": memberId,
+                Authorization: `Bearer ${accessToken}`,
             }
         });
         return res.data.result;
@@ -23,17 +24,19 @@ const getPersonalChat = async (
 
 // 채팅방 얻기, 없으면 생성
 const registPersonalChat = async (
-    // accessToken: string,
+    accessToken: string,
     consultId: number,
-    receiver: number,
+    // receiver: number,
     // memberId: number
     ): Promise<any> => {
     try {
-        const res: AxiosResponse = await axios.post(`https://mindtrip.site/api/channels/v1/enter/${consultId}`,{
-            "receiver": receiver,
-        }, {
+        const res: AxiosResponse = await axios.post(`https://mindtrip.site/api/channels/v1/enter/${consultId}`,
+            // "receiver": receiver,
+            null
+        , {
             headers: {
-                "x-member-id": 1,
+                // "x-member-id": memberId,
+                Authorization: `Bearer ${accessToken}`,
             }
         });
         return res.data.result;
@@ -63,14 +66,15 @@ const send = (stompClient: any, sender: String, message: string, channelId: stri
 };
 
 const entranceChannel = (
-    // accessToken: string, 
+    accessToken: string, 
     stompClient: any, message: any, channelId: string): void => {
     if (stompClient && stompClient.connected) {
+
         stompClient.publish({
             destination: "/pub/api/chat/enter/" + channelId,
-            // headers: {
-            //     token: accessToken
-            // },
+            headers: {
+                token: accessToken
+            },
             body: JSON.stringify(message)
         });
     } else {
@@ -83,6 +87,4 @@ export {
     getPersonalChat,
     send,
     entranceChannel
-    // readPersonalChat
-    // readChannelChat
 }

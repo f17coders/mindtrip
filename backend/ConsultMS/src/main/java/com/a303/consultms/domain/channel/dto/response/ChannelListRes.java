@@ -8,8 +8,7 @@ import lombok.Builder;
 @Builder
 public record ChannelListRes(
     String channelId,
-    MemberBaseRes receiver,
-    MemberBaseRes sender,
+    int memberId,
     List<Message> messageList
 ) {
 

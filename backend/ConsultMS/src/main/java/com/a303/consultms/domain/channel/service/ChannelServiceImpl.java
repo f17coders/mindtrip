@@ -1,11 +1,18 @@
 package com.a303.consultms.domain.channel.service;
 
+import static com.a303.consultms.global.exception.code.ErrorCode.NOT_FOUND_CHANNEL_EXCEPTION;
+
 import com.a303.consultms.domain.channel.Channel;
+import com.a303.consultms.domain.channel.dto.response.ChannelListRes;
 import com.a303.consultms.domain.channel.dto.response.ChannelRes;
 import com.a303.consultms.domain.channel.repository.ChannelRepository;
+import com.a303.consultms.domain.consult.Consult;
 import com.a303.consultms.domain.consult.repository.ConsultRepository;
 import com.a303.consultms.domain.member.dto.response.MemberBaseRes;
+import com.a303.consultms.domain.message.Message;
 import com.a303.consultms.global.client.MemberClient;
+import com.a303.consultms.global.exception.BaseExceptionHandler;
+import com.a303.consultms.global.exception.code.ErrorCode;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,31 +30,6 @@ public class ChannelServiceImpl implements ChannelService {
     private final ChannelRepository channelRepository;
     private final ConsultRepository consultRepository;
     private final MemberClient memberClient;
-
-    //채팅방 등록
-//    @Override
-//    @Transactional
-//    public String registerPersonalChat(int receiverId, int memberId) {
-//        Map<String, String> receiver = new HashMap<>();
-//        //receiver 정보 받아오기
-//        System.out.println("채널 등록");
-//        MemberBaseRes receiverMember = memberClient.getMember(receiverId).getResult();
-//
-//        receiver.put("memberId", String.valueOf(receiverId));
-//        receiver.put("nickname", receiverMember.nickname());
-//
-//        Map<String, String> sender = new HashMap<>();
-//        //sender 정보 받아오기
-//        MemberBaseRes senderMember = memberClient.getMember(memberId).getResult();
-//
-//        sender.put("memberId", String.valueOf(memberId));
-//        sender.put("nickname", senderMember.nickname());
-//
-//        Channel channel = Channel.createChannel(consultId, receiver, sender, new ArrayList<>());
-//        channelRepository.save(channel);
-//
-//        return channel.getChannelId();
-//    }
 
     //참여중인 채팅방 목록 조회
     @Override
@@ -67,7 +49,6 @@ public class ChannelServiceImpl implements ChannelService {
 
             MemberBaseRes receiverInfo = memberClient.getMember(receiverId).getResult();
             MemberBaseRes senderInfo = memberClient.getMember(senderId).getResult();
-
 
             //TODO: 탈퇴한 사용자 처리
 
@@ -94,7 +75,7 @@ public class ChannelServiceImpl implements ChannelService {
         Map<String, String> sender = channel.getSender();
         System.out.println(sender);
 
-        if(memberId != Integer.parseInt(sender.get("memberId"))){
+        if (memberId != Integer.parseInt(sender.get("memberId"))) {
             channel.setSender(channel.getReceiver());
             channel.setReceiver(sender);
         }
@@ -103,10 +84,8 @@ public class ChannelServiceImpl implements ChannelService {
 
         // TODO: 탈퇴한 사용자 처리
 
-
         return channel;
     }
-
 
     //채팅방 입장 전 고민상담소 정보 조회
     @Override
@@ -117,22 +96,26 @@ public class ChannelServiceImpl implements ChannelService {
         return channel;
     }
 
-    //고민상담소 입장(채널생성)
-//    @Override
-//    public String enterConsultingRoom(int consultId, int memberId) throws BaseExceptionHandler {
-//
-//        consultException(consultId);
-////        memberException(memberId);
-//
-//        List<Message> messageList = new ArrayList<>();
-//
-//        //채널 생성
-//        Channel channel = Channel.createChannel(consultId, memberId, false, false, messageList);
-//
-//        channelRepository.save(channel);
-//
-//        return channel.getId();
-//    }
+    //공유된 채팅내역 조회
+    @Override
+    public ChannelListRes getSharedChat(String channelId)
+        throws BaseExceptionHandler {
 
+        //고민 주최자가 누구인지 파악하기
+        Consult consult = consultRepository.findByChannelId(channelId);
+        int memberId = consult.getMemberId();
+
+        //채널에 대한 정보 가져오기
+        Channel channel = channelRepository.findById(channelId)
+            .orElseThrow(() -> new BaseExceptionHandler(NOT_FOUND_CHANNEL_EXCEPTION));
+
+        if (channel != null && channel.isShared()) { // 채널이 존재하고 공유된 경우에만 처리
+            // 채널의 메시지 리스트를 가져와서 ChannelListRes 객체를 생성하여 반환
+            return new ChannelListRes(channel.getChannelId(), memberId, channel.getMessageList());
+        } else {
+            // 채널이 없거나 공유되지 않은 경우 null 반환
+            return null;
+        }
+    }
 
 }

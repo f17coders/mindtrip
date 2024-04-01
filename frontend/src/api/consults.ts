@@ -86,7 +86,7 @@ async function enterRoom(token: string, consultId: number): Promise<string|null>
     switch (err.response?.data?.code) {
       case 'B100':
         Swal.fire({
-          text: '권한이 없는 사용자입니다.'
+          text: '본인이 만든 방에는 참여할 수 없습니다.'
         })
         break
       default:
@@ -100,12 +100,15 @@ async function enterRoom(token: string, consultId: number): Promise<string|null>
 // 대화중인 채팅 목록 불러오기(내꺼)
 async function loadChattingMine(token:string) :Promise<chattingRoom[]|null>{
   try{
-    const res = await axios.get('https://mindtrip.site/api/consults/v1/mine',{
+    const res = await axios.get(`https://mindtrip.site/api/consults/v1/mine`,{
       headers: {
         Authorization: token
       }
     })
+    // console.log(res)
     const tempRes = res.data.result
+    // console.log('--- 내 고민 목록 출력 ---')
+    // console.log(tempRes)
     if (tempRes) {
       return tempRes.consultChattingRes
     } else {
@@ -122,7 +125,7 @@ async function loadChattingMine(token:string) :Promise<chattingRoom[]|null>{
 async function loadChattingOthers(token:string) :Promise<chattingRoom[]|null>{
   console.log(token)
   try{
-    const res = await axios.get('https://mindtrip.site/api/consults/v1/others',{
+    const res = await axios.get(`https://mindtrip.site/api/consults/v1/others`,{
       headers: {
         Authorization: token
       }
@@ -132,7 +135,7 @@ async function loadChattingOthers(token:string) :Promise<chattingRoom[]|null>{
     if (temp === null) {
       return null
     } else {
-      return temp
+      return temp.consultChattingRes
     }
   } catch (err) {
     console.log(err)

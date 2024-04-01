@@ -369,7 +369,7 @@ public class ConsultServiceImpl implements ConsultService {
 
             if (!channel.getMessageList().isEmpty()) {
                 //가장 최근 메세지 한개 가져오기
-                Message latestMessage = channel.getMessageList().get(0);
+                Message latestMessage = channel.getMessageList().get(channel.getMessageList().size() - 1);
 
                 // ConsultChattingRes 객체 생성 및 최근 메시지 설정
                 ConsultChattingRes consultChattingRes = ConsultChattingRes.builder()
@@ -425,7 +425,7 @@ public class ConsultServiceImpl implements ConsultService {
             //가장 최근 메세지 한개 가져오기
             Message latestMessage = null;
             if (!c.getMessageList().isEmpty()) {
-                latestMessage = c.getMessageList().get(0);
+                latestMessage = c.getMessageList().get(c.getMessageList().size() - 1);
             }
 
             String text = null;

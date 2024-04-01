@@ -1,9 +1,11 @@
 package com.a303.consultms.domain.channel.controller;
 
 import com.a303.consultms.domain.channel.Channel;
+import com.a303.consultms.domain.channel.dto.response.ChannelListRes;
 import com.a303.consultms.domain.channel.dto.response.ChannelRes;
 import com.a303.consultms.domain.channel.service.ChannelService;
 import com.a303.consultms.domain.consult.service.ConsultService;
+import com.a303.consultms.domain.message.Message;
 import com.a303.consultms.global.api.response.BaseResponse;
 import com.a303.consultms.global.exception.code.SuccessCode;
 import jakarta.transaction.Transactional;
@@ -92,5 +94,15 @@ public class ChannelController {
         //강제로 추방시키기
         consultService.expelConsultingRoom(consultId, sender);
         return BaseResponse.success(SuccessCode.DELETE_SUCCESS, "참여자가 강제로 추방되었습니다.");
+    }
+
+    //공유된 고민 채팅 내역 조회
+    @GetMapping("/shared/{channelId}")
+    public ResponseEntity<BaseResponse<ChannelListRes>> getSharedChat(
+        @PathVariable String channelId
+//        @RequestHeader("x-member-id") int memberId
+    ){
+        ChannelListRes channelListRes = channelService.getSharedChat(channelId);
+        return BaseResponse.success(SuccessCode.SELECT_SUCCESS, channelListRes);
     }
 }

@@ -16,7 +16,7 @@ type chatInfo = {
   content: string,
   closed: boolean,
   shared: boolean|null,
-  consultId: string|null
+  consultId: number|null
 }
 
 function ChattingAdditionalInfo({isMine} : propsType) {
@@ -69,7 +69,7 @@ function ChattingAdditionalInfo({isMine} : propsType) {
     Swal.fire({
       title: '현재 상담에서 나갑니다'
     }).then(() => {
-      axios.put(`https://mindtrip.site/api/consults/v1/exit/${chatInfo?.consultId}`, {
+      axios.put(`https://mindtrip.site/api/consults/v1/exit/${chatInfo?.consultId}`, null,{
         headers : {
           Authorization: accessToken
         }
@@ -86,7 +86,7 @@ function ChattingAdditionalInfo({isMine} : propsType) {
       title: '현재 채팅중인 대상을 내보냅니다'
     }).then(() => {
       // 여기에 내보내는 로직
-      axios.put(`https://mindtrip.site/api/channels/v1/expel/${chatInfo?.consultId}`,{
+      axios.put(`https://mindtrip.site/api/channels/v1/expel/${chatInfo?.consultId}`, null,{
         headers:{
           Authorization: accessToken
         }

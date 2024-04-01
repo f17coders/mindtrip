@@ -2,6 +2,7 @@ package com.a303.consultms.domain.channel.service;
 
 import com.a303.consultms.domain.channel.Channel;
 import com.a303.consultms.domain.channel.dto.request.ChannelReq;
+import com.a303.consultms.domain.channel.dto.response.ChannelListRes;
 import com.a303.consultms.domain.channel.dto.response.ChannelRes;
 import com.a303.consultms.global.exception.BaseExceptionHandler;
 import java.util.List;
@@ -19,4 +20,6 @@ public interface ChannelService {
     List<ChannelRes> getPersonalChatList(int memberId);
 
     Channel readPersonalChat(String channelId, int memberId);
+
+    ChannelListRes getSharedChat(String channelId);
 }
