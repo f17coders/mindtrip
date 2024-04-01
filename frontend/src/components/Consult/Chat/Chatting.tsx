@@ -84,7 +84,7 @@ function Chatting() {
         const socket = new WebSocket(stompEndpoint);
         stompClient.current = new Client({
           webSocketFactory: () => socket,
-          onConnect: (frame: Frame) => {
+          onConnect: () => {
             // 구독 설정
             stompClient.current!.subscribe(
               `/sub/${channelId}`,
