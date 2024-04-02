@@ -200,7 +200,7 @@ public class DailyMissionServiceImpl implements DailyMissionService {
 		List<MissionLogRes> missionLogList = dailyMissionRepository.findAllToMissionLogRes();
 
 		// 미션 수행도 집계
-		int percent = 0;
+		float percent = 0;
 		LocalDate localDate = LocalDate.now().minusDays(1);
 		for (MissionLogRes missionLogRes : missionLogList) {
 			if (missionLogRes.isFinish()) {
