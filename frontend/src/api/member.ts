@@ -17,6 +17,10 @@ async function login(id: string, password: string): Promise<memberInfo | void> {
     });
     return res.data.result
   } catch (err) {
+    Swal.fire({
+      text:'아이디/비밀번호를 확인해주세요.',
+      icon:'warning'
+    })
     console.log(err);
   }
 }
@@ -47,6 +51,10 @@ async function signup(id: string, password: string, nickname: string): Promise<n
     return res.data.result
   } catch (err) {
     console.log(err);
+    Swal.fire({
+      text: '회원가입에 실패했습니다.',
+      icon:'warning'
+    })
     return null
   }
 }
@@ -54,7 +62,7 @@ async function signup(id: string, password: string, nickname: string): Promise<n
 
 // 검사결과 등록하기
 async function registerResult(memberId: number, tempToken: string): Promise<boolean> {
-  console.log('등록시도하러감')
+  // console.log('등록시도하러감')
   try {
     const res = await axios.post('https://mindtrip.site/api/htp/v1/register', {
       'member_id': memberId.toString()

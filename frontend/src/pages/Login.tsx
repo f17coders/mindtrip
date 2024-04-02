@@ -1,7 +1,5 @@
 import { Input, Card, CardBody, Button } from "@nextui-org/react";
-import { useState } from 'react';
-import kakao from './../assets/login/kakao.png'
-import google from './../assets/login/google.png'
+import { useEffect, useState } from 'react';
 import { loadUser, login } from "../api/member";
 import { useDispatch } from "react-redux";
 import { saveToken, saveUserInfo } from "../store/memberSlice";
@@ -9,8 +7,8 @@ import { useNavigate } from "react-router-dom";
 import { memberType } from "../types/DataTypes";
 
 type memberInfo = {
-  memberId:number,
-  token:string
+  memberId: number,
+  token: string
 }
 
 function Login() {
@@ -23,43 +21,62 @@ function Login() {
 
   // 아이디
   const [id, setId] = useState<string>('')
+  const [checkId, setCheckId] = useState<boolean>(true)
 
   // 비밀번호
   const [password, setPassword] = useState<string>('')
+  const [checkPassword, setCheckPassword] = useState<boolean>(true)
+
+  useEffect(() => {
+    if (id != '') {
+      setCheckId(true)
+    } 
+    if (password != '') {
+      setCheckPassword(true)
+    }
+  }, [id, password])
 
   // 유저 정보 저장
-  const saveUser = async function(memberId:number) {
-    const userInfo:memberType|void = await loadUser(memberId)
+  const saveUser = async function (memberId: number) {
+    const userInfo: memberType | void = await loadUser(memberId)
     if (userInfo) {
       dispatch(saveUserInfo(userInfo))
     }
   }
 
+
   // 로그인 로직
-  const handleLogin = async function() {
-    const tempInfo:memberInfo|void = await login(id, password)
-    if (tempInfo != null) {
-      dispatch(saveToken(tempInfo.token))
-      saveUser(tempInfo.memberId)
-      navigate('/main')
+  const handleLogin = async function () {
+    if (id === '') {
+      setCheckId(false)
+    } else if (password === '') {
+      setCheckPassword(false)
+    } else {
+      const tempInfo: memberInfo | void = await login(id, password)
+      if (tempInfo != null) {
+        dispatch(saveToken(tempInfo.token))
+        saveUser(tempInfo.memberId)
+        navigate('/main')
+      }
     }
   }
-  
+
   return (
     <Card
       className="w-full h-[90vh] mt-[5vh] sm:h-[90vh] sm:mt-[5vh] mx-auto sm:w-3/5 xl:w-1/3"
     >
-      <CardBody className="flex-col content-center py-[5vh]">
+      <CardBody className="flex-col content-center justify-around my-[15%] sm:my-[30%]">
         <p className="text-center text-4xl mb-12">로그인</p>
         {/* 아이디 입력 창 */}
-        <Input 
-          isClearable 
+        <Input
+          isClearable
           value={id}
           onValueChange={setId}
-          className="mx-auto my-5 w-[85%] md:w-[70%]" 
-          variant="underlined" 
-          label='아이디' 
-          placeholder="아이디를 입력해주세요." 
+          className="mx-auto my-5 w-[85%] md:w-[70%]"
+          variant="underlined"
+          label='아이디'
+          placeholder="아이디를 입력해주세요."
+          errorMessage={checkId? '':'아이디를 입력해주세요'}
         />
         {/* 비밀번호 입력 창 */}
         <Input
@@ -68,6 +85,7 @@ function Login() {
           onValueChange={setPassword}
           variant="underlined"
           placeholder="비밀번호를 입력해주세요."
+          errorMessage={checkPassword? '':'비밀번호를 입력해주세요'}
           endContent={
             <button className="focus:outline-none" type="button" onClick={toggleVisibility}>
               {isVisible ? (
@@ -79,29 +97,14 @@ function Login() {
           }
           type={isVisible ? "text" : "password"}
           className="mx-auto my-5 w-[85%] md:w-[70%]"
-          
+
         />
         {/* 로그인 버튼 */}
-        <Button 
+        <Button
           onClick={handleLogin}
           size='lg'
-          className="w-[90%] mx-auto my-5 bg-[#eeeeee] shadow md:w-[80%]" 
+          className="w-[80%] mx-auto my-5 bg-[#eeeeee] shadow md:w-[80%]"
         >로그인</Button>
-        {/* Divider */}
-        <div className="flex justify-center w-full items-center">
-          <hr className="w-1/3"/>
-          <p className="mx-5 text-slate-400 text-xs">또는</p>
-          <hr className="w-1/3"/>
-        </div>
-        {/* 소셜 로그인 버튼 */}
-        <Button isDisabled className="w-[90%] mx-auto my-2 mt-4 bg-[#FEE500] pr-7 shadow md:w-[80%]" size='lg'>
-          <img className='w-8 h-9 mb-1' src={kakao} alt="kakaoLogo" />
-          <p>카카오로 로그인하기</p>
-        </Button>
-        <Button isDisabled  className="w-[90%] mx-auto my-2 bg-[#ffffff] pr-7 shadow md:w-[80%]" size='lg'>
-          <img className='w-6 h-6 mr-3' src={google} alt="googleLogo" />
-          <p>구글로 로그인하기</p>
-        </Button>
       </CardBody>
     </Card>
   )

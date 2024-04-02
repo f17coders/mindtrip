@@ -76,12 +76,14 @@ function MyBtn({village} :propsType) {
       }).then(()=>{
         navigate('/main')
       })
+    } else {
+      Swal.fire({
+        text: '회원가입 후에 마을을 확인할 수 있습니다!'
+      }).then(() => {
+        navigate('/signup')
+      })
     }
-    Swal.fire({
-      text: '회원가입 후에 마을을 확인할 수 있습니다!'
-    }).then(() => {
-      navigate('/signup')
-    })
+    
   }
 
   return(

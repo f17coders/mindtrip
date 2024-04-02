@@ -16,7 +16,7 @@ function Main() {
 
   return (
     <div className='h-screen relative'>
-      <div className='absolute top-0 left-0 z-0'>
+      <div className='absolute top-0 left-0 z-0 w-full h-full'>
         <MainBackground go={go}/>
       </div>
       <div className='relative w-[384px] h-screen mx-auto z-10'>

@@ -1,7 +1,9 @@
 import * as THREE from 'three'
-import { useRef, useEffect } from 'react'
+import  { useRef, useEffect, Suspense, lazy } from 'react'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { useNavigate } from 'react-router-dom'
+
+const LazyModel = lazy(() => import('./LazyModel'))
 
 type propsType = {
     go:string|null
@@ -97,7 +99,11 @@ function MainBackground({go} :propsType) {
 
   return (
     <div className='bg-sky-100'>
-      <canvas ref={canvasRef} className='w-screen h-screen'></canvas>
+      <canvas ref={canvasRef} className='w-screen h-screen'>
+      </canvas>
+      <Suspense fallback={<div>모델 로딩중</div>}>
+          <LazyModel />
+        </Suspense>
     </div>
   )
 }

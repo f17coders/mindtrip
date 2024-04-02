@@ -1,8 +1,6 @@
 import { Input, Card, CardBody, Button } from "@nextui-org/react";
 import { useEffect, useState } from 'react';
 import { loadUser, login, signup, registerResult } from "../api/member";
-import kakao from './../assets/login/kakao.png'
-import google from './../assets/login/google.png'
 import { memberType } from "../types/DataTypes";
 import { saveToken, saveUserInfo } from "../store/memberSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -246,7 +244,7 @@ function Signup () {
     <Card
       className="w-full h-[95vh] mt-[2.5vh] mx-auto sm:w-3/5 xl:w-1/3"
     >
-      <CardBody className="flex-col content-center py-[5vh]">
+      <CardBody className="flex-col content-center justify-around my-[12%] sm:my-[25%]">
         <p className="text-center text-4xl mb-2">회원가입</p>
         {/* 아이디 입력 창 */}
         <div className="mx-auto mt-4 my-1 w-[95%] md:w-[70%] flex items-center">
@@ -326,21 +324,6 @@ function Signup () {
           size='lg'
           variant="bordered"
           className="min-h-[40px] w-[90%] mx-auto my-5 bg-[#eeeeee] shadow md:w-[80%]">회원가입</Button>
-        
-        {/* Divider */}
-        <div className="flex justify-center w-full items-center">
-          <hr className="w-1/3"/>
-          <p className="mx-5 text-slate-400 text-xs">또는</p>
-          <hr className="w-1/3"/>
-        </div>
-        <Button isDisabled className="min-h-[40px] w-[90%] mx-auto my-2 mt-4 bg-[#FEE500] pr-7 shadow md:w-[80%]" size='lg'>
-          <img className='w-8 h-9 mb-1' src={kakao} alt="kakaoLogo" />
-          <p>카카오로 회원가입하기</p>
-        </Button>
-        <Button isDisabled className="min-h-[40px] w-[90%] mx-auto my-2 bg-[#ffffff] pr-7 shadow md:w-[80%]" size='lg'>
-          <img className='w-6 h-6 mr-3' src={google} alt="googleLogo" />
-          <p>구글로 회원가입하기</p>
-        </Button>
       </CardBody>
     </Card>
   )
