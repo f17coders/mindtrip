@@ -7,7 +7,6 @@ import axios from 'axios'
 import { useDispatch, useSelector } from "react-redux";
 import { saveHouseAnswer } from "../../store/htpSlice";
 import { RootState } from "../../store/store";
-import Loading from "../../atoms/Loading";
 
 // props의 타입을 지정해주자
 

@@ -152,10 +152,10 @@ function Chatting() {
     }
   }, [recvList]);
 
-  const formattedDate = (time: string | number | Date) =>{
-      const createDate = new Date(time);
-      return `${createDate.getFullYear()}-${(createDate.getMonth() + 1).toString().padStart(2, '0')}-${createDate.getDate().toString().padStart(2, '0')} ${createDate.getHours().toString().padStart(2, '0')}:${createDate.getMinutes().toString().padStart(2, '0')}`;
-  }
+  // const formattedDate = (time: string | number | Date) =>{
+  //     const createDate = new Date(time);
+  //     return `${createDate.getFullYear()}-${(createDate.getMonth() + 1).toString().padStart(2, '0')}-${createDate.getDate().toString().padStart(2, '0')} ${createDate.getHours().toString().padStart(2, '0')}:${createDate.getMinutes().toString().padStart(2, '0')}`;
+  // }
 
   //   const formattedMessage = (message : string) => {
   //       return message.split('\n').map((line, index) => (

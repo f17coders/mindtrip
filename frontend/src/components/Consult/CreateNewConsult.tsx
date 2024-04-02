@@ -4,7 +4,6 @@ import { uploadConsult } from "../../api/consults";
 import { categoryType } from "../../types/DataTypes";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
-import Swal from "sweetalert2";
 
 type propsType = {
   onClose: () => void
