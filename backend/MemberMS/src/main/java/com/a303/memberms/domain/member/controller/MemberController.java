@@ -95,6 +95,7 @@ public class MemberController {
 //		response.setHeader("Authorization", "Bearer " + token);
 
 		log.debug("Authorization: {}", memberLoginRes);
+		log.info("{} login", memberStandardLoginReq.id());
 
 		return BaseResponse.success(
 			SuccessCode.LOGIN_SUCCESS,

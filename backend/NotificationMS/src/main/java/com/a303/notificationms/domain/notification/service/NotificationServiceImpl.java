@@ -57,7 +57,7 @@ public class NotificationServiceImpl implements NotificationService {
 		// 2. 연결
 		try {
 			sseEmitter.send(SseEmitter.event().name("connect"));
-			log.info("connect");
+//			log.info("connect");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
