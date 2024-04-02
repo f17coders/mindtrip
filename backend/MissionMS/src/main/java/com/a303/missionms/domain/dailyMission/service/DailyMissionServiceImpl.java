@@ -22,6 +22,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder.In;
 import jakarta.transaction.Transactional;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -73,7 +74,6 @@ public class DailyMissionServiceImpl implements DailyMissionService {
 		// 기존 저장된 유저의 마이테이블 미션들을 엔티티 형태로 가져온다. -> n+1 해결
 		List<DailyMission> dailyMissions = dailyMissionRepository.findByMemberId(
 			memberId);
-
 
 		// 기존 마이테이블 미션들 중에 수행된것 제외, 넣으려는 것과 동일한 것 제외하고 남은 애들은 이번에 교체되는 애들
 		// 따라서 해당 엔티티는 삭제한다.
@@ -198,6 +198,20 @@ public class DailyMissionServiceImpl implements DailyMissionService {
 	public void dailyMissionRecommend() throws BaseExceptionHandler {
 		// daily_mission테이블 missionlog에 append
 		List<MissionLogRes> missionLogList = dailyMissionRepository.findAllToMissionLogRes();
+
+		// 미션 수행도 집계
+		int percent = 0;
+		LocalDate localDate = LocalDate.now().minusDays(1);
+		for (MissionLogRes missionLogRes : missionLogList) {
+			if (missionLogRes.isFinish()) {
+				percent++;
+			}
+		}
+		if (missionLogList.size() != 0) {
+			percent *= 100;
+			percent /= missionLogList.size();
+		}
+		log.info("미션수행도 날짜:{}, percent:{}", localDate, percent);
 
 		// jdbctemplate으로 교체(삭제와 삽입)
 		missionBulkRepository.saveAllMissionLog(missionLogList);
