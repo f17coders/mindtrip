@@ -412,6 +412,8 @@ public class ConsultServiceImpl implements ConsultService {
         //내가 참여중인 채널의 정보 가져오기
         List<Channel> channelList = channelRepository.findBySender(String.valueOf(memberId));
 
+        log.error("[channelList] channelList={}",channelList.get(0).getChannelId());
+
         if (channelList.isEmpty()) {
             return null;
         }
@@ -420,9 +422,8 @@ public class ConsultServiceImpl implements ConsultService {
 
             Consult consult = consultRepository.findByChannelId(c.getChannelId());
 
-            if (consult == null) { // consult가 null일 때 예외 처리
-                return null;
-            }
+            log.debug("[getOthersChattingRooms] channelId={}",c.getChannelId());
+            if (consult == null) continue;
 
             //가장 최근 메세지 한개 가져오기
             Message latestMessage = null;

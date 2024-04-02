@@ -9,10 +9,8 @@ import UpIcon from '../../../atoms/Icons/UpIcon'
 import DownIcon from '../../../atoms/Icons/DownIcon'
 import SendIcon from '../../../atoms/Icons/SendIcon'
 import { villageBackgroundColor } from '../../../atoms/color'
-// 채팅방
 import { getPersonalChat, send } from '../../../services/chat';
 import ChattingAdditionalInfo from './ChattingAddtionalInfo';
-// import SockJS from "sockjs-client";
 
 
 function Chatting() {
@@ -30,9 +28,6 @@ function Chatting() {
   const [show, setShow] = useState<boolean>(false)
 
   const [stompClient, setStompClient] = useState<Client | null>(null);
-  // const stompClient = useRef<Client | null>(null);
-  // const [connected, setConnected] = useState<boolean>(false);
-  // const [name, setName] = useState<string>('');
   const [newMessage, setNewMessage] = useState("");
   const [recvList, setRecvList] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -75,31 +70,22 @@ function Chatting() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const chatPrivateConnect = () => {
-      // const serverURL = `https://mindtrip.site/api/chat`;
 
       setIsLoading(true);
   
       const stomp = new Client({
-        // brokerURL: 'ws://localhost:8000/api/chat',
-        // brokerURL: 'wss://mindtrip.site/api/chat',
-        
-        // connectHeaders: {
-        //   Authorization: `${accessToken}`,
-        // },
 
         debug: (str: string) => {
           console.log(str)
         },
         webSocketFactory: () => {
           // WebSocket을 생성하여 반환합니다.
-          const socket = new WebSocket('wss://mindtrip.site/api/chat');
+          const socket = new WebSocket("wss://mindtrip.site/api/chat");
           return socket;
         },
         // reconnectDelay: 5000, //자동 재 연결
       });
 
-      
-      
       setIsLoading(true);
 
     stomp.onConnect = (frame: Frame) => { //연결이 성공하면 수행할 작업
@@ -178,7 +164,6 @@ function Chatting() {
     if(channelId != null){
       send(stompClient, personalChat.sender, newMessage, channelId);
     }
-    //   readPersonalChat(accessToken, personalChat.personalChatId);
     setNewMessage("");
   };
 
@@ -189,10 +174,10 @@ function Chatting() {
     }
   }, [recvList]);
 
-  // const formattedDate = (time) =>{
-  //     const createDate = new Date(time);
-  //     return `${createDate.getFullYear()}-${(createDate.getMonth() + 1).toString().padStart(2, '0')}-${createDate.getDate().toString().padStart(2, '0')} ${createDate.getHours().toString().padStart(2, '0')}:${createDate.getMinutes().toString().padStart(2, '0')}`;
-  // }
+  const formattedDate = (time: string | number | Date) =>{
+      const createDate = new Date(time);
+      return `${createDate.getFullYear()}-${(createDate.getMonth() + 1).toString().padStart(2, '0')}-${createDate.getDate().toString().padStart(2, '0')} ${createDate.getHours().toString().padStart(2, '0')}:${createDate.getMinutes().toString().padStart(2, '0')}`;
+  }
 
   //   const formattedMessage = (message : string) => {
   //       return message.split('\n').map((line, index) => (
@@ -212,50 +197,6 @@ function Chatting() {
       sendMessage();
     }
   };
-
-  // const connect = () => {
-  //   setConnected(true)
-  //     if (stompClient) {
-  //         stompClient.activate();
-  //     }else{
-  //       console.error('연결 실패: Stomp 클라이언트가 연결되지 않았습니다.');
-  //     }
-  // };
-
-  // const disconnect = () => {
-  //     if (stompClient) {
-  //         stompClient.deactivate();
-  //         setConnected(false);
-  //         console.log('Disconnected');
-  //     }
-  // };
-
-  // const sendName = (message : string) => {
-  //     if (stompClient) {
-  //       console.log(message)
-  //         stompClient.publish({
-  //             destination: '/pub/api/chat/send/{channelId}',
-  //             // body: JSON.stringify({ name: name })
-  //         });
-  //     }
-  // };
-
-
-  // const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //     setName(event.target.value);
-  // };
-
-  // const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-  //     event.preventDefault();
-  //     sendName(event.target.value);
-  // };
-
-  //     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //       setMessage(event.target.value); // 입력 필드의 값을 상태에 업데이트합니다.
-  //       console.log(event.target.value);
-  //   };
-
-  // 고민 종료하는 함수
 
   return (
     <div>
