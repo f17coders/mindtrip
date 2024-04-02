@@ -29,8 +29,8 @@ function Chatting() {
   // 추가정보 열고 닫고
   const [show, setShow] = useState<boolean>(false)
 
-  // const [stompClient, setStompClient] = useState<Client | null>(null);
-  const stompClient = useRef<Client | null>(null);
+  const [stompClient, setStompClient] = useState<Client | null>(null);
+  // const stompClient = useRef<Client | null>(null);
   // const [connected, setConnected] = useState<boolean>(false);
   // const [name, setName] = useState<string>('');
   const [newMessage, setNewMessage] = useState("");
@@ -74,89 +74,73 @@ function Chatting() {
   // 스크롤바 조정
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  const stompEndpoint = "wss://j10a303.p.ssafy.io/api/chat";
-  
-    const chatPrivateConnect = () => {
+  const chatPrivateConnect = () => {
       // const serverURL = `https://mindtrip.site/api/chat`;
 
-      if (!stompClient.current) {
-        // stompClient 인스턴스 초기화 확인
-        const socket = new WebSocket(stompEndpoint);
-        stompClient.current = new Client({
-          webSocketFactory: () => socket,
-          onConnect: (frame: Frame) => {
-            console.log('Connected: ' + frame);
-            // 구독 설정
-            stompClient.current!.subscribe(
-              `/sub/${channelId}`,
-            (res: { body: string; }) => {
-              setRecvList(prevRecvList => [...prevRecvList, JSON.parse(res.body)]);
-            });
-            setIsLoading(false);
-          },
-        });
-        stompClient.current.activate(); // 웹소켓 연결 활성화
-      }
-
-
-      // const stomp = new Client({
-      //   // brokerURL: 'ws://localhost:8000/api/chat',
-      //   // brokerURL: 'wss://mindtrip.site/api/chat',
+      setIsLoading(true);
+  
+      const stomp = new Client({
+        // brokerURL: 'ws://localhost:8000/api/chat',
+        // brokerURL: 'wss://mindtrip.site/api/chat',
         
-      //   // connectHeaders: {
-      //   //   Authorization: `${accessToken}`,
-      //   // },
+        // connectHeaders: {
+        //   Authorization: `${accessToken}`,
+        // },
 
-      //   debug: (str: string) => {
-      //     console.log(str)
-      //   },
-      //   webSocketFactory: () => socket
-      //   // reconnectDelay: 5000, //자동 재 연결
-      // });
+        debug: (str: string) => {
+          console.log(str)
+        },
+        webSocketFactory: () => {
+          // WebSocket을 생성하여 반환합니다.
+          const socket = new WebSocket('ws://mindtrip.site/api/chat');
+          return socket;
+        },
+        // reconnectDelay: 5000, //자동 재 연결
+      });
 
       
       
       setIsLoading(true);
 
-    // stomp.onConnect = (frame: Frame) => { //연결이 성공하면 수행할 작업
-    //   //   setConnected(true);
-    //   console.log('Connected: ' + frame);
-    //   console.log(channelId)
-    //   stomp.subscribe(`/sub/${channelId}`,
-    //     (res: { body: string; }) => {
-    //       setRecvList(prevRecvList => [...prevRecvList, JSON.parse(res.body)]);
-    //     });
-    //   console.log(recvList);
-    //   setIsLoading(false);
-    // };
+    stomp.onConnect = (frame: Frame) => { //연결이 성공하면 수행할 작업
+        // setConnected(true);
+      console.log('Connected: ' + frame);
+      console.log(channelId)
+      stomp.subscribe(`/sub/${channelId}`,
+        (res: { body: string; }) => {
+          setRecvList(prevRecvList => [...prevRecvList, JSON.parse(res.body)]);
+        });
+      console.log(recvList);
+      setIsLoading(false);
+    };
 
-    // stomp.activate(); //클라이언트 활성화
+    stomp.activate(); //클라이언트 활성화
 
-    // //웹소켓 오류 발생 시 처리
-    // stomp.onWebSocketError = (error: Event) => {
-    //   console.error('Error with websocket', error);
-    // };
+    //웹소켓 오류 발생 시 처리
+    stomp.onWebSocketError = (error: Event) => {
+      console.error('Error with websocket', error);
+    };
 
-    // //연결 오류 발생 시 처리
-    // stomp.onStompError = (frame: Frame) => {
-    //   console.error('Broker reported error: ' + frame.headers['message']);
-    //   console.error('Additional details: ' + frame.body);
-    // };
+    //연결 오류 발생 시 처리
+    stomp.onStompError = (frame: Frame) => {
+      console.error('Broker reported error: ' + frame.headers['message']);
+      console.error('Additional details: ' + frame.body);
+    };
 
-    // setStompClient(stomp);
+    setStompClient(stomp);
 
-    //   return () => {
-    //     if (stomp.connected) {
-    //         stomp.deactivate();
-    //     }
-    //   };
+      return () => {
+        if (stomp.connected) {
+            stomp.deactivate();
+        }
+      };
   };
 
   // 연결 끊기
   const disconnectChat = () => {
-    if (stompClient.current !== null) {
-      stompClient.current.deactivate(); // STOMP 클라이언트 비활성화
-      stompClient.current = null; // stompClient 상태 초기화
+    if (stompClient !== null) {
+      stompClient.deactivate(); // STOMP 클라이언트 비활성화
+      setStompClient(null); // stompClient 상태 초기화
       setIsLoading(false); // isLoading 상태를 false로 설정
       setRecvList([]); // 받은 메시지 목록 초기화
     }
