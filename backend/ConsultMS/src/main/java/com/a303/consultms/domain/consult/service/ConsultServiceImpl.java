@@ -59,6 +59,7 @@ public class ConsultServiceImpl implements ConsultService {
 	private final LikeConsultRepository likeConsultRepository;
 	private final RedisTemplate<String, String> redisTemplate;
 	private final NotificationClient notificationClient;
+	private final ConsultService consultService;
 
 	private final KafkaTemplate<String, String> notificationEventDtoKafkaTemplate;
 
@@ -242,8 +243,8 @@ public class ConsultServiceImpl implements ConsultService {
 		channelRepository.save(channel);
 
 		// TODO 알림 발생 : notificationms에 전송
-//        notificationClient.consultNotification("END",
-//            Integer.parseInt(channel.getReceiver().get("memberId")));
+		consultService.makeNotification("END",
+			Integer.parseInt(channel.getReceiver().get("memberId")));
 
 		return consult.getConsultId();
 	}
@@ -316,7 +317,9 @@ public class ConsultServiceImpl implements ConsultService {
 		consult.setChannelId(null);
 
 		// TODO 알림 발생 : notificationms에 전송
-//        notificationClient.consultNotification("EXIT", consult.getMemberId());
+		consultService.makeNotification("EXIT",
+			consult.getMemberId());
+
 	}
 
 	//참여자 강제로 추방시키기
@@ -346,9 +349,9 @@ public class ConsultServiceImpl implements ConsultService {
 		consult.setChannelId(null);
 
 		// TODO 알림 발생 : notificationms에 전송
-//        Channel channel = channelRepository.findById(channelId).get();
-//        notificationClient.consultNotification("BANNED",
-//            Integer.parseInt(channel.getReceiver().get("memberId")));
+		Channel channel = channelRepository.findById(channelId).get();
+		consultService.makeNotification("BANNED",
+			Integer.parseInt(channel.getReceiver().get("memberId")));
 
 	}
 
