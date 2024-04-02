@@ -105,7 +105,7 @@ async function loadChattingMine(token:string) :Promise<chattingRoom[]|null>{
         Authorization: token
       }
     })
-    // console.log(res)
+    console.log(res)
     const tempRes = res.data.result
     // console.log('--- 내 고민 목록 출력 ---')
     // console.log(tempRes)

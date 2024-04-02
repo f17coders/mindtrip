@@ -64,7 +64,12 @@ function ChatList() {
             {
               myChattings.map((chatting, idx) => {
                 return(
-                  <Chatting key={idx} title={chatting.title} content={chatting.text} channelId={chatting.channelId}/>
+                  <div key={idx} >
+                  {
+                    chatting.shared === false && (<Chatting title={chatting.title} content={chatting.text} channelId={chatting.channelId}/>)
+                  }
+                  </div>
+                  
                 )
               })
             }
@@ -80,7 +85,12 @@ function ChatList() {
             {
               otherChattings?.map((chatting, idx) => {
                 return(
-                  <Chatting key={idx} title={chatting.title} content={chatting.text} channelId={chatting.channelId}/>
+                  <div key={idx}>
+                    {
+                      chatting.shared === false && (<Chatting title={chatting.title} content={chatting.text} channelId={chatting.channelId}/>)
+                    }
+                  </div>
+                  
                 )
               })
             }

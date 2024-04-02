@@ -53,7 +53,8 @@ type chattingRoom = {
   nickname: string,
   title:string,
   channelId: string,
-  text: string|null
+  text: string|null,
+  shared: boolean
 }
 
 
