@@ -10,17 +10,24 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import styles from "../../components/Calendar/Calendar.module.css";
 import { villageBackgroundColor } from "../../atoms/color";
-// import { formatDate } from "date-fns/format";
+import { Button } from "@nextui-org/react";
 
-
-export interface postitType  {
-  content: string,
-  id: string,
-  isLike: boolean,
-  isReport: boolean,
-  likeCount: number,
-  reportCount: number,
-  village: 'apple'|'orange'|'pineapple'|'watermelon'|'grape'|'peach'|'blueberry'|'kakao'
+export interface postitType {
+  content: string;
+  id: string;
+  isLike: boolean;
+  isReport: boolean;
+  likeCount: number;
+  reportCount: number;
+  village:
+    | "apple"
+    | "orange"
+    | "pineapple"
+    | "watermelon"
+    | "grape"
+    | "peach"
+    | "blueberry"
+    | "kakao";
 }
 
 const PostitPage: React.FC = () => {
@@ -28,41 +35,41 @@ const PostitPage: React.FC = () => {
   const [topic, setTopic] = useState<string>("");
   const [topicId, setTopicId] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  
+  const [sortBy, setSortBy] = useState<string>("like"); // "like" 또는 "date"
+
+  const [selectedFilter, setSelectedFilter] = useState("all");
   const formatDate = (date: Date | null): string => {
-    if (!date) return '';
+    if (!date) return "";
 
     const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // getMonth()는 0부터 시작하기 때문에 +1
-    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
 
     return `${year}-${month}-${day}`;
   };
-  //  api에서 오늘 날짜 가져오는 부분
+
   const currentDate = new Date();
-  //datepicker 관련
   const [startDate, setStartDate] = useState<Date | null>(currentDate);
-  console.log(startDate,"시작날짜")
-  
+
   let member = useSelector((state: RootState) => state.member);
   let accessToken = useSelector((state: RootState) => state.accessToken.value);
 
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        // api 주소가 order=like면 좋아요 순 정렬 아니면 날짜 순 정렬
-        `https://mindtrip.site/api/postits/v1?date=${formatDate(startDate)}&order=like&village=all&page=0&size=10`,
+        `https://mindtrip.site/api/postits/v1?date=${formatDate(
+          startDate
+        )}&order=${sortBy}&village=all&page=0&size=10`, // sortBy가 like면 좋아요 순 정렬 아니면 최신순 정렬
         {
           headers: {
             Authorization: accessToken,
           },
         }
       );
-      console.log(response.data);
       setPostits(response.data.result.postitResList);
       setTopic(response.data.result.topic);
       setTopicId(response.data.result.topicId);
-    } catch (error:any) {
+    } catch (error: any) {
       let errorMessage;
       switch (error.response?.data?.code) {
         case "B300":
@@ -82,13 +89,11 @@ const PostitPage: React.FC = () => {
   };
 
   useEffect(() => {
-    console.log("useEffect");
     fetchData();
-  }, [startDate]);
+  }, [startDate, sortBy]);
 
   const addPostit = async (content: string) => {
     try {
-      console.log("post");
       const response = await axios.post(
         "https://mindtrip.site/api/postits/v1",
         {
@@ -104,11 +109,9 @@ const PostitPage: React.FC = () => {
         }
       );
       console.log(response.data);
-      setIsModalOpen(false); // 새로운 포스트잇을 추가한 후에 모달을 닫기
-      fetchData(); // 모달을 닫은 후에 포스트잇 목록을 다시 불러오기
+      setIsModalOpen(false);
+      fetchData();
     } catch (error: any) {
-      console.log(error.response?.data);
-
       let errorMessage;
       switch (error.response?.data?.code) {
         case "G011":
@@ -155,35 +158,78 @@ const PostitPage: React.FC = () => {
         <div className="flex flex-row">
           <DatePicker
             dateFormat="yyyy.MM.dd"
-            maxDate={startDate}
+            maxDate={currentDate}
             className={styles.datePicker}
             selected={startDate}
             onChange={(date) => date && setStartDate(date)}
           />
-          <h1 className="text-center flex items-center justify-center">의 질문 보기</h1>
+          <h1 className="text-center flex items-center justify-center">
+            의 질문 보기
+          </h1>
         </div>
         <h1 className="text-xl font-bold mt-10 w-4/5">{topic}</h1>
       </div>
-      <div className="bg-white rounded-lg shadow-md p-6 mb-8 w-4/5 mx-auto">
-        <div className="flex justify-center items-center flex-wrap list-none">
-          <div className="m-2">
-          { formatDate(startDate) === formatDate(currentDate) &&
-              <PostIt
-                accessToken={accessToken}
-                color={villageBackgroundColor[member.villageName]}
-                onClick={handleFirstPostitClick}
-                style={{ transition: "transform 0.3s ease-in-out" }}
-                firstData={true}
-              >
-                눌러서 대답하기
-              </PostIt>
-            }
+      <div>
+        <div className="p-2 w-4/5 mx-auto flex justify-end">
+          <Button
+            className="mx-4"
+            variant="ghost"
+            onClick={() => setSortBy("like")}
+          >
+            좋아요순
+          </Button>
+          <Button variant="ghost" onClick={() => setSortBy("date")}>
+            최신순
+          </Button>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-md p-6 mb-8 w-4/5 mx-auto">
+          <div>
+            <select
+              value={selectedFilter}
+              onChange={(e) => setSelectedFilter(e.target.value)}
+            >
+              <option value="all">All</option>
+              <option value="apple">Apple</option>
+              <option value="pineapple">Pineapple</option>
+              <option value="watermelon">Watermelon</option>
+              <option value="grape">Grape</option>
+              <option value="peach">Peach</option>
+              <option value="blueberry">Blueberry</option>
+              <option value="kakao">Kakao</option>
+            </select>
           </div>
-          {postits.map((postit) => (
-            <div className="m-2" key={postit.id}>
-              <PostIt accessToken={accessToken} postItem={postit} color={villageBackgroundColor[postit.village]}>{postit.content}</PostIt>
+          <div className="flex justify-center items-center flex-wrap list-none">
+            <div className="m-2">
+              {formatDate(startDate) === formatDate(currentDate) && (
+                <PostIt
+                  accessToken={accessToken}
+                  color={villageBackgroundColor[member.villageName]}
+                  onClick={handleFirstPostitClick}
+                  style={{ transition: "transform 0.3s ease-in-out" }}
+                  firstData={true}
+                >
+                  눌러서 대답하기
+                </PostIt>
+              )}
             </div>
-          ))}
+            {postits
+              .filter(
+                (item) =>
+                  selectedFilter === "all" || item.village === selectedFilter
+              )
+              .map((postit) => (
+                <div className="m-2" key={postit.id}>
+                  <PostIt
+                    accessToken={accessToken}
+                    postItem={postit}
+                    color={villageBackgroundColor[postit.village]}
+                  >
+                    {postit.content}
+                  </PostIt>
+                </div>
+              ))}
+          </div>
         </div>
       </div>
       <div className="mt-8 p-2 rounded-lg text-center w-4/5 mx-auto"></div>

@@ -39,6 +39,7 @@ const Postit: React.FC<PostitProps> = ({
   const LikeHandle = async (clickData: boolean) => {
     try {
       if (clickData) {
+        console.log(clickData)
         await axios.post(
           `https://mindtrip.site/api/postits/v1/like/${postItem?.id}`,
           {},
