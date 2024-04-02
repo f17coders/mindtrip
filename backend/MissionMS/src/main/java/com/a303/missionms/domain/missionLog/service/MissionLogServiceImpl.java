@@ -43,10 +43,11 @@ public class MissionLogServiceImpl implements MissionLogService {
 //		System.out.println(now.getYear()+" "+now.getMonthValue());
 		if (year == now.getYear() && month == now.getMonthValue()) {
 //			System.out.println(11);
-			int day = now.getDayOfMonth();
 			List<DailyMission> dailyMissions = dailyMissionRepository.findByMemberId(memberId);
 			dailyMissionCnt = dailyMissions.size();
 			for (DailyMission dailyMission : dailyMissions) {
+				int day = dailyMission.getCreateTime().getDayOfMonth();
+
 				if (dailyMission.isFinish()) {
 					percent++;
 					daySuccessCountArray[day] += 1;
@@ -93,7 +94,7 @@ public class MissionLogServiceImpl implements MissionLogService {
 			}
 		}
 		percent *= 100;
-		if ( missionLogBaseResList.size() + dailyMissionCnt != 0) {
+		if (missionLogBaseResList.size() + dailyMissionCnt != 0) {
 			percent /= (missionLogBaseResList.size() + dailyMissionCnt);
 		} else {
 			percent = 0;

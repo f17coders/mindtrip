@@ -117,8 +117,13 @@ public class MissionController {
 		@RequestParam("year") int year,
 		@RequestParam("month") int month
 	) throws IOException {
+
+		log.debug("missions/v1/report GET api accepted with memberId:{}", memberId);
+
 		MissionReportRes missionReportRes = missionLogService.getMissionReport(memberId, year,
 			month);
+
+		log.debug("missions/v1/report GET api succeed with memberId:{}", memberId);
 
 		return BaseResponse.success(SuccessCode.SELECT_SUCCESS, missionReportRes);
 	}
