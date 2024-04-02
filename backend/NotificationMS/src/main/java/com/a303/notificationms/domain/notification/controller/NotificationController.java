@@ -46,7 +46,7 @@ public class NotificationController {
 	}
 
 	// 알림 읽음 처리
-	@PostMapping("/v1")
+	@PostMapping("/v1/set")
 	public ResponseEntity<BaseResponse<List<NotificationMessageRes>>> setIsWrittenTrue(
 		@RequestHeader("x-member-id") int memberId
 	) {
