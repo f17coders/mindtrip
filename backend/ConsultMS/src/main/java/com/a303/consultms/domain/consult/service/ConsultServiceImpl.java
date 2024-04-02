@@ -58,7 +58,6 @@ public class ConsultServiceImpl implements ConsultService {
 	private final ChannelRepository channelRepository;
 	private final LikeConsultRepository likeConsultRepository;
 	private final RedisTemplate<String, String> redisTemplate;
-	private final NotificationClient notificationClient;
 	private final ConsultService consultService;
 
 	private final KafkaTemplate<String, String> notificationEventDtoKafkaTemplate;
@@ -189,8 +188,11 @@ public class ConsultServiceImpl implements ConsultService {
 		consult.setChannelId(channel.getChannelId());
 		consultRepository.save(consult);
 
-		return channel;
+		// TODO 동준이가 나중에 해결
+		consultService.makeNotification("ENTER",
+			Integer.parseInt(channel.getReceiver().get("memberId")));
 
+		return channel;
 
 	}
 
@@ -243,7 +245,7 @@ public class ConsultServiceImpl implements ConsultService {
 		channelRepository.save(channel);
 
 		// TODO 알림 발생 : notificationms에 전송
-		consultService.makeNotification("END",
+		makeNotification("END",
 			Integer.parseInt(channel.getReceiver().get("memberId")));
 
 		return consult.getConsultId();
@@ -317,7 +319,7 @@ public class ConsultServiceImpl implements ConsultService {
 		consult.setChannelId(null);
 
 		// TODO 알림 발생 : notificationms에 전송
-		consultService.makeNotification("EXIT",
+		makeNotification("EXIT",
 			consult.getMemberId());
 
 	}
@@ -350,7 +352,7 @@ public class ConsultServiceImpl implements ConsultService {
 
 		// TODO 알림 발생 : notificationms에 전송
 		Channel channel = channelRepository.findById(channelId).get();
-		consultService.makeNotification("BANNED",
+		makeNotification("BANNED",
 			Integer.parseInt(channel.getReceiver().get("memberId")));
 
 	}

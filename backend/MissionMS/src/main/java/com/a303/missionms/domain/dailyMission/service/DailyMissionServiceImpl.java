@@ -207,66 +207,66 @@ public class DailyMissionServiceImpl implements DailyMissionService {
 	@Override
 	public void dailyMissionRecommend() throws BaseExceptionHandler {
 		// daily_mission테이블 missionlog에 append
-//		List<MissionLogRes> missionLogList = dailyMissionRepository.findAllToMissionLogRes();
-//
-//		// 미션 수행도 집계
-//		float percent = 0;
-//		LocalDate localDate = LocalDate.now().minusDays(1);
-//		for (MissionLogRes missionLogRes : missionLogList) {
-//			if (missionLogRes.isFinish()) {
-//				percent++;
-//			}
-//		}
-//		if (missionLogList.size() != 0) {
-//			percent *= 100;
-//			percent /= missionLogList.size();
-//		}
-//		log.info("미션수행도 날짜:{}, percent:{}", localDate, percent);
-//
-//		// jdbctemplate으로 교체(삭제와 삽입)
-//		missionBulkRepository.saveAllMissionLog(missionLogList);
-//		missionBulkRepository.deleteAllDailyMission();
-//
-//		// 새로운 미션 3개씩 선정해서 넣기
-//		List<Integer> memberIdList = memberClient.getMemberIdList().getResult();
-//		if (memberIdList.size() == 0) {
-//			return;
-//		}
-//
-//		List<Mission> missionList = missionRepository.getMissionList();
-//
-//		List<DailyMissionBaseRes> scheduledList = new ArrayList<>();
-//
-//		Random random = new Random();
-//		Set<Integer> pickedSet = new HashSet();
-//
-//		for (int i = 0; i < memberIdList.size(); i++) {
-//			int memberId = memberIdList.get(i);
-//			pickedSet.clear();
-//			int cnt = 0;
-//			while (cnt < 3) {
-//				int index = random.nextInt(missionList.size());
-//				if (pickedSet.contains(index)) {
-//					// 다시 뽑아야 함
-//					continue;
-//				}
-//				// 넣어도 됨
-//				DailyMissionBaseRes dailyMission = DailyMissionBaseRes.builder()
-//					.missionId(missionList.get(index).getMissionId())
-//					.memberId(memberId)
-//					.isFinish(false)
-//					.build();
-//				scheduledList.add(dailyMission);
-//				pickedSet.add(index);
-//				cnt++;
-//			}
-//		}
-//
-//		// template으로 교체
-//		if (scheduledList.size() != 0) {
-//
-//			missionBulkRepository.saveAllDailyMission(scheduledList);
-//		}
+		List<MissionLogRes> missionLogList = dailyMissionRepository.findAllToMissionLogRes();
+
+		// 미션 수행도 집계
+		float percent = 0;
+		LocalDate localDate = LocalDate.now().minusDays(1);
+		for (MissionLogRes missionLogRes : missionLogList) {
+			if (missionLogRes.isFinish()) {
+				percent++;
+			}
+		}
+		if (missionLogList.size() != 0) {
+			percent *= 100;
+			percent /= missionLogList.size();
+		}
+		log.info("미션수행도 날짜:{}, percent:{}", localDate, percent);
+
+		// jdbctemplate으로 교체(삭제와 삽입)
+		missionBulkRepository.saveAllMissionLog(missionLogList);
+		missionBulkRepository.deleteAllDailyMission();
+
+		// 새로운 미션 3개씩 선정해서 넣기
+		List<Integer> memberIdList = memberClient.getMemberIdList().getResult();
+		if (memberIdList.size() == 0) {
+			return;
+		}
+
+		List<Mission> missionList = missionRepository.getMissionList();
+
+		List<DailyMissionBaseRes> scheduledList = new ArrayList<>();
+
+		Random random = new Random();
+		Set<Integer> pickedSet = new HashSet();
+
+		for (int i = 0; i < memberIdList.size(); i++) {
+			int memberId = memberIdList.get(i);
+			pickedSet.clear();
+			int cnt = 0;
+			while (cnt < 3) {
+				int index = random.nextInt(missionList.size());
+				if (pickedSet.contains(index)) {
+					// 다시 뽑아야 함
+					continue;
+				}
+				// 넣어도 됨
+				DailyMissionBaseRes dailyMission = DailyMissionBaseRes.builder()
+					.missionId(missionList.get(index).getMissionId())
+					.memberId(memberId)
+					.isFinish(false)
+					.build();
+				scheduledList.add(dailyMission);
+				pickedSet.add(index);
+				cnt++;
+			}
+		}
+
+		// template으로 교체
+		if (scheduledList.size() != 0) {
+
+			missionBulkRepository.saveAllDailyMission(scheduledList);
+		}
 
 		// 알림 전송 kafka(notification에서는 알림테이블에 저장 + 실시간 알림 전송)
 
