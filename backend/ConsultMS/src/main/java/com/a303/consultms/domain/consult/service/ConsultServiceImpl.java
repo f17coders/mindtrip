@@ -58,7 +58,6 @@ public class ConsultServiceImpl implements ConsultService {
 	private final ChannelRepository channelRepository;
 	private final LikeConsultRepository likeConsultRepository;
 	private final RedisTemplate<String, String> redisTemplate;
-	private final ConsultService consultService;
 
 	private final KafkaTemplate<String, String> notificationEventDtoKafkaTemplate;
 
@@ -189,7 +188,7 @@ public class ConsultServiceImpl implements ConsultService {
 		consultRepository.save(consult);
 
 		// TODO 동준이가 나중에 해결
-		consultService.makeNotification("ENTER",
+		makeNotification("ENTER",
 			Integer.parseInt(channel.getReceiver().get("memberId")));
 
 		return channel;
