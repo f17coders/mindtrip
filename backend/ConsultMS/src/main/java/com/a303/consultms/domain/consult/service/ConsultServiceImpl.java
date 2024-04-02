@@ -412,8 +412,9 @@ public class ConsultServiceImpl implements ConsultService {
 
 		//내가 참여중인 채널의 정보 가져오기
 		List<Channel> channelList = channelRepository.findBySender(String.valueOf(memberId));
+		
+//        log.error("[channelList] channelList={}",channelList.get(0).getChannelId());
 
-		log.error("[channelList] channelList={}", channelList.get(0).getChannelId());
 
 		if (channelList.isEmpty()) {
 			return null;
