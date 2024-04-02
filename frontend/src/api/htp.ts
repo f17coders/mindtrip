@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { villageNameType } from '../types/DataTypes'
+import { villageNameType, pictureResultType } from '../types/DataTypes'
 
 // 검사 결과 문장으로 가져오기
 async function getResult1(token: string): Promise<string|null> {
@@ -54,4 +54,37 @@ function changeLang(village:string) :string {
   }
 }
 
-export { getResult1, getResult2, changeLang }
+
+// 마이페이지에서 결과 조회하기(문장)
+async function loadRecentResult(token:string) :Promise<string|null> {
+  try {
+    const res = await axios.get('https://mindtrip.site/api/htp/v1/member/htp-last-result', {
+      headers: {
+        Authorization: token
+      }
+    })
+    return res.data
+  } catch(err) {
+    console.log(err)
+    return null
+  }  
+}
+
+
+// 마이페이지에서 결과(사진) 조회하기
+async function loadPictureResult(token:string) :Promise<pictureResultType[]|null> {
+  try {
+    const res = await axios.get('https://mindtrip.site/api/htp/v1/member/htp-results', {
+      headers : {
+        Authorization: token
+      }
+    })
+    return res.data
+  } catch(err) {
+    console.log(err)
+    return null
+  }
+}
+
+
+export { getResult1, getResult2, changeLang, loadRecentResult, loadPictureResult }

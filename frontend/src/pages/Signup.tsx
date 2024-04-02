@@ -30,6 +30,7 @@ function Signup () {
   const [id, setId] = useState<string>('')
   const [checkId, setCheckId] = useState<boolean|null>(null)
   const [errorMessageId, setErrorMessageId] = useState<string>('')
+  const [okayId, setOkayId] = useState<string>('')
 
   const idTest =  async () => {
     if (id.length > 10) {
@@ -56,6 +57,7 @@ function Signup () {
         icon:'success'
       })
       setCheckId(true)
+      setOkayId(id)
     } catch (err :any) {
       switch (err.response?.data?.code) {
         case 'B300':
@@ -67,6 +69,8 @@ function Signup () {
           break
         default:
           console.log(err)
+          setErrorMessageId('다시 시도해주세요')
+          setCheckId(false)
       }
     }
   }
@@ -74,7 +78,8 @@ function Signup () {
   const [nickname, setNickname] = useState<string>('')
   const [checkNickname, setCheckNickname] = useState<boolean|null>(null)
   const [errorMessageNickname, setErrorMessageNickname] = useState<string>('')
-  
+  const [okayNickname, setOkayNickname] = useState<string>('')
+
   const nicknameTest = async () => {
     if (nickname.length > 10) {
       Swal.fire({
@@ -100,6 +105,7 @@ function Signup () {
         icon:'success'
       })
       setCheckNickname(true)
+      setOkayNickname(nickname)
     } catch (err :any) {
       switch (err.response?.data?.code) {
         case 'B301':
@@ -111,6 +117,8 @@ function Signup () {
           break
         default:
           console.log(err)
+          setErrorMessageNickname('다시 시도해주세요')
+          setCheckNickname(false)
       }
     }
   }
@@ -155,13 +163,29 @@ function Signup () {
   }, [password2])
 
 
+ useEffect(() => {
+    if (checkId === true) {
+      if (id != okayId) {
+        setCheckId(false)
+      }
+    }
+    if (checkNickname == true) { 
+      if (nickname != okayNickname){
+        setCheckNickname(false)
+      }
+    }
+  }, [id, nickname])
+
   // 유효성
   const requestSignup = function() {
     // 중복검사를 안했다면,
     if (checkId === null){
+      setErrorMessageId('중복검사를 실행해주세요')
       setCheckId(false)
+      
     }
     if (checkNickname === null) {
+      setErrorMessageNickname('중복검사를 실행해주세요')
       setCheckNickname(false)
     }
     // 중복검사를 모두 통과하고 비밀번호가 서로 같다면

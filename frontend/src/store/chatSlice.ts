@@ -5,14 +5,16 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 type ChatState = {
   isOpen: boolean
   isList: boolean
-  selectedId: string | null
+  selectedId: string | null, 
+  isMine: boolean
 }
 
 // 2. 초기 상태 정의
 const initialChatState :ChatState = {
   isOpen: false,
   isList: true,
-  selectedId: null
+  selectedId: null,
+  isMine: true
 }
 
 // 3. 슬라이스 정의
@@ -31,12 +33,15 @@ const chatSlice = createSlice({
     // 채팅방 아이디 넣으면 바꿔주는 함수
     changeSelectedId(state, action: PayloadAction<string| null>) {
       state.selectedId = action.payload
+    },
+    setisMine(state, action:PayloadAction<boolean>){
+      state.isMine = action.payload
     }
   }
 })
 
 // 4. 함수들 내보내기
-export const { toggleOpen, changeList, changeSelectedId } = chatSlice.actions;
+export const { toggleOpen, changeList, changeSelectedId, setisMine } = chatSlice.actions;
 
 
 export default chatSlice

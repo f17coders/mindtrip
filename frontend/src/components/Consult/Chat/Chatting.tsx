@@ -18,7 +18,6 @@ function Chatting() {
 
   let chat = useSelector((state: RootState) => state.chat);
   const channelId = chat.selectedId;
-  console.log(channelId);
 
   // 토큰
   // let memberId = useSelector((state: RootState) => state.member.memberId);
@@ -44,27 +43,6 @@ function Chatting() {
     },
     messageList: []
   });
-
-
-// 이 방이 내가 만든방인지 / 참여한 방인지를 확인하기 위한 변수
-  let member = useSelector((state: RootState) => state.member)
-  const [isMine, setIsMine] = useState<Boolean|null>(true)
-
-  useEffect(() => {
-    // 만약 채팅방의 user Id와 내 아이디가 같다면 내꺼임
-    if (member.memberId == personalChat.sender.memberId) {
-      console.log('memberid')
-      console.log(personalChat.sender.memberId)
-      console.log(member.memberId)
-      setIsMine(true)
-    } else {
-      console.log('memberid')
-      console.log(personalChat.sender.memberId)
-      console.log(member.memberId)
-      setIsMine(false)
-    }
-  }, [personalChat])
-
 
   // 스크롤바 조정
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -250,8 +228,8 @@ function Chatting() {
       }
 
       {/* 추가정보 나오는 곳 */}
-      {(show && isMine != null) && (
-        <ChattingAdditionalInfo isMine={isMine}/>
+      {(show && chat.isMine != null) && (
+        <ChattingAdditionalInfo isMine={chat.isMine}/>
       )}
     </div>
   );

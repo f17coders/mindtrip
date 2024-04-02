@@ -19,7 +19,7 @@ async function getConsults(token: string): Promise<consultType[]> {
 
 
 // 고민 등록하기
-async function uploadConsult(token:string, title: string, content: string, categoryId: number | string | categoryType): Promise<void> {
+async function uploadConsult(token:string, title: string, content: string, categoryId: categoryType): Promise<void> {
   try {
     await axios.post('https://mindtrip.site/api/consults/v1', {
       'title': title,

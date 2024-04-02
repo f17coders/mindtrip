@@ -58,4 +58,12 @@ type chattingRoom = {
 }
 
 
-export type {consultType, categoryType, memberType, villageType, chattingRoom, villageNameType}
+type pictureResultType = {
+  test_time: Date,
+  member_result_id: number,
+  house_url: string,
+  tree_url: string,
+  person_url: string,
+}
+
+export type {consultType, categoryType, memberType, villageType, chattingRoom, villageNameType, pictureResultType}

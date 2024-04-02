@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { changeList, changeSelectedId } from '../../../store/chatSlice'
+import { changeList, changeSelectedId, setisMine } from '../../../store/chatSlice'
 import { useDispatch, useSelector } from "react-redux"
 import { RootState } from '../../../store/store'
 import { villageBackgroundColor } from '../../../atoms/color'
@@ -14,13 +14,13 @@ function ChatList() {
   // const [personalChatId, setPersonalChatId] = useState<string>("")
 
   let member = useSelector((state: RootState) => state.member)
-  let accessToken = useSelector((state:RootState) => state.accessToken.value)
+  let accessToken = useSelector((state: RootState) => state.accessToken.value)
 
   const [myChattings, setMyChattings] = useState<chattingRoom[]>([])
   // 내 채팅 불러오는 함수
   const loadMyChatting = async () => {
-    try{
-      let tempList:chattingRoom[]|null = await loadChattingMine(accessToken)
+    try {
+      let tempList: chattingRoom[] | null = await loadChattingMine(accessToken)
       if (tempList) {
         setMyChattings(tempList)
       }
@@ -32,8 +32,8 @@ function ChatList() {
   const [otherChattings, setOtherChattings] = useState<chattingRoom[]>([])
   // 내 채팅 불러오는 함수
   const loadOtherChatting = async () => {
-    try{
-      let tempList:chattingRoom[]|null = await loadChattingOthers(accessToken)
+    try {
+      let tempList: chattingRoom[] | null = await loadChattingOthers(accessToken)
       if (tempList) {
         setOtherChattings(tempList)
       }
@@ -42,11 +42,11 @@ function ChatList() {
     }
   }
 
-
   useEffect(() => {
     loadMyChatting()
     loadOtherChatting()
-  }, [])
+  }, [pickFirst])
+
 
   return (
     <div className="h-[70vh]">
@@ -62,19 +62,17 @@ function ChatList() {
         pickFirst && (
           <div className='overflow-y-auto h-full pb-[200px]'>
             {
-              myChattings.map((chatting, idx) => {
-                return(
-                  <div key={idx} >
-                  {
-                    chatting.shared === false && (<Chatting title={chatting.title} content={chatting.text} channelId={chatting.channelId}/>)
-                  }
-                  </div>
-                  
-                )
-              })
-            }
-            {
-              (myChattings === null || myChattings.length === 0) && (<p>고민을 아직 생성하지 않았거나, 참여한 사람이 없습니다!</p>)
+              (myChattings === null || myChattings.length === 0) ? (<p>고민을 아직 생성하지 않았거나, 참여한 사람이 없습니다!</p>) : (<>{
+                myChattings.map((chatting, idx) => {
+                  return (
+                    <div key={idx} >
+                      {
+                        chatting.shared === false && (<Chatting title={chatting.title} content={chatting.text} channelId={chatting.channelId} isMine={true} />)
+                      }
+                    </div>
+                  )
+                })
+              }</>)
             }
           </div>
         )
@@ -84,13 +82,13 @@ function ChatList() {
           <div className='overflow-y-auto h-full pb-[200px]'>
             {
               otherChattings?.map((chatting, idx) => {
-                return(
+                return (
                   <div key={idx}>
                     {
-                      chatting.shared === false && (<Chatting title={chatting.title} content={chatting.text} channelId={chatting.channelId}/>)
+                      chatting.shared === false && (<Chatting title={chatting.title} content={chatting.text} channelId={chatting.channelId} isMine={false}/>)
                     }
                   </div>
-                  
+
                 )
               })
             }
@@ -108,19 +106,21 @@ export default ChatList
 
 type propstype = {
   readonly title: string,
-  readonly content: string|null,
-  readonly channelId: string // channelId 추가
+  readonly content: string | null,
+  readonly channelId: string // channelId 추가,
+  readonly isMine: boolean
 }
 
-function Chatting({title, content, channelId} :propstype) {
+function Chatting({ title, content, channelId, isMine }: propstype) {
   const dispatch = useDispatch()
 
-  const handleClick = (channelId : string) => {
+  const handleClick = (channelId: string) => {
     dispatch(changeList(false))
     dispatch(changeSelectedId(channelId))
+    dispatch(setisMine(isMine))
   };
 
-  return(
+  return (
     <div className="relative border-b h-20 p-3 hover:bg-gray-100" onClick={() => handleClick(channelId)}>
       <p className="text-lg">{title}</p>
       <p className="text-sm overflow-hidden">{content}</p>

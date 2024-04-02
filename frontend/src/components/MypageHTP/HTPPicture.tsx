@@ -1,20 +1,19 @@
 // HTPPicture.tsx
-import React from 'react';
 import HTPDrawing from './HTPDrawing';
-import testimg from '../../assets/mococo.jpg'; // 임시 이미지 경로
+import { pictureResultType } from '../../types/DataTypes';
 
 interface HTPPictureProps {
-  title: string;
+  data: pictureResultType;
 }
 
-const HTPPicture: React.FC<HTPPictureProps> = ({ title }) => {
+function HTPPicture({ data }:HTPPictureProps) {
   return (
-    <div>
-      <div className='mt-6'>{title}</div> {/* title props를 표시 */}
-      <div className="flex space-x-4 overflow-x-scroll">
-        <HTPDrawing imageUrl={testimg} />
-        <HTPDrawing imageUrl={testimg} />
-        <HTPDrawing imageUrl={testimg} />
+    <div className='w-full'>
+      <div className='mt-6'>{data.test_time.toString()}</div>
+      <div className="max-w-[90vw] flex overflow-x-scroll">
+        <HTPDrawing imageUrl={data.house_url} />
+        <HTPDrawing imageUrl={data.tree_url} />
+        <HTPDrawing imageUrl={data.person_url} />
       </div>
     </div>
   );

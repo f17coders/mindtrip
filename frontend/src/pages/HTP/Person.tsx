@@ -108,11 +108,6 @@ function PersonDraw({ goSurvey }: propsType1) {
     }
   };
   
-  const [isLoading, setIsLoading] = useState<boolean>(false)
-
-  const switchLoading = function() {
-    setIsLoading(!isLoading)
-  }
 
   const sendFile = async (data: FormData) => {
     await axios.post('https://mindtrip.site/api/htp/v1/test/person', data, {
@@ -123,9 +118,7 @@ function PersonDraw({ goSurvey }: propsType1) {
     })
   }
   const handleFile = async (file: FormData) => {
-    setIsLoading(true)
     await (sendFile(file))
-    setIsLoading(false)
     Swal.fire({
       title: '업로드완료',
       icon: "success"
@@ -148,10 +141,9 @@ function PersonDraw({ goSurvey }: propsType1) {
 
   return (
     <div className="flex h-svh w-svh justify-center items-center flex-col relactive">
-      <Loading isLoading={isLoading} />
       <p className="text-center mb-8 font-bold text-3xl">사람을 그려주세요.</p>
       <div className="border-2 rounded h-2/3 lg:w-2/3 w-full bg-white">
-        <Draw now='person' goSurvey={goSurvey} tempAuthorization={tempAuthorization} switchLoading={switchLoading}/>
+        <Draw now='person' goSurvey={goSurvey} tempAuthorization={tempAuthorization}/>
       </div>
       <div className="flex items-center text-slate-500 mt-2">
         <p className="mr-3">그리기 힘들다면?</p>
@@ -176,19 +168,29 @@ function PersonSurvey({ goNext, survey, isLast }: propsType) {
   let answer = useSelector((state:RootState) => state.htpAnswer)
   let accessToken = useSelector((state:RootState) => state.accessToken.value) 
 
+
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  
   const sendAnswer = async () => {
-    const res = await axios.post('https://mindtrip.site/api/htp/v1/answer', {
-      answer: {
-        house: answer.house,
-        tree: answer.tree,
-        person: answer.person
-      }
-    }, {
-      headers : {
-        Authorization: accessToken
-      }
-    })
-    console.log(res)
+    setIsLoading(true)
+    try {
+      const res = await axios.post('https://mindtrip.site/api/htp/v1/answer', {
+        answer: {
+          house: answer.house,
+          tree: answer.tree,
+          person: answer.person
+        }
+      }, {
+        headers : {
+          Authorization: accessToken
+        }
+      })
+      console.log(res)
+
+    } catch (err) {
+      console.log(err)
+    }
+    setIsLoading(false)
   }
 
   const handleClick = async (questionId:number, answerId:number) => {
@@ -208,6 +210,9 @@ function PersonSurvey({ goNext, survey, isLast }: propsType) {
   
   return (
     <div className="flex h-svh w-svh justify-center items-center flex-col">
+      {
+        isLoading && <Loading/>
+      }
       <p className="text-center mb-5 font-bold text-2xl">{survey.content}</p>
       {
         survey.choices.map((choice, idx) => {

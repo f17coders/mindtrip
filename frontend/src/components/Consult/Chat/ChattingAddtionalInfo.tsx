@@ -46,7 +46,10 @@ function ChattingAdditionalInfo({isMine} : propsType) {
   const endConsult = function () {
     Swal.fire({
       title: '고민을 종료합니다',
-      text: '이 대화를 공유할까요?'
+      text: '이 대화를 공유할까요?',
+      showDenyButton: true,
+      confirmButtonText: '공유할게요!',
+      denyButtonText: '안할래요',
     }).then((result) => {
       // 여기에 종료 로직
       axios.put(`https://mindtrip.site/api/consults/v1/close/${chatInfo?.consultId}`, {
@@ -60,6 +63,7 @@ function ChattingAdditionalInfo({isMine} : propsType) {
         dispatch(toggleOpen())
         // 다음에 리스트로 가게
         dispatch(changeList(true))
+        location.reload()
       }).catch((err) => console.log(err))
     })
   }

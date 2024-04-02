@@ -1,9 +1,10 @@
 import { Button, Input, Textarea, Select, SelectItem } from "@nextui-org/react";
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { uploadConsult } from "../../api/consults";
 import { categoryType } from "../../types/DataTypes";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
+import Swal from "sweetalert2";
 
 type propsType = {
   onClose: () => void
@@ -24,6 +25,7 @@ function CreateNewConsult({ onClose, category }: propsType) {
   const handleCategory = (e: any) => {
     setSelectedCategory(e.target.value)
   }
+  const [cateErr, setCateErr] = useState<boolean>(false)
 
   // 유효성 검사용 변수들
   const [titleErrorMessage, setTitleErrorMessage] = useState<string>('')
@@ -43,13 +45,24 @@ function CreateNewConsult({ onClose, category }: propsType) {
     } else {
       setContentErrorMessage('')
 
-      //여기에 axios 통신
-      let temp: number | string | categoryType = selectedCategory ? selectedCategory : 0
+      if (selectedCategory != null) {
+        //여기에 axios 통신
+        let temp :categoryType = selectedCategory
 
-      uploadConsult(accessToken, title, content, temp)
-      onClose()
+        uploadConsult(accessToken, title, content, temp)
+        onClose()
+      } else {
+        setCateErr(true)
+      }  
     }
   }
+
+  useEffect(() => {
+    if (cateErr == true) {
+      setCateErr(false)
+    }
+  }, [selectedCategory])
+
   return (
     <div className="flex-col h-[60vh] pt-4">
       {/* 고민 제목 */}
@@ -79,6 +92,8 @@ function CreateNewConsult({ onClose, category }: propsType) {
       {
         selectableCategory != null ? (
           <Select
+            isRequired
+            color={cateErr ? 'danger' : 'default'}
             label='카테고리'
             labelPlacement='outside'
             placeholder='카테고리를 선택해주세요'

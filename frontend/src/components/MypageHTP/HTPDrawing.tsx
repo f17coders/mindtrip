@@ -9,9 +9,8 @@ const HTPDrawing: React.FC<HTPDrawingProps> = ({ imageUrl }) => {
   return (
     <div className="mycard">
       <div className="bg">
-        <img src={imageUrl} alt="Drawing" style={{ width: '100%', height: '100%' }} />
+        <img src={imageUrl} alt="Drawing" className='w-full h-full' />
       </div>
-      <div className="blob"></div>
     </div>
   );
 }

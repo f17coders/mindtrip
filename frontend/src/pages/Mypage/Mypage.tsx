@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Avatar } from "@nextui-org/react";
 import { Card } from "@nextui-org/react";
 import { Link, Outlet } from "react-router-dom";
-// import Header from '../../components/Header'
+import Header from '../../components/Header'
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import { changeLang } from "../../api/htp";
@@ -50,7 +50,7 @@ function Mypage() {
 
   return (
     <div className="max-w-6xl mx-auto bg-white rounded-lg shadow-md ">
-      {/* <Header /> */}
+      <Header />
       <div className="p-6 flex justify-between h-[10vh] items-center">
         <div className="flex space-x-4 items-center">
           <Avatar isBordered color="default" src={ProfileImg} />
