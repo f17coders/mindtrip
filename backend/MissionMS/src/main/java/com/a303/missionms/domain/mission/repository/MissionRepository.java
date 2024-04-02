@@ -13,10 +13,12 @@ public interface MissionRepository extends JpaRepository<Mission, Integer> {
 
 	List<Mission> findAll();
 
-	@EntityGraph(attributePaths = {"missionIdList"})
-	@Query("SELECT DISTINCT m FROM Mission m WHERE m.missionId IN :missionIdList")
-	List<Mission> getMissionsByMissionIdIn(
-		@Param("missionIdList") List<Integer> missionIdList);
+//	@EntityGraph(attributePaths = {"missionIdList"})
+//	@Query("SELECT DISTINCT m FROM Mission m WHERE m.missionId IN :missionIdList")
+//	List<Mission> getMissionsByMissionIdIn(
+//		@Param("missionIdList") List<Integer> missionIdList);
+
+	Mission findMissionByMissionId(int missionId);
 
 	@Query("SELECT DISTINCT m FROM Mission m")
 	List<Mission> getMissionList();

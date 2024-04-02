@@ -101,8 +101,13 @@ public class DailyMissionServiceImpl implements DailyMissionService {
 		if (myTableMissionDTOMap.size() != 0) {
 			List<Integer> missionIdList = new ArrayList<>(myTableMissionDTOMap.keySet());
 			log.error("missionIdList : {}", missionIdList);
-			List<Mission> missions = missionRepository.getMissionsByMissionIdIn(
-				missionIdList);
+			List<Mission> missions = new ArrayList<>();
+			for (int missionId : missionIdList) {
+				Mission mission = missionRepository.findMissionByMissionId(missionId);
+				missions.add(mission);
+			}
+//			List<Mission> missions = missionRepository.getMissionsByMissionIdIn(
+//				missionIdList);
 			Map<Integer, Mission> missionHashMap = new HashMap<>();
 			for (Mission mission : missions) {
 				missionHashMap.put(mission.getMissionId(), mission);
@@ -202,86 +207,86 @@ public class DailyMissionServiceImpl implements DailyMissionService {
 	@Override
 	public void dailyMissionRecommend() throws BaseExceptionHandler {
 		// daily_mission테이블 missionlog에 append
-		List<MissionLogRes> missionLogList = dailyMissionRepository.findAllToMissionLogRes();
-
-		// 미션 수행도 집계
-		float percent = 0;
-		LocalDate localDate = LocalDate.now().minusDays(1);
-		for (MissionLogRes missionLogRes : missionLogList) {
-			if (missionLogRes.isFinish()) {
-				percent++;
-			}
-		}
-		if (missionLogList.size() != 0) {
-			percent *= 100;
-			percent /= missionLogList.size();
-		}
-		log.info("미션수행도 날짜:{}, percent:{}", localDate, percent);
-
-		// jdbctemplate으로 교체(삭제와 삽입)
-		missionBulkRepository.saveAllMissionLog(missionLogList);
-		missionBulkRepository.deleteAllDailyMission();
-
-		// 새로운 미션 3개씩 선정해서 넣기
-		List<Integer> memberIdList = memberClient.getMemberIdList().getResult();
-		if (memberIdList.size() == 0) {
-			return;
-		}
-
-		List<Mission> missionList = missionRepository.getMissionList();
-
-		List<DailyMissionBaseRes> scheduledList = new ArrayList<>();
-
-		Random random = new Random();
-		Set<Integer> pickedSet = new HashSet();
-
-		for (int i = 0; i < memberIdList.size(); i++) {
-			int memberId = memberIdList.get(i);
-			pickedSet.clear();
-			int cnt = 0;
-			while (cnt < 3) {
-				int index = random.nextInt(missionList.size());
-				if (pickedSet.contains(index)) {
-					// 다시 뽑아야 함
-					continue;
-				}
-				// 넣어도 됨
-				DailyMissionBaseRes dailyMission = DailyMissionBaseRes.builder()
-					.missionId(missionList.get(index).getMissionId())
-					.memberId(memberId)
-					.isFinish(false)
-					.build();
-				scheduledList.add(dailyMission);
-				pickedSet.add(index);
-				cnt++;
-			}
-		}
-
-		// template으로 교체
-		if (scheduledList.size() != 0) {
-
-			missionBulkRepository.saveAllDailyMission(scheduledList);
-		}
+//		List<MissionLogRes> missionLogList = dailyMissionRepository.findAllToMissionLogRes();
+//
+//		// 미션 수행도 집계
+//		float percent = 0;
+//		LocalDate localDate = LocalDate.now().minusDays(1);
+//		for (MissionLogRes missionLogRes : missionLogList) {
+//			if (missionLogRes.isFinish()) {
+//				percent++;
+//			}
+//		}
+//		if (missionLogList.size() != 0) {
+//			percent *= 100;
+//			percent /= missionLogList.size();
+//		}
+//		log.info("미션수행도 날짜:{}, percent:{}", localDate, percent);
+//
+//		// jdbctemplate으로 교체(삭제와 삽입)
+//		missionBulkRepository.saveAllMissionLog(missionLogList);
+//		missionBulkRepository.deleteAllDailyMission();
+//
+//		// 새로운 미션 3개씩 선정해서 넣기
+//		List<Integer> memberIdList = memberClient.getMemberIdList().getResult();
+//		if (memberIdList.size() == 0) {
+//			return;
+//		}
+//
+//		List<Mission> missionList = missionRepository.getMissionList();
+//
+//		List<DailyMissionBaseRes> scheduledList = new ArrayList<>();
+//
+//		Random random = new Random();
+//		Set<Integer> pickedSet = new HashSet();
+//
+//		for (int i = 0; i < memberIdList.size(); i++) {
+//			int memberId = memberIdList.get(i);
+//			pickedSet.clear();
+//			int cnt = 0;
+//			while (cnt < 3) {
+//				int index = random.nextInt(missionList.size());
+//				if (pickedSet.contains(index)) {
+//					// 다시 뽑아야 함
+//					continue;
+//				}
+//				// 넣어도 됨
+//				DailyMissionBaseRes dailyMission = DailyMissionBaseRes.builder()
+//					.missionId(missionList.get(index).getMissionId())
+//					.memberId(memberId)
+//					.isFinish(false)
+//					.build();
+//				scheduledList.add(dailyMission);
+//				pickedSet.add(index);
+//				cnt++;
+//			}
+//		}
+//
+//		// template으로 교체
+//		if (scheduledList.size() != 0) {
+//
+//			missionBulkRepository.saveAllDailyMission(scheduledList);
+//		}
 
 		// 알림 전송 kafka(notification에서는 알림테이블에 저장 + 실시간 알림 전송)
 
-//		NotificationEventDto eventDto = NotificationEventDto.builder()
-//			.eventType("DailyMissionSchedule")
-//			.memberId(-1)
-//			.build();
-//
-//		ObjectMapper objectMapper = new ObjectMapper();
-//		String jsonString;
-//		// 객체를 JSON 문자열로 변환
-//		try {
-//			jsonString = objectMapper.writeValueAsString(eventDto);
-//			notificationEventDtoKafkaTemplate.send("notification-topic", jsonString);
-//
-//		} catch (JsonProcessingException e) {
-//			e.printStackTrace();
-//		}
+		NotificationEventDto eventDto = NotificationEventDto.builder()
+			.eventType("DailyMissionSchedule")
+			.memberId(-1)
+			.build();
 
-		BaseResponse<Integer> res = notificationClient.dailyMissionScheduling();
+		ObjectMapper objectMapper = new ObjectMapper();
+		String jsonString;
+		// 객체를 JSON 문자열로 변환
+		try {
+			jsonString = objectMapper.writeValueAsString(eventDto);
+			notificationEventDtoKafkaTemplate.send("notification-topic", jsonString);
+
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+
+//		BaseResponse<Integer> res = notificationClient.dailyMissionScheduling();
 		log.info("스케쥴링 완료 알림 전송. userId : 전체");
 
 
