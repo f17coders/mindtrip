@@ -245,7 +245,7 @@ public class ConsultServiceImpl implements ConsultService {
 
 		// TODO 알림 발생 : notificationms에 전송
 		makeNotification("END",
-			Integer.parseInt(channel.getReceiver().get("memberId")));
+			Integer.parseInt(channel.getSender().get("memberId")));
 
 		return consult.getConsultId();
 	}
@@ -319,7 +319,7 @@ public class ConsultServiceImpl implements ConsultService {
 
 		// TODO 알림 발생 : notificationms에 전송
 		makeNotification("EXIT",
-			consult.getMemberId());
+			sender);
 
 	}
 
@@ -352,7 +352,7 @@ public class ConsultServiceImpl implements ConsultService {
 		// TODO 알림 발생 : notificationms에 전송
 		Channel channel = channelRepository.findById(channelId).get();
 		makeNotification("BANNED",
-			Integer.parseInt(channel.getReceiver().get("memberId")));
+			Integer.parseInt(channel.getSender().get("memberId")));
 
 	}
 
