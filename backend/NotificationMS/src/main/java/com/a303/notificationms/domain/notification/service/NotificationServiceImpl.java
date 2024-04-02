@@ -214,19 +214,19 @@ public class NotificationServiceImpl implements NotificationService {
 			content = "고민상담소 채팅방에 상담자가 입장했어요.";
 		}
 		// 채팅방에 누가 나갔어요 : 방 주인에게 알림 EXIT
-		if (type.equals("EXIT")) {
+		else if (type.equals("EXIT")) {
 			content = "상담자가 퇴장했어요. 다른 상담자를 얼른 찾아드릴게요.";
 		}
 		// 고민이 종료되었어요 : 참여자에게 알림 END
-		if (type.equals("END")) {
+		else if (type.equals("END")) {
 			content = "고민상담소 채팅이 종료되었어요. 친절한 상담 감사합니다.";
 		}
 		// 님 쫓겨났어요 : 참여자에게 알림 BANNED
-		if (type.equals("BANNED")) {
+		else if (type.equals("BANNED")) {
 			content = "고민상담소 채팅방에서 퇴장당하셨습니다.";
 		}
 		// 카톡 왔어요 : 그냥 왔다는것만 알려주자. TALK
-		if (type.equals("TALK")) {
+		else if (type.equals("TALK")) {
 			// TODO 메시지 작성
 		} else {
 			throw new BaseExceptionHandler(type + "에 해당하는 type은 존재하지 않습니다.",
