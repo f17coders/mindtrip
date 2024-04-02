@@ -3,6 +3,7 @@ package com.a303.memberms.domain.member.controller;
 import com.a303.memberms.domain.member.dto.request.MemberStandardLoginReq;
 import com.a303.memberms.domain.member.dto.request.MemberStandardRegisterReq;
 import com.a303.memberms.domain.member.dto.response.MemberBaseRes;
+import com.a303.memberms.domain.member.dto.response.MemberLoginRes;
 import com.a303.memberms.domain.member.service.MemberService;
 import com.a303.memberms.global.api.response.BaseResponse;
 import com.a303.memberms.global.exception.code.SuccessCode;
@@ -85,19 +86,19 @@ public class MemberController {
 	}
 
 	@PostMapping("/v0/login")
-	public ResponseEntity<BaseResponse<String>> login(
+	public ResponseEntity<BaseResponse<MemberLoginRes>> login(
 		@RequestBody
 		MemberStandardLoginReq memberStandardLoginReq,
 		HttpServletResponse response
 	) {
-		String token = memberService.standardLogin(memberStandardLoginReq);
+        MemberLoginRes memberLoginRes = memberService.standardLogin(memberStandardLoginReq);
 //		response.setHeader("Authorization", "Bearer " + token);
 
-		log.debug("Authorization: {}", token);
+		log.debug("Authorization: {}", memberLoginRes);
 
 		return BaseResponse.success(
 			SuccessCode.LOGIN_SUCCESS,
-			"Bearer " + token
+            memberLoginRes
 		);
 	}
 
