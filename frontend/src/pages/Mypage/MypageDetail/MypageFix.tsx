@@ -1,11 +1,17 @@
 import {Input,Button} from "@nextui-org/react";
 import ResignIcon from '../../../atoms/Icons/ResignIcon';
 import kakao from '../../../assets/login/kakao.png'
+import { RootState } from "../../../store/store";
+import { useSelector } from "react-redux";
+import { villageBackgroundColor } from "../../../atoms/color";
+
+
 
 function MypageFix() {
+  let member = useSelector((state:RootState) => state.member)
   
   return (
-    <div className="bg-[#f4c2c2] flex justify-center items-center h-[80vh]  flex-col ">
+    <div className={`${villageBackgroundColor[member.villageName]} flex flex-col justify-around items-center min-h-[80vh] relative`}>
     <div className="flex  ">
       <div className="bg-white shadow-medium rounded-large rounded-lg h-[70vh] w-[70vw]  ">
       <Input className="my-16 max-w-[50vw] mx-auto" type="email" variant= "underlined" label="이름" placeholder="이름이름" isDisabled />
