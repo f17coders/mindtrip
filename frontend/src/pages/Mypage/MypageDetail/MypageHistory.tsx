@@ -1,5 +1,8 @@
 // import React, { useState } from 'react';
 import MyPostit from "../../../components/MyPostit/MyPostit";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../store/store";
+import { villageBackgroundColor } from "../../../atoms/color";
 
 // interface Memo {
 //   date: Date;
@@ -11,11 +14,11 @@ import MyPostit from "../../../components/MyPostit/MyPostit";
 // }
 
 function MypageHistory() {
+  let member = useSelector((state:RootState) => state.member)
+
   return (
-    <div className="bg-[#f4c2c2]">
-      <div className="flex justify-center items-center w-[20vw] mx-auto h-[80vh]">
+    <div className={`${villageBackgroundColor[member.villageName]} h-[80vh] w-screen`}>
         <MyPostit />
-    </div>
     </div>
   );
 }

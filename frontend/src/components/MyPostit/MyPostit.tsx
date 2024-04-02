@@ -1,22 +1,32 @@
 import { useRef, useState, useEffect } from "react";
-import moment from "moment";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
+import { Card, CardBody, Button } from "@nextui-org/react";
+import LeftIcon from "../../atoms/Icons/LeftIcon";
+import RightIcon from "../../atoms/Icons/RightIcon";
+import { villageTextColor } from "../../atoms/color";
+
+type postitType = {
+  id: string,
+  postitTopicRes: {
+    id: string,
+    topic: string,
+    postitDate: string
+  },
+  content: string,
+  reportCount: number,
+  likeCount: number,
+  village: number
+}
+
 
 function MyPostit() {
   let accessToken = useSelector((state: RootState) => state.accessToken.value);
+  let member = useSelector((state:RootState) => state.member)
+  const [postitList, setPostitList] = useState<postitType[]>([]);
 
-  const [selectedDate, setSelectedDate] = useState(moment()); // 선택된 날짜 상태
-  const [showCalendar, setShowCalendar] = useState(false); // 달력 표시 여부 상태
-
-  const [todayPostit, setTodayPostit] = useState("");
-  const [todayAnswer, setTodayAnswer] = useState("");
-  // const [postitList, setPostitList] = useState<any[]>([]);
-
-  const getTodayTopic = async (date: moment.MomentInput) => {
+  const getTodayTopic = async () => {
     try {
       const response = await axios.get(
         `https://mindtrip.site/api/postits/v1/my`,
@@ -26,31 +36,18 @@ function MyPostit() {
           },
         }
       );
-      // setPostitList(response.data.result);
-      const todayQuestion = response.data.result.find(
-        (item: any) =>
-          moment(item.postitTopicRes.postitDate).format("YYYY-MM-DD") ===
-          moment(date).format("YYYY-MM-DD")
-      );
-      if (todayQuestion) {
-        setTodayPostit(todayQuestion.postitTopicRes.topic);
-        setTodayAnswer(todayQuestion.content);
-      } else {
-        setTodayPostit(
-          `${moment(date).format("YYYY-MM-DD")}에\n질문이 없습니다`
-        );
-        setTodayAnswer("");
-      }
+      console.log(response.data.result)
+      setPostitList(response.data.result)
     } catch (e) {
       console.log(e);
-      setTodayPostit(`${moment(date).format("YYYY-MM-DD")}에\n질문이 없습니다`);
-      setTodayAnswer("");
     }
   };
 
-  // 넘기기부분
+  useEffect(() => {
+    getTodayTopic()
+  }, [])
 
-  const arr = [1, 2, 3, 4, 5];
+  // 넘기기부분
   const [selectedIdx, setSelectedIdx] = useState<number>(0);
 
   const box = useRef<HTMLDivElement>(null);
@@ -74,7 +71,7 @@ function MyPostit() {
         offsetX: (event as MouseEvent).offsetX,
         offsetY: (event as MouseEvent).offsetY,
       };
-    } 
+    }
   };
 
   const [a1, setA1] = useState(0);
@@ -114,64 +111,60 @@ function MyPostit() {
   }, []);
 
   useEffect(() => {
-    if (a1 - a2 > 100) {
-      if (selectedIdx < arr.length - 1) {
+    if (a1 - a2 > 250) {
+      if (selectedIdx < postitList.length - 1) {
         setSelectedIdx((now) => now + 1);
       }
-    } else if (a2 - a1 > 100) {
+    } else if (a2 - a1 > 250) {
       if (selectedIdx > 0) {
         setSelectedIdx((now) => now - 1);
       }
     }
-    console.log(a1, a2, selectedIdx);
   }, [a1, a2]);
 
-  // 선택된 날짜 변경 함수
-  const onChangeDate = async (date: Date) => {
-    setSelectedDate(moment(date));
-    setShowCalendar(false); // 달력 숨기기
-    await getTodayTopic(moment(date));
-  };
-
-  useEffect(() => {
-    getTodayTopic(moment(Date.now()));
-  }, []);
-
   return (
-    <div className="my-postit-container">
-      <div style={{ width: "100%", height: "100%" }}>
-        <h1
-          className="postit-date"
-          onClick={() => setShowCalendar(!showCalendar)}
-        >
-          {selectedDate.format("YYYY년 MM월 DD일")}
-        </h1>
-        {showCalendar && (
-          <DatePicker
-            selected={selectedDate.toDate()}
-            onChange={onChangeDate}
-            dateFormat="yyyy년 MM월 dd일"
-          />
-        )}
-        <div>{todayPostit === "" ? "그날의 질문" : todayPostit}</div>
-        <div className="relative overflow-hidden w-72 h-80 rounded-3xl cursor-pointer text-2xl font-bold bg-purple-400">
-          <div className="w-full h-full flex flex-col items-center justify-center uppercase text-lg whitespace-pre-line">
-            {/* <div className="text-sm font-normal">
-              {todayAnswer !== "" && todayAnswer}
-            </div> */}
-            <div
-              ref={box}
-              style={{
-                width: "200px",
-                height: "200px",
-                border: "1px black",
+    <div className="flex-col p-3">
+      <p className="text-center mt-3 mb-5 text-xl text-gray-600">내가 작성한 포스트잇들</p>
+      {
+        postitList.length != 0 && (
+          <p className="text-center mb-5 h-[10vh]"><span className="text-sm" style={{fontFamily:'JamsilThin'}}>{postitList[selectedIdx].postitTopicRes.postitDate}의 질문</span><br/>{postitList[selectedIdx].postitTopicRes.topic}</p>
+        )
+      }
+      <div>
+        {
+          postitList.length === 0 ? 
+          (<p className="text-center text-gray-400 mt-[30vh]">아직 작성한 포스트잇이 없습니다!</p>) : 
+          (<div className="relative">
+            <Button 
+              isIconOnly
+              variant="light"
+              className={`${villageTextColor[member.villageName]} absolute left-0 z-10 bottom-2`}
+              onClick={()=> {
+                if (selectedIdx < postitList.length - 1) {
+                  setSelectedIdx((now) => now + 1);
+                }
               }}
-            >
-              {todayAnswer !== "" && todayAnswer}
-            </div>
+            ><LeftIcon/></Button>
+            <Button 
+              isIconOnly
+              variant="light"
+              className={`${villageTextColor[member.villageName]} absolute right-0 z-10 bottom-2`}
+              onClick={()=> {
+                if (selectedIdx > 0) {
+                  setSelectedIdx((now) => now - 1);
+                }
+              }}
+            ><RightIcon/></Button>
+            <Card ref={box} className="h-[50vh] mt-[2vh]">
+              <CardBody style={{fontFamily:'JamsilThin'}} className="p-5">
+                {postitList[selectedIdx].content}
+              </CardBody>
+            </Card>
           </div>
-        </div>
+          )
+        }
       </div>
+
     </div>
   );
 }

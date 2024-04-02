@@ -7,20 +7,14 @@ import axios from 'axios'
 import { useDispatch, useSelector } from "react-redux";
 import { saveTreeAnswer } from "../../store/htpSlice";
 import { RootState } from "../../store/store";
+import { survey } from "../../types/DataTypes";
 
 // props의 타입을 지정해주자
 
 type propsType1 = {
   goSurvey: () => void
 }
-type survey = {
-  question_id: number,
-  content: string,
-  choices: {
-    choice_id: number,
-    content: string
-  }[]
-}
+
 type propsType = {
   goNext: () => void
   survey: survey
@@ -41,28 +35,9 @@ function Tree() {
   }
 
   // 처음에 질문 불러오기
-  const [surveyList, setSurveyList] = useState<survey[] | null>(null)
-  async function loadSurvey(): Promise<survey[] | null> {
-    try {
-      const res = await axios.get('https://mindtrip.site/api/htp/v0/question/tree')
-      return res.data
-    } catch (err) {
-      console.log(err)
-      return null
-    }
-  }
+  let surveyList = useSelector((state:RootState) => state.htpSurveys.tree)
 
   useEffect(() => {
-    const fetchSurvey = async () => {
-      try {
-        let tempSurveys: survey[] | null = await loadSurvey()
-        tempSurveys ? setSurveyList(tempSurveys) : console.log('데이터가 없습니다!')
-      } catch (err) {
-        console.log(err)
-      }
-    }
-    fetchSurvey()
-
     // 처음에 들어오면 리덕스 초기화
     dispatch(saveTreeAnswer([]))
   }, [])

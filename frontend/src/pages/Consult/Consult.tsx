@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react'
-import { Button, Input, Tooltip, Card, Select, SelectItem } from "@nextui-org/react";
+import { Button, Tooltip, Card, Select, SelectItem } from "@nextui-org/react";
 import OtherConsult from '../../components/Consult/OtherConsult';
 import SharedConsult from '../../components/Consult/SharedConsult';
 import Chat from '../../components/Consult/Chat/Chat';
 import Header from '../../components/Header';
 import { useNavigate } from 'react-router-dom';
-import SearchIcon from '../../atoms/Icons/SearchIcon';
 import ChatIcon from './../../atoms/Icons/ChatIcon'
 import XIcon from '../../atoms/Icons/XIcon';
 
@@ -254,16 +253,6 @@ function Shared() {
               })
             }
           </Select>
-          <Input
-            isClearable
-            variant='underlined'
-            placeholder='검색'
-            size='sm'
-            startContent={
-              <SearchIcon />
-            }
-            className='mt-5 md:mt-0 w-48 hidden md:block'
-          />
         </div>
         <p
           className='underline pt-3 underline-offset-4 hover:cursor-pointer block'

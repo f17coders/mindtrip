@@ -1,4 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { allSurveys } from '../types/DataTypes'
+
 // 검사용 변수들
 
 // 타입지정
@@ -49,4 +51,30 @@ const htpAnswer = createSlice({
 })
 export const { saveHouseAnswer,saveTreeAnswer,savePersonAnswer } = htpAnswer.actions;
 
-export { htpAnswer }
+
+
+// 설문조사 항목
+
+  const initailSurveys: allSurveys = {
+    house: [],
+    tree: [],
+    person: []
+}
+
+const htpSurveys = createSlice({
+    name: 'htpSurveys',
+    initialState: initailSurveys,
+    reducers: {
+        // 저장
+        saveSurveys(state, action:PayloadAction<allSurveys>) {
+            return({
+                ...state,
+                house: action.payload.house,
+                tree: action.payload.tree,
+                person: action.payload.person
+            })
+        }
+    }
+})
+export const { saveSurveys } = htpSurveys.actions;
+export { htpAnswer, htpSurveys }

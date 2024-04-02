@@ -40,13 +40,13 @@ function MypageHTP() {
   return (
     <div className={`${villageBackgroundColor[member.villageName]} w-screen flex flex-col justify-around items-center min-h-[80vh]`}>
       <div className="bg-white rounded-lg p-4 mt-5 w-[90vw]">
-        <h1 className="text-lg font-bold mb-2">최근 HTP 검사 결과</h1>
+        <h1 className="text-lg font-bold">최근 HTP 검사 결과</h1>
         <div className="py-3" style={{fontFamily:"JamsilThin"}}>{result1}</div>
         <Link to="/htp/house">
           <Button className="w-full">새 검사 하러가기</Button>
         </Link>
       </div>
-      <div className="grid gap-y-4">
+      <div className="grid gap-y-4 mb-8">
         {
           result2.map((res, idx) => {
             return (

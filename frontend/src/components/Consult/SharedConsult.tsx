@@ -118,8 +118,8 @@ function SharedConsult({consult} : propsType) {
                   </div>
                 </div>
               </ModalHeader>
-              <ModalBody>
-                <div className="h-[55vh] border-1 overflow-y-scroll">
+              <ModalBody className="relactive">
+                <div className="h-[55vh] border-1 overflow-y-scroll p-2 mb-[10vh]">
                   {/* recvList가 비어 있는지 여부를 체크하여 처리 */}
                   {recvList.length > 0 && recvList.map((msg, index) => (
                     <div key={index}>
@@ -131,13 +131,13 @@ function SharedConsult({consult} : propsType) {
                     </div>
                   ))}
                 </div>
-                <div className="pl-[68vw] flex-col justifys-center">
-                  <p className="text-xs text-center pl-3">공감하기</p>
+                <div className="absolute bottom-[2vh] right-[2vw] flex-col justifys-center">
+                  <p className="text-xs text-center text-gray-400">공감하기</p>
                   <Button 
                     size='md'
                     className={`
                       ${villageTextColor[member.villageName] || ''} 
-                      bg-transparent p-0 pr-1`
+                      bg-transparent p-0 pr-1 h-[5vh]`
                     } 
                     startContent={like ? <FullHeart/> : <EmptyHeart/>}
                     onClick={() => setLike(!like)}

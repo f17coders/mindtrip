@@ -1,49 +1,49 @@
 // 멤버에 들어갈 타입
 type memberType = {
-  memberId: number|null,
-  nickname: string|null,
-  socialId: string|null,
-  villageId: number|null,
-  villageName: 'apple'|'orange'|'pineapple'|'watermelon'|'grape'|'peach'|'blueberry'|'kakao',
+  memberId: number | null,
+  nickname: string | null,
+  socialId: string | null,
+  villageId: number | null,
+  villageName: 'apple' | 'orange' | 'pineapple' | 'watermelon' | 'grape' | 'peach' | 'blueberry' | 'kakao',
   level: number,
   missionCount: number,
-  accessToken :string|null,
-} 
+  accessToken: string | null,
+}
 
 // 마을 타입
 type villageType = {
-  apple : string,
-  orange : string,
-  pineapple : string,
-  watermelon : string,
-  grape : string,
-  peach : string,
-  blueberry : string,
+  apple: string,
+  orange: string,
+  pineapple: string,
+  watermelon: string,
+  grape: string,
+  peach: string,
+  blueberry: string,
   kakao: string
 }
 
 // 가능한 마을의 타입
-type villageNameType = 'apple'|'orange'|'pineapple'|'watermelon'|'grape'|'peach'|'blueberry'|'kakao'
+type villageNameType = 'apple' | 'orange' | 'pineapple' | 'watermelon' | 'grape' | 'peach' | 'blueberry' | 'kakao'
 
 
 // 고민 타입
 type consultType = {
-  consultId : number,
-  memberId : number,
-  title : string,
-  content : string,
-  categoryId : number,
+  consultId: number,
+  memberId: number,
+  title: string,
+  content: string,
+  categoryId: number,
   canLike: boolean,
   likeCount: number,
-  channelId: string|null,
+  channelId: string | null,
   nickname: string,
-  isClosed : boolean
+  isClosed: boolean
 }
 
 // 고민 카테고리 타입
 type categoryType = {
-  categoryId : number,
-  categoryName : string
+  categoryId: number,
+  categoryName: string
 }
 
 // 채팅방 타입
@@ -51,9 +51,9 @@ type chattingRoom = {
   consultId: number,
   memberId: number,
   nickname: string,
-  title:string,
+  title: string,
   channelId: string,
-  text: string|null,
+  text: string | null,
   shared: boolean
 }
 
@@ -66,4 +66,21 @@ type pictureResultType = {
   person_url: string,
 }
 
-export type {consultType, categoryType, memberType, villageType, chattingRoom, villageNameType, pictureResultType}
+
+// 설문조사 타입
+type survey = {
+  question_id: number,
+  content: string,
+  choices: {
+    choice_id: number,
+    content: string
+  }[]
+}
+
+type allSurveys = {
+  house: survey[],
+  tree: survey[],
+  person: survey[]
+}
+
+export type { consultType, categoryType, memberType, villageType, chattingRoom, villageNameType, pictureResultType, survey, allSurveys }

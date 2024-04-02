@@ -85,7 +85,7 @@ function CreateNewConsult({ onClose, category }: propsType) {
         placeholder="고민 내용을 입력해주세요"
         value={content}
         onValueChange={setContent}
-        className="my-6 mb-10"
+        className="my-6 mb-10 max-h-[20vh]"
       />
       {/* 카테고리들 */}
       {

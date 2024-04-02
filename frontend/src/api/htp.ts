@@ -1,5 +1,19 @@
 import axios from 'axios'
-import { villageNameType, pictureResultType } from '../types/DataTypes'
+import { villageNameType, pictureResultType, allSurveys } from '../types/DataTypes'
+
+
+// 설문조사 항목 가져오기
+async function getSurvey() :Promise<allSurveys|null> {
+  try {
+    const res  = await axios.get('https://mindtrip.site/api/htp/v0/question/all')
+    // console.log(res.data)
+    return res.data
+  } catch (err) {
+    console.log(err)
+    return null
+  }
+}
+
 
 // 검사 결과 문장으로 가져오기
 async function getResult1(token: string): Promise<string|null> {
@@ -87,4 +101,5 @@ async function loadPictureResult(token:string) :Promise<pictureResultType[]|null
 }
 
 
-export { getResult1, getResult2, changeLang, loadRecentResult, loadPictureResult }
+
+export { getSurvey, getResult1, getResult2, changeLang, loadRecentResult, loadPictureResult }

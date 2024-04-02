@@ -88,16 +88,20 @@ function Header() {
     })
   }
 
+  // 로딩중
+  const [loading, setLoading] = useState<boolean>(false)
 
   // 알림 확인하면 메세지 보여주기
   const handleAlarm = function() {
+    setLoading(true)
+    setOpenMessage(!openMessage)
     axios.post('https://mindtrip.site/api/notifications/v1', null, {
       headers:{
         Authorization: accessToken
       }
     }).then((res) => {
+      setLoading(false)
       setnotifications(res.data.result)
-      setOpenMessage(!openMessage)
       setAlarmCount(0)
     }) .catch((err) => console.log(err))
   }
@@ -132,9 +136,16 @@ function Header() {
       >
         <CardBody>
           {
-            notifications?.map((noti, idx) => {return(
-              <div key={idx} className="py-1">{noti.message}</div>
-            )})
+            loading && (<p>로딩중</p>)
+          }
+          {
+            (notifications?.length == 0) ? (<p>수신된 메세지가 없습니다!</p>) : (<div>
+              {
+                notifications?.map((noti, idx) => {return(
+                  <div key={idx} className="py-1">{noti.message}</div>
+                )})
+              }
+            </div>)
           }
         </CardBody>
         
