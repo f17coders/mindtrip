@@ -92,7 +92,7 @@ function Chatting() {
         },
         webSocketFactory: () => {
           // WebSocket을 생성하여 반환합니다.
-          const socket = new WebSocket('ws://mindtrip.site/api/chat');
+          const socket = new WebSocket('wss://mindtrip.site/api/chat');
           return socket;
         },
         // reconnectDelay: 5000, //자동 재 연결
