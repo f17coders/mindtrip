@@ -35,8 +35,8 @@ const initialMemberState :memberType = {
   socialId: null,
   villageId: null,
   villageName: 'kakao',
-  level: null,
-  missionCount: null,
+  level: 0,
+  missionCount: 0,
   accessToken: null
 }
 
@@ -57,12 +57,52 @@ const memberSlice = createSlice({
         ...state,
         villageName: action.payload
       })
+    },
+    countUpdate(state){
+      const nowLevel = state.level
+      const newCount = state.missionCount + 1
+      if (newCount === 3) {
+        return({
+          ...state,
+          level: nowLevel + 1,
+          missionCount: newCount
+        })
+      } else if (newCount === 9) {
+        return({
+          ...state,
+          level: nowLevel + 1,
+          missionCount: newCount
+        })
+      } else if (newCount === 15) {
+        return({
+          ...state,
+          level: nowLevel + 1,
+          missionCount: newCount
+        })
+      } else if (newCount === 21) {
+        return({
+          ...state,
+          level: nowLevel + 1,
+          missionCount: newCount
+        })
+      } else if (newCount === 30) {
+        return({
+          ...state,
+          level: nowLevel + 1,
+          missionCount: newCount
+        })
+      } else {
+        return({
+          ...state,
+          missionCount: newCount
+        })
+      }
     }
   }
 })
 
 // 4. 함수들 내보내기
-export const {saveUserInfo, saveVillage} = memberSlice.actions;
+export const {saveUserInfo, saveVillage, countUpdate} = memberSlice.actions;
 
 
 export {memberSlice, accessToken}

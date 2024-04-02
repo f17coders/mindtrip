@@ -4,10 +4,16 @@ import { Link } from 'react-router-dom';
 import Successbtn from '../../atoms/buttons/successbtn';
 import MissionTree from "../../components/Loading/MissionTree";
 import Header from "../../components/Header";
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../store/store';
+import { countUpdate } from "../../store/memberSlice";
 import Swal from "sweetalert2";
-import '../../assets/levelupbadge/새싹.png'
+import profile0 from "../../assets/levelupbadge/씨앗.png";
+import profile1 from "../../assets/levelupbadge/새싹.png";
+import profile2 from "../../assets/levelupbadge/잎새.png";
+import profile3 from "../../assets/levelupbadge/나뭇가지.png";
+import profile4 from "../../assets/levelupbadge/나무.png";
+import profile5 from "../../assets/levelupbadge/열매.png";
 
 
 // 미션 타입 정의
@@ -18,11 +24,35 @@ type Mission = {
 };
 
 function Mission() {
+  const dispatch = useDispatch()
   // 미션 데이터 상태
   const [missions, setMissions] = useState<Mission[]>([]); // 미션 타입을 명시
 
   const [isMidnight, setIsMidnight] = useState<boolean>(false);
   let accessToken = useSelector((state: RootState) => state.accessToken.value);
+  let member = useSelector((state: RootState) => state.member);
+
+  const [ProfileImg, setProfileImg] = useState(profile0);
+
+  const changeProfile = () => {
+    if (member.level === 0) {
+      setProfileImg(profile0);
+    }
+    if (member.level === 1) {
+      setProfileImg(profile1);
+    }
+    if (member.level === 2) {
+      setProfileImg(profile2);
+    }
+    if (member.level === 3) {
+      setProfileImg(profile3);
+    }
+    if (member.level === 4) {
+      setProfileImg(profile4);
+    }
+    if (member.level === 5){
+      setProfileImg(profile5)}
+  };
 
   // 페이지가 로드될 때 미션 데이터를 가져오는 useEffect 훅
   useEffect(() => {
@@ -59,6 +89,9 @@ function Mission() {
       setIsMidnight(true);
     }
   }, []);
+  useEffect(() => {
+    changeProfile();
+  }, []);
 
   // 미션 성공 처리 함수
   const handleMissionSuccess = async (missionId: number) => {
@@ -93,13 +126,14 @@ function Mission() {
         )
       );
       console.log("성공개수:",successCount.data.result)
+      dispatch(countUpdate())
 
       if (successCount.data.result === 3) {
         // 미션 성공 메세지 띄워주기  \
         Swal.fire({
           title: "레벨업!",
           text: "새싹으로 레벨업 했습니다.",
-          imageUrl: "../../assets/levelupbadge/새싹.png",
+          imageUrl: ProfileImg,
           imageWidth: 200,
           imageHeight: 200,
           imageAlt: "새싹"
@@ -110,7 +144,7 @@ function Mission() {
         Swal.fire({
           title: "레벨업!",
           text: "잎새로 레벨업 했습니다.",
-          imageUrl: "../../assets/levelupbadge/잎새.png",
+          imageUrl: ProfileImg,
           imageWidth: 200,
           imageHeight: 200,
           imageAlt: "잎새"
@@ -121,7 +155,7 @@ function Mission() {
         Swal.fire({
           title: "레벨업!",
           text: "나뭇가지로 레벨업 했습니다.",
-          imageUrl: "../../assets/levelupbadge/나뭇가지.png",
+          imageUrl: ProfileImg,
           imageWidth: 200,
           imageHeight: 200,
           imageAlt: "나뭇가지"
@@ -132,7 +166,7 @@ function Mission() {
         Swal.fire({
           title: "레벨업!",
           text: "열매로 레벨업 했습니다.",
-          imageUrl: "../../assets/levelupbadge/열매.png",
+          imageUrl: ProfileImg,
           imageWidth: 200,
           imageHeight: 200,
           imageAlt: "열매"
@@ -143,7 +177,7 @@ function Mission() {
         Swal.fire({
           title: "레벨업!",
           text: "나무로 레벨업 했습니다. 레벨업 최대치에 도착했습니다!",
-          imageUrl: "../../assets/levelupbadge/나무.png",
+          imageUrl: ProfileImg,
           imageWidth: 200,
           imageHeight: 200,
           imageAlt: "나무"

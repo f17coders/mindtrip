@@ -5,8 +5,8 @@ type memberType = {
   socialId: string|null,
   villageId: number|null,
   villageName: 'apple'|'orange'|'pineapple'|'watermelon'|'grape'|'peach'|'blueberry'|'kakao',
-  level: number|null,
-  missionCount: number|null,
+  level: number,
+  missionCount: number,
   accessToken :string|null,
 } 
 
