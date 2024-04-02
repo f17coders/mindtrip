@@ -76,44 +76,48 @@ const TestCal: React.FC<TestCalProps> = ({ missionData }) => {
   const addContent = ({ date }: { date: Date }) => {
     const contents = [];
     const formattedDate = moment(date).format("YYYY-MM-DD");
-    const dayValue = dayMissionData.dayData[formattedDate];
-
-    if (dayValue === 3) {
-      contents.push(
-        <img
-          key={formattedDate}
-          src={goodimo}
-          className="diaryImg"
-          width="26"
-          height="26"
-          alt="good day"
-        />
-      );
-    } else if (dayValue === 2 || dayValue === 1) {
-      contents.push(
-        <img
-          key={formattedDate}
-          src={sosoimo}
-          className="diaryImg"
-          width="26"
-          height="26"
-          alt="so-so day"
-        />
-      );
-    } else {
-      contents.push(
-        <img
-          key={formattedDate}
-          src={badimo}
-          className="diaryImg"
-          width="26"
-          height="26"
-          alt="bad day"
-        />
-      );
+    const todayDate = moment().format("YYYY-MM-DD");
+  
+    // 과거부터 오늘까지의 날짜에 대해서 이미지를 표시
+    if (moment(formattedDate).isSameOrBefore(todayDate)) {
+      const dayValue = dayMissionData.dayData[formattedDate];
+  
+      if (dayValue === 3) {
+        contents.push(
+          <img
+            key={formattedDate}
+            src={goodimo}
+            className="diaryImg"
+            width="26"
+            height="26"
+            alt="good day"
+          />
+        );
+      } else if (dayValue === 2 || dayValue === 1) {
+        contents.push(
+          <img
+            key={formattedDate}
+            src={sosoimo}
+            className="diaryImg"
+            width="26"
+            height="26"
+            alt="so-so day"
+          />
+        );
+      } else {
+        contents.push(
+          <img
+            key={formattedDate}
+            src={badimo}
+            className="diaryImg"
+            width="26"
+            height="26"
+            alt="bad day"
+          />
+        );
+      }
     }
-
-    return <div>{contents}</div>;
+    return contents;
   };
 
   const handleDayClick = (date: Date) => {

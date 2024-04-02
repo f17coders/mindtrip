@@ -155,6 +155,7 @@ const PostitPage: React.FC = () => {
         <div className="flex flex-row">
           <DatePicker
             dateFormat="yyyy.MM.dd"
+            maxDate={startDate}
             className={styles.datePicker}
             selected={startDate}
             onChange={(date) => date && setStartDate(date)}

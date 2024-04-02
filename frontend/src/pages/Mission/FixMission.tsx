@@ -118,6 +118,15 @@ function Fixmission() {
   return (
     <div className="bg-[#fff7e0] px-2 py-8 min-h-screen">
       <div className="mt-8 grid gap-8 flex items-center">
+        <div className="mt-8 flex justify-center">
+        <Link
+          to="/mission"
+          className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 mt-4"
+          onClick={handleFixCompleted} // 수정 완료 버튼 클릭 시 호출될 함수 추가
+        >
+          수정완료버튼
+        </Link>
+      </div>
         
         <div className="bg-[#f4f4f4] p-4 rounded-lg mb-4 border-2 border-gray-500 shadow-lg min-h-560">
           <h2 className="text-xl font-semibold mb-4">오늘의 미션</h2>
@@ -153,15 +162,6 @@ function Fixmission() {
             />
           ))}
         </div>
-      </div>
-      <div className="mt-8 flex justify-center">
-        <Link
-          to="/mission"
-          className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 mt-4"
-          onClick={handleFixCompleted} // 수정 완료 버튼 클릭 시 호출될 함수 추가
-        >
-          수정완료버튼
-        </Link>
       </div>
     </div>
   );
