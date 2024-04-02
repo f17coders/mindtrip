@@ -109,16 +109,16 @@ function PersonDraw({ goSurvey }: propsType1) {
   };
   
 
-  const sendFile = async (data: FormData) => {
-    await axios.post('https://mindtrip.site/api/htp/v1/test/person', data, {
+  const sendFile = (data: FormData) => {
+    axios.post('https://mindtrip.site/api/htp/v1/test/person', data, {
       headers: {
         Authorization: tempAuthorization,
         "Content-Type": "multipart/form-data"
       }
     })
   }
-  const handleFile = async (file: FormData) => {
-    await (sendFile(file))
+  const handleFile = (file: FormData) => {
+    sendFile(file)
     Swal.fire({
       title: '업로드완료',
       icon: "success"

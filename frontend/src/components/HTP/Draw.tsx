@@ -170,19 +170,29 @@ function Draw({now, goSurvey, tempAuthorization}:propsType) {
       <div className='absolute top-3 left-[130px] flex'>
         <div 
           onClick={() => setPencolor('black')}
-          className='w-8 h-8 rounded-full bg-black mx-2 hover:cursor-pointer'/>
+          className='w-8 h-8 rounded-full bg-black mx-2 hover:cursor-pointer'
+          style={{border: penColor === 'black' ? '4px solid white' : ''}}
+        />
         <div 
         onClick={() => setPencolor('red')}
-        className='w-8 h-8 rounded-full bg-red-500 mx-2 hover:cursor-pointer'/>
+        className='w-8 h-8 rounded-full bg-red-500 mx-2 hover:cursor-pointer'
+        style={{border: penColor === 'red' ? '4px solid white' : ''}}
+        />
         <div 
         onClick={() => setPencolor('#3b82f6')}
-        className='w-8 h-8 rounded-full bg-blue-500 mx-2 hover:cursor-pointer'/>
+        className='w-8 h-8 rounded-full bg-blue-500 mx-2 hover:cursor-pointer'
+        style={{border: penColor === '#3b82f6' ? '4px solid white' : ''}}
+        />
         <div 
         onClick={() => setPencolor('rgb(132 204 22)')}
-        className='w-8 h-8 rounded-full bg-lime-400 mx-2 hover:cursor-pointer'/>
+        className='w-8 h-8 rounded-full bg-lime-400 mx-2 hover:cursor-pointer'
+        style={{border: penColor === 'rgb(132 204 22)' ? '4px solid white' : ''}}
+        />
         <div 
         onClick={() => setPencolor('rgb(113 63 18)')}
-        className='w-8 h-8 rounded-full bg-yellow-900 mx-2 hover:cursor-pointer'/>
+        className='w-8 h-8 rounded-full bg-yellow-900 mx-2 hover:cursor-pointer'
+        style={{border: penColor === 'rgb(113 63 18)' ? '4px solid white' : ''}}
+        />
       </div>
       <Button
         className={`absolute bottom-0 right-0 m-3 opacity-50`}

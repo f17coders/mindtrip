@@ -119,7 +119,7 @@ function SharedConsult({consult} : propsType) {
                 </div>
               </ModalHeader>
               <ModalBody>
-                <div className="h-[55vh] border-1">
+                <div className="h-[55vh] border-1 overflow-y-scroll">
                   {/* recvList가 비어 있는지 여부를 체크하여 처리 */}
                   {recvList.length > 0 && recvList.map((msg, index) => (
                     <div key={index}>

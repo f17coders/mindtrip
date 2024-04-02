@@ -47,9 +47,9 @@ function Header() {
       }
     })
 
-    // eventSource.addEventListener("open", () => {
-    //   console.log('알림서버 연결 지속중')
-    // })
+    eventSource.addEventListener("open", () => {
+      console.log('알림서버 연결 지속중')
+    })
 
     eventSource.addEventListener('message', (e) => {
       if (e.data) {

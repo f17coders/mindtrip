@@ -177,7 +177,7 @@ function Chatting() {
   };
 
   return (
-    <div>
+    <div className='h-full'>
       {/* 상단 */}
       <div className='relative flex items-center justify-between mb-5'>
         <Tooltip placement='bottom' content='뒤로가기'>
@@ -207,7 +207,7 @@ function Chatting() {
                 <OtherBallon message={msg.text} />
               )}
             </div>
-          ))}
+          ))}   
       </div>
 
       {/* 채팅 치는 곳 */}

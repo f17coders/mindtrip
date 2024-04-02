@@ -1,5 +1,5 @@
 import { Card, CardBody, Button, Modal, ModalContent, ModalHeader, ModalBody, useDisclosure } from "@nextui-org/react";
-import { toggleOpen, changeList, changeSelectedId } from "./../../store/chatSlice";
+import { toggleOpen, changeList, changeSelectedId, setisMine } from "./../../store/chatSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from './../../store/store'
 import { consultType } from "../../types/DataTypes";
@@ -39,6 +39,7 @@ function OtherConsult({consult} : propsType) {
       if (typeof tempChannelId == 'string') {
         // 채널 아이디 알려주고
         dispatch(changeSelectedId(tempChannelId))
+        dispatch(setisMine(false))
         // 만약 채팅창이 닫혀있는 상태라면 열어주고
         if (chat.isOpen === false) {
           dispatch(toggleOpen())
