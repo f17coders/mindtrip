@@ -63,9 +63,9 @@ public class DailyMissionServiceImpl implements DailyMissionService {
 		HashMap<Integer, MyTableMissionDTO> myTableMissionDTOMap)
 		throws BaseExceptionHandler, IOException {
 
-		for (Entry<Integer, MyTableMissionDTO> m : myTableMissionDTOMap.entrySet()) {
-			log.error(m.toString());
-		}
+//		for (Entry<Integer, MyTableMissionDTO> m : myTableMissionDTOMap.entrySet()) {
+//			log.error(m.toString());
+//		}
 
 		// 스케쥴링 시간과 겹치지는 않는지 체크
 		if (!isValidRequestTime()) {
@@ -100,6 +100,7 @@ public class DailyMissionServiceImpl implements DailyMissionService {
 		List<DailyMissionBaseRes> missionsToInsert = new ArrayList<>();
 		if (myTableMissionDTOMap.size() != 0) {
 			List<Integer> missionIdList = new ArrayList<>(myTableMissionDTOMap.keySet());
+			log.error("missionIdList : {}", missionIdList);
 			List<Mission> missions = missionRepository.getMissionsByMissionIdIn(
 				missionIdList);
 			Map<Integer, Mission> missionHashMap = new HashMap<>();
