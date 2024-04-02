@@ -263,7 +263,7 @@ public class ConsultServiceImpl implements ConsultService {
 
 	//공유된 고민 리스트 조회
 	@Override
-	public ConsultListRes getSharedConsultingRooms() throws BaseExceptionHandler {
+	public ConsultListRes getSharedConsultingRooms(int memberId) throws BaseExceptionHandler {
 		List<Consult> consultList = consultRepository.findAllByIsSharedOrderByCreateTimeDesc(true);
 
 		// Consult 객체의 리스트를 ConsultDetailRes 객체의 리스트로 변환
@@ -271,10 +271,14 @@ public class ConsultServiceImpl implements ConsultService {
 			consult -> ConsultDetailRes.builder().consultId(consult.getConsultId())
 				.memberId(consult.getMemberId())
 				.nickname(memberClient.getMember(consult.getMemberId()).getResult().nickname())
-				.title(consult.getTitle()).content(consult.getContent())
-				.categoryId(consult.getCategoryId()).isClosed(consult.isClosed())
-				.isShared(consult.isShared()).canLike(consult.isCanLike())
-				.channelId(consult.getChannelId()).build()).collect(Collectors.toList());
+				.title(consult.getTitle())
+				.content(consult.getContent())
+				.categoryId(consult.getCategoryId())
+				.isClosed(consult.isClosed())
+				.isShared(consult.isShared())
+				.canLike(isLike(consult.getConsultId(), memberId))
+				.channelId(consult.getChannelId())
+				.build()).collect(Collectors.toList());
 
 		// TODO: 전체 페이지 수를 계산하는 로직 추가 필요
 
@@ -481,6 +485,7 @@ public class ConsultServiceImpl implements ConsultService {
 				throw new BaseExceptionHandler(ALREADY_CONSULT_LIKE_EXISTS);
 			}
 			hashOperations.put(key, field, String.valueOf(1));
+
 		} else {
 			throw new BaseExceptionHandler(ALREADY_CONSULT_LIKE_EXISTS);
 		}

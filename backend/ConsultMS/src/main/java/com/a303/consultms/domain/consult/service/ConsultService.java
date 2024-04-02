@@ -33,7 +33,7 @@ public interface ConsultService {
     ConsultCategoryListRes getConsultCategoryList();
 
     //공유된 고민 리스트 조회
-    ConsultListRes getSharedConsultingRooms();
+    ConsultListRes getSharedConsultingRooms(int memberId);
 
     //고민상담소 나가기(퇴장)
     void exitConsultingRoom(int consultId, int sender);

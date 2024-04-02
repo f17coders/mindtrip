@@ -122,7 +122,7 @@ public class ConsultController {
     public ResponseEntity<BaseResponse<ConsultListRes>> getSharedConsultList(
         @RequestHeader("x-member-id") int memberId
     ) {
-        ConsultListRes consultListRes = consultService.getSharedConsultingRooms();
+        ConsultListRes consultListRes = consultService.getSharedConsultingRooms(memberId);
         return BaseResponse.success(SuccessCode.SELECT_SUCCESS, consultListRes);
     }
 
