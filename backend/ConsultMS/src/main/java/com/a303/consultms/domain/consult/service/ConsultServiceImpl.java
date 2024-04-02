@@ -27,10 +27,13 @@ import com.a303.consultms.domain.consultLike.LikeConsult;
 import com.a303.consultms.domain.consultLike.repository.LikeConsultRepository;
 import com.a303.consultms.domain.member.dto.response.MemberBaseRes;
 import com.a303.consultms.domain.message.Message;
+import com.a303.consultms.domain.notification.dto.response.NotificationEventDto;
 import com.a303.consultms.global.api.response.BaseResponse;
 import com.a303.consultms.global.client.MemberClient;
 import com.a303.consultms.global.client.NotificationClient;
 import com.a303.consultms.global.exception.BaseExceptionHandler;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,6 +44,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 @Log4j2
@@ -55,6 +59,8 @@ public class ConsultServiceImpl implements ConsultService {
 	private final LikeConsultRepository likeConsultRepository;
 	private final RedisTemplate<String, String> redisTemplate;
 	private final NotificationClient notificationClient;
+
+	private final KafkaTemplate<String, String> notificationEventDtoKafkaTemplate;
 
 	//고민상담소 전체 조회
 	@Override
@@ -412,9 +418,8 @@ public class ConsultServiceImpl implements ConsultService {
 
 		//내가 참여중인 채널의 정보 가져오기
 		List<Channel> channelList = channelRepository.findBySender(String.valueOf(memberId));
-		
-//        log.error("[channelList] channelList={}",channelList.get(0).getChannelId());
 
+//        log.error("[channelList] channelList={}",channelList.get(0).getChannelId());
 
 		if (channelList.isEmpty()) {
 			return null;
@@ -581,8 +586,25 @@ public class ConsultServiceImpl implements ConsultService {
 
 	@Override
 	public void makeNotification(String type, int memberId) {
-		// 알림 발생 : notificationms에 전송
-		notificationClient.consultNotification(type, memberId);
+		// 알림 전송 kafka(notification에서는 알림테이블에 저장 + 실시간 알림 전송)
+
+		NotificationEventDto eventDto = NotificationEventDto.builder()
+			.eventType("Consult-" + type)
+			.memberId(memberId)
+			.build();
+
+		ObjectMapper objectMapper = new ObjectMapper();
+		String jsonString;
+		// 객체를 JSON 문자열로 변환
+		try {
+			jsonString = objectMapper.writeValueAsString(eventDto);
+			notificationEventDtoKafkaTemplate.send("notification-topic", jsonString);
+
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+
+//		notificationClient.consultNotification(type, memberId);
 	}
 
 	private boolean isLike(int consultId, int memberId) {

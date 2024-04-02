@@ -63,6 +63,10 @@ public class DailyMissionServiceImpl implements DailyMissionService {
 		HashMap<Integer, MyTableMissionDTO> myTableMissionDTOMap)
 		throws BaseExceptionHandler, IOException {
 
+		for (Entry<Integer, MyTableMissionDTO> m : myTableMissionDTOMap.entrySet()) {
+			log.error(m.toString());
+		}
+
 		// 스케쥴링 시간과 겹치지는 않는지 체크
 		if (!isValidRequestTime()) {
 			log.error("putMyTableMissions method failed with request-time:{}", LocalDateTime.now());
