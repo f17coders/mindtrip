@@ -19,12 +19,14 @@ function Header() {
   const [openMessage, setOpenMessage] = useState<Boolean>(false)
   const [alarmCount, setAlarmCount] = useState<number>(0)
   const [notifications, setnotifications] = useState<notificationType[]|null>(null)
+  const [temp, setTemp] = useState<number>(0)
 
   useEffect(() => {
     // 처음엔 메세지창 닫아주고
     setOpenMessage(false)
     // 서버 ON
     fetchSSE()
+    setTemp(0)
   }, [])
 
   let accessToken = useSelector((state:RootState) => state.accessToken.value)
@@ -76,8 +78,13 @@ function Header() {
     })
 
     eventSource.addEventListener('error', (err) => {
+      // 에러가 나면 두번까지만 재요청 보내보자
+      const a = temp + 1
+      setTemp(a)
       console.log(err)
-      fetchSSE()
+      if (temp < 2) {
+        fetchSSE()
+      }
     })
   }
 
