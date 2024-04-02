@@ -74,7 +74,7 @@ function Chatting() {
   // 스크롤바 조정
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  const stompEndpoint = "wss://mindtrip.site/api/chat";
+  const stompEndpoint = "wss://j10a303.p.ssafy.io/api/chat";
   
     const chatPrivateConnect = () => {
       // const serverURL = `https://mindtrip.site/api/chat`;
