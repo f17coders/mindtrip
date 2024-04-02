@@ -62,7 +62,21 @@ const PostitPage: React.FC = () => {
       setPostits(response.data.result.postitResList);
       setTopic(response.data.result.topic);
       setTopicId(response.data.result.topicId);
-    } catch (error) {
+    } catch (error:any) {
+      let errorMessage;
+      switch (error.response?.data?.code) {
+        case "B300":
+          errorMessage = "존재하지 않는 주제입니다.";
+          setStartDate(new Date());
+          break;
+        default:
+          errorMessage = "알 수 없는 오류가 발생했습니다.";
+      }
+
+      Swal.fire({
+        text: errorMessage,
+        icon: "warning",
+      });
       console.log("Error fetching missions:", error);
     }
   };

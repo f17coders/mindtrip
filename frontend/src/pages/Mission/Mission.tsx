@@ -36,19 +36,19 @@ function Mission() {
 
   const changeProfile = () => {
     if (member.level === 1) {
-      setProfileImg(profile1);
-    }
-    if (member.level === 2) {
       setProfileImg(profile2);
     }
-    if (member.level === 3) {
+    if (member.level === 2) {
       setProfileImg(profile3);
     }
-    if (member.level === 4) {
+    if (member.level === 3) {
       setProfileImg(profile4);
     }
-    if (member.level === 5) {
+    if (member.level === 4) {
       setProfileImg(profile5);
+    }
+    if (member.level === 5) {
+      setProfileImg(profile6);
     }
     if (member.level === 6){
       setProfileImg(profile6)}
@@ -91,7 +91,7 @@ function Mission() {
   }, []);
   useEffect(() => {
     changeProfile();
-  }, []);
+  }, [member.level]);
 
   // 미션 성공 처리 함수
   const handleMissionSuccess = async (missionId: number) => {
