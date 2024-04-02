@@ -144,7 +144,7 @@ public class NotificationServiceImpl implements NotificationService {
 		try {
 			ObjectMapper objectMapper = new ObjectMapper();
 			messageRes = objectMapper.readValue(message, NotificationEventDto.class);
-			System.out.println(messageRes);
+			log.error(messageRes.toString());
 		} catch (JsonMappingException e) {
 			// log
 			throw new RuntimeException(e);
@@ -243,18 +243,18 @@ public class NotificationServiceImpl implements NotificationService {
 		notificationRepository.save(notification);
 
 		// 실시간 알람
-		try {
-			SseEmitter sseEmitter = emitterRepository.findByMemberId(memberId);
-			NotificationMessageRes messageRes = NotificationMessageRes.builder()
-				.type("NOTIFICATION")
-				.message(notification.getContent())
-				.isWritten(notification.isWritten())
-				.localDateTime(notification.getCreateTime())
-				.build();
-			sseEmitter.send(SseEmitter.event().name("message").data(messageRes));
-		} catch (Exception e) {
-			emitterRepository.removeByMemberId(memberId);
-		}
+//		try {
+//			SseEmitter sseEmitter = emitterRepository.findByMemberId(memberId);
+//			NotificationMessageRes messageRes = NotificationMessageRes.builder()
+//				.type("NOTIFICATION")
+//				.message(notification.getContent())
+//				.isWritten(notification.isWritten())
+//				.localDateTime(notification.getCreateTime())
+//				.build();
+//			sseEmitter.send(SseEmitter.event().name("message").data(messageRes));
+//		} catch (Exception e) {
+//			emitterRepository.removeByMemberId(memberId);
+//		}
 
 	}
 
