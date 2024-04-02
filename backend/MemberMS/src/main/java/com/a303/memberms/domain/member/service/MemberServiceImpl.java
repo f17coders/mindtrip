@@ -6,6 +6,7 @@ import com.a303.memberms.domain.member.dto.request.MemberStandardLoginReq;
 import com.a303.memberms.domain.member.dto.request.MemberStandardRegisterReq;
 import com.a303.memberms.domain.member.dto.response.MemberBaseRes;
 
+import com.a303.memberms.domain.member.dto.response.MemberLoginRes;
 import com.a303.memberms.domain.member.repository.MemberRepository;
 import com.a303.memberms.domain.village.dto.response.VillageBaseRes;
 import com.a303.memberms.global.api.response.BaseResponse;
@@ -80,7 +81,7 @@ public class MemberServiceImpl implements MemberService {
 
 
 	@Override
-	public String standardLogin(MemberStandardLoginReq memberStandardLoginReq) {
+	public MemberLoginRes standardLogin(MemberStandardLoginReq memberStandardLoginReq) {
 		//ID로 존재 여부 확인(사실상 일치 여부도 확인됨)
 		Member target = memberRepository.findById(memberStandardLoginReq.id())
 			.orElseThrow(
@@ -108,8 +109,13 @@ public class MemberServiceImpl implements MemberService {
 				.role(target.getRole().name())
 				.build()
 		);
+        String token = response.getBody().getResult();
 
-		return response.getBody().getResult();
+        return MemberLoginRes.builder()
+            .memberId(target.getMemberId())
+            .token("Bearer " + token)
+            .build();
+
 	}
 
 
