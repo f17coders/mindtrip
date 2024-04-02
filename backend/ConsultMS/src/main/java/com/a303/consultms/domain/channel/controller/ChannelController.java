@@ -44,10 +44,6 @@ public class ChannelController {
 		//고민상담소 입장
 		Channel channel = consultService.registerChannel(consultId, sender);
 
-		// TODO 동준이가 나중에 해결
-		consultService.makeNotification("ENTER",
-			Integer.parseInt(channel.getReceiver().get("memberId")));
-
 		return BaseResponse.success(SuccessCode.INSERT_SUCCESS, channel.getChannelId());
 	}
 
