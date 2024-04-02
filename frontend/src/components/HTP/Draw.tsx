@@ -7,11 +7,12 @@ import Swal from 'sweetalert2';
 type propsType = {
   now: string
   goSurvey: () => void,
-  tempAuthorization:string
+  tempAuthorization:string,
+  switchLoading: () => void
 }
 
 
-function Draw({now, goSurvey, tempAuthorization}:propsType) {
+function Draw({now, goSurvey, tempAuthorization, switchLoading}:propsType) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [isDrawing, setIsDrawing] = useState<boolean>(false)
   const [penColor, setPencolor] = useState<string>('black')
@@ -129,6 +130,7 @@ function Draw({now, goSurvey, tempAuthorization}:propsType) {
 
   // 버튼 눌렀을 때 실행되는 함수
   const handleButton = () => {
+    switchLoading()
     const canvas = canvasRef.current
     canvas?.toBlob(async function(blob) {
       if (blob){
@@ -142,6 +144,7 @@ function Draw({now, goSurvey, tempAuthorization}:propsType) {
               Authorization: tempAuthorization
             }
           })
+          switchLoading()
           Swal.fire({
             text: '그림 업로드 완료!',
             icon: "success"

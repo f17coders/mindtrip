@@ -13,6 +13,10 @@ import { RootState } from "../store/store";
 import { changeLang } from "../api/htp";
 
 // 회원가입 페이지
+type memberInfo = {
+  memberId :number,
+  token:string
+}
 
 function Signup () {
   const dispatch = useDispatch()
@@ -185,8 +189,8 @@ function Signup () {
   }
 
   // 유저 정보 저장
-  const saveUser = async function() :Promise<string|null> {
-    const userInfo:memberType|void = await loadUser()
+  const saveUser = async function(memberId:number) :Promise<string|null> {
+    const userInfo:memberType|void = await loadUser(memberId)
     if (userInfo) {
       dispatch(saveUserInfo(userInfo))
       return userInfo.villageName
@@ -196,10 +200,10 @@ function Signup () {
 
   // 로그인 로직
   const handleLogin = async function() {
-    const token:string|void = await login(id, password1)
-    if (typeof token == 'string') {
-      dispatch(saveToken(token))
-      saveUser()
+    const tempInfo:memberInfo|void = await login(id, password1)
+    if (tempInfo != null) {
+      dispatch(saveToken(tempInfo.token))
+      saveUser(tempInfo.memberId)
       if (tempUserVillage) {
         Swal.fire({
           text: `당신은 ${changeLang(tempUserVillage)}마을에 도착했습니다`

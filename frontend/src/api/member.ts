@@ -4,7 +4,12 @@ import Swal from "sweetalert2";
 
 // 로그인하기
 
-async function login(id: string, password: string): Promise<string | void> {
+type memberInfo = {
+  memberId: number,
+  token: string
+}
+
+async function login(id: string, password: string): Promise<memberInfo | void> {
   try {
     const res = await axios.post('https://mindtrip.site/api/members/v0/login', {
       'id': id,
@@ -19,9 +24,9 @@ async function login(id: string, password: string): Promise<string | void> {
 
 
 // 유저정보 로딩하기
-async function loadUser(): Promise<memberType | void> {
+async function loadUser(memberId :number): Promise<memberType | void> {
   try {
-    const res = await axios.get(`https://mindtrip.site/api/members/v0/1`)
+    const res = await axios.get(`https://mindtrip.site/api/members/v0/${memberId}`)
     return res.data.result
     // 여기서 멤버 정보를 return 해줘야함
   } catch (err) {

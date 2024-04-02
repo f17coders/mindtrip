@@ -10,8 +10,14 @@ function Start() {
   const dispatch = useDispatch()
 
   const getTempToken = async () => {
-    const res = await axios.get('https://mindtrip.site/api/htp/v0/temp_token')
-    dispatch(saveToken(res.data.Authorization))
+    console.log('시도는 함')
+    try {
+      const res = await axios.get('https://mindtrip.site/api/htp/v0/temp_token')
+      dispatch(saveToken(res.data.Authorization))
+    } catch(err) {
+      console.log(err)
+    }
+    
   }
 
   const handleClick = async () => {

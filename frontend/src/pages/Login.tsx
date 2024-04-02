@@ -8,6 +8,11 @@ import { saveToken, saveUserInfo } from "../store/memberSlice";
 import { useNavigate } from "react-router-dom";
 import { memberType } from "../types/DataTypes";
 
+type memberInfo = {
+  memberId:number,
+  token:string
+}
+
 function Login() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -23,8 +28,8 @@ function Login() {
   const [password, setPassword] = useState<string>('')
 
   // 유저 정보 저장
-  const saveUser = async function() {
-    const userInfo:memberType|void = await loadUser()
+  const saveUser = async function(memberId:number) {
+    const userInfo:memberType|void = await loadUser(memberId)
     if (userInfo) {
       dispatch(saveUserInfo(userInfo))
     }
@@ -32,10 +37,10 @@ function Login() {
 
   // 로그인 로직
   const handleLogin = async function() {
-    const token:string|void = await login(id, password)
-    if (typeof token == 'string') {
-      dispatch(saveToken(token))
-      saveUser()
+    const tempInfo:memberInfo|void = await login(id, password)
+    if (tempInfo != null) {
+      dispatch(saveToken(tempInfo.token))
+      saveUser(tempInfo.memberId)
       navigate('/main')
     }
   }

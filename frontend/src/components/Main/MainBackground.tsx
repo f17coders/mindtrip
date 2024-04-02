@@ -23,7 +23,7 @@ function MainBackground({go} :propsType) {
   camera.rotation.x -= 0.25
 
   // 조명
-  const directionalLight = new THREE.DirectionalLight('#faf3ea', 3); // color, intensity
+  const directionalLight = new THREE.DirectionalLight('#faf3ea', 2.5); // color, intensity
   directionalLight.position.set(0, 100, 100); // x, y, z
   scene.add(directionalLight);
 
@@ -46,7 +46,7 @@ function MainBackground({go} :propsType) {
       renderer.setSize(window.innerWidth, window.innerHeight)
 
       // 모델 불러오기
-      loader.load('/mainbackground.glb', function (gltf: any) {
+      loader.load('/village.glb', function (gltf: any) {
         scene.add(gltf.scene)
 
         // 랜더링
