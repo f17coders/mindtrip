@@ -9,7 +9,8 @@ public record ConsultChattingRes(
     String nickname,
     String title,
     String channelId,
-    String text
+    String text,
+    boolean shared
 ) {
 
 }

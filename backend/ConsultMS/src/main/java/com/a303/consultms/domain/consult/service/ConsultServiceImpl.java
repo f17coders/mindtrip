@@ -377,6 +377,7 @@ public class ConsultServiceImpl implements ConsultService {
                     .nickname(memberClient.getMember(consult.getMemberId()).getResult().nickname())
                     .title(consult.getTitle()).channelId(consult.getChannelId())
                     .text(latestMessage.getText()) // 최근 메시지의 텍스트 설정
+                    .shared(consult.isShared())
                     .build();
 
                 // ConsultChattingRes 객체를 리스트에 추가
@@ -388,6 +389,7 @@ public class ConsultServiceImpl implements ConsultService {
                     .nickname(memberClient.getMember(consult.getMemberId()).getResult().nickname())
                     .title(consult.getTitle()).channelId(consult.getChannelId())
                     .text(null) // 최근 메시지의 텍스트 설정
+                    .shared(consult.isShared())
                     .build();
 
                 // ConsultChattingRes 객체를 리스트에 추가
@@ -439,6 +441,7 @@ public class ConsultServiceImpl implements ConsultService {
                 .nickname(memberClient.getMember(consult.getMemberId()).getResult().nickname())
                 .title(consult.getTitle()).channelId(consult.getChannelId())
                 .text(text) // 최근 메시지의 텍스트 설정
+                .shared(consult.isShared())
                 .build();
 
             // ConsultChattingRes 객체를 리스트에 추가
