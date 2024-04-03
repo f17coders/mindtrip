@@ -15,6 +15,7 @@ import { deleteUserInfo, deleteToken } from "../store/memberSlice";
 type notificationType = {
   message: string
 }
+
 function Header() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
@@ -65,7 +66,6 @@ function Header() {
     eventSource.addEventListener('message', (e) => {
       if (e.data) {
         const parsedData = JSON.parse(e.data)
-        // console.log(parsedData)
         // 처음에 count갯수가 오면 바로 보여주고
         if (parsedData.type === 'COUNT') {
           setAlarmCount(parsedData.count)
