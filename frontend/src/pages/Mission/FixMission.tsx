@@ -126,7 +126,7 @@ function Fixmission() {
           className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 mt-4"
           onClick={handleFixCompleted} // 수정 완료 버튼 클릭 시 호출될 함수 추가
         >
-          수정완료버튼
+          수정 완료
         </Link>
       </div>
         
