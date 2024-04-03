@@ -275,18 +275,18 @@ public class NotificationServiceImpl implements NotificationService {
 		notificationRepository.save(notification);
 
 		// 실시간 알람
-		try {
-			SseEmitter sseEmitter = emitterRepository.findByMemberId(memberId);
-			NotificationMessageRes messageRes = NotificationMessageRes.builder()
-				.type("NOTIFICATION")
-				.message(notification.getContent())
-				.isWritten(notification.isWritten())
-				.localDateTime(notification.getCreateTime())
-				.build();
-			sseEmitter.send(SseEmitter.event().name("message").data(messageRes));
-		} catch (Exception e) {
-			emitterRepository.removeByMemberId(memberId);
-		}
+//		try {
+//			SseEmitter sseEmitter = emitterRepository.findByMemberId(memberId);
+//			NotificationMessageRes messageRes = NotificationMessageRes.builder()
+//				.type("NOTIFICATION")
+//				.message(notification.getContent())
+//				.isWritten(notification.isWritten())
+//				.localDateTime(notification.getCreateTime())
+//				.build();
+//			sseEmitter.send(SseEmitter.event().name("message").data(messageRes));
+//		} catch (Exception e) {
+//			emitterRepository.removeByMemberId(memberId);
+//		}
 
 	}
 
