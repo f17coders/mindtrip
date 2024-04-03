@@ -1,19 +1,16 @@
-// Postititem.tsx
 import React, { useState } from "react";
 import "./postit.css";
 import PostitLikeBtn from "../buttons/PostitLikeBtn";
-// import { Button } from '@nextui-org/react';
-import { postitType } from "../../pages/Postit/Postit";
+import ReportBtn from "../buttons/ReportBtn";
 import axios from "axios";
 import Swal from "sweetalert2";
-// import ReportIcon from '../Icons/ReportIcon';
-import ReportBtn from "../buttons/ReportBtn";
+import { postitType } from "../../pages/Postit/Postit";
 
 type PostitProps = {
   accessToken: string;
   postItem?: postitType;
   color: string;
-  onClick?: () => void; // onClick prop을 선택적으로(Optional) 처리
+  onClick?: () => void;
   children: string;
   style?: React.CSSProperties;
   firstData?: boolean;
@@ -32,14 +29,14 @@ const Postit: React.FC<PostitProps> = ({
   const [isReport, setIsReport] = useState(
     (postItem && postItem.isReport) || false
   );
+
   const postitStyle: React.CSSProperties = {
-    ...style, // 전달받은 style을 포함합니다.
+    ...style,
   };
 
   const LikeHandle = async (clickData: boolean) => {
     try {
       if (clickData) {
-        console.log(clickData)
         await axios.post(
           `https://mindtrip.site/api/postits/v1/like/${postItem?.id}`,
           {},
@@ -70,9 +67,12 @@ const Postit: React.FC<PostitProps> = ({
       if (!isReport) {
         Swal.fire({
           title: "신고 하시겠습니까?",
-        }).then(async () => {
-          await axios
-            .post(
+          showDenyButton: true,
+          confirmButtonText: "확인",
+          denyButtonText: `취소`,
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            await axios.post(
               `https://mindtrip.site/api/postits/v1/report/${postItem?.id}`,
               {},
               {
@@ -80,38 +80,41 @@ const Postit: React.FC<PostitProps> = ({
                   Authorization: accessToken,
                 },
               }
-            )
-            .then(() => {
-              Swal.fire({ text: "정상적으로 완료되었습니다" });
-
-              setIsReport(true);
-            })
-            .catch((err) => console.log(err));
+            );
+            Swal.fire({ text: "신고가 정상적으로 완료되었습니다" });
+            setIsReport(true);
+          } else if (result.isDenied) {
+            Swal.fire({ text: "취소되었습니다", icon: "info" });
+          }
         });
       } else {
         Swal.fire({
           title: "신고를 취소 하시겠습니까?",
-        }).then(async () => {
-          await axios
-            .delete(
+          showDenyButton: true,
+          confirmButtonText: "확인",
+          denyButtonText: `취소`,
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            await axios.delete(
               `https://mindtrip.site/api/postits/v1/report/${postItem?.id}`,
               {
                 headers: {
                   Authorization: accessToken,
                 },
               }
-            )
-            .then(() => {
-              Swal.fire({ text: "정상적으로 완료되었습니다" });
-              setIsReport(false);
-            })
-            .catch((err) => console.log(err));
+            );
+            Swal.fire({ text: "신고 취소가 정상적으로 완료되었습니다" });
+            setIsReport(false);
+          } else if (result.isDenied) {
+            Swal.fire({ text: "취소되었습니다", icon: "info" });
+          }
         });
       }
     } catch (error) {
       console.log(error);
     }
   };
+
   return (
     <div className={`${color} rgyPostIt`} style={postitStyle} onClick={onClick}>
       {!firstData && (

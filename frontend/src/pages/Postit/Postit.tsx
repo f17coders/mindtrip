@@ -9,8 +9,9 @@ import Swal from "sweetalert2";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import styles from "../../components/Calendar/Calendar.module.css";
-import { villageBackgroundColor } from "../../atoms/color";
+import { villageTextColor, villageBackgroundColor } from "../../atoms/color";
 import { Button } from "@nextui-org/react";
+import { changeLang } from "../../api/htp";
 
 export interface postitType {
   content: string;
@@ -172,13 +173,17 @@ const PostitPage: React.FC = () => {
       <div>
         <div className="p-2 w-4/5 mx-auto flex justify-end">
           <Button
-            className="mx-4"
-            variant="ghost"
+            className= {`${villageTextColor[member.villageName]} mx-4`}
+            variant={sortBy === `like` ? `solid` : `ghost`}
             onClick={() => setSortBy("like")}
           >
             좋아요순
           </Button>
-          <Button variant="ghost" onClick={() => setSortBy("date")}>
+          <Button
+            className= {`${villageTextColor[member.villageName]}`}
+            variant={sortBy === `date` ? `solid` : `ghost`}
+            onClick={() => setSortBy("date")}
+          >
             최신순
           </Button>
         </div>
@@ -189,14 +194,14 @@ const PostitPage: React.FC = () => {
               value={selectedFilter}
               onChange={(e) => setSelectedFilter(e.target.value)}
             >
-              <option value="all">All</option>
-              <option value="apple">Apple</option>
-              <option value="pineapple">Pineapple</option>
-              <option value="watermelon">Watermelon</option>
-              <option value="grape">Grape</option>
-              <option value="peach">Peach</option>
-              <option value="blueberry">Blueberry</option>
-              <option value="kakao">Kakao</option>
+              <option value="all">전체</option>
+              <option value="apple">사과</option>
+              <option value="pineapple">파인애플</option>
+              <option value="watermelon">수박</option>
+              <option value="grape">포도</option>
+              <option value="peach">복숭아</option>
+              <option value="blueberry">블루베리</option>
+              <option value="kakao">카카오</option>
             </select>
           </div>
           <div className="flex justify-center items-center flex-wrap list-none">
