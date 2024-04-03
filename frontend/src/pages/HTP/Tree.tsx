@@ -164,7 +164,7 @@ function TreeSurvey({ goNext, survey, isLast }: propsType) {
             <Button
               key={idx}
               variant="bordered"
-              className='w-[90vw] lg:w-3/5 m-3 h-[10vh] px-3 text-md bg-white hover:bg-sky-800 hover:text-white shadow'
+              className='w-[90vw] lg:w-3/5 m-3 h-[10vh] px-3 text-md bg-white shadow'
               onClick={() => { handleClick(survey.question_id, choice.choice_id) }}
             >
               {choice.content}
