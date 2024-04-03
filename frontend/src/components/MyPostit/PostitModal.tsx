@@ -13,7 +13,7 @@ const customModalStyles: Styles = {
   },
   content: {
     width: "360px",
-    height: "210px",
+    height: "auto",
     zIndex: 150,
     position: "absolute",
     top: "50%",
@@ -57,12 +57,25 @@ const PostitModal = ({ isOpen, onClose, onSubmit }: { isOpen: boolean, onClose: 
         maxLength={50} 
         onChange={handleInputChange}
         placeholder="여기에 내용을 입력하세요..." 
-        style={{ width: "100%", height: "100px", marginBottom: "10px" }} 
+        style={{ width: "100%", minHeight: "100px", marginBottom: "10px" }} 
       />
       <div style={{ textAlign: 'right', marginRight: '10px', color: '#888', fontSize: '14px' }}>
         {inputCount}/50
       </div>
-      <button onClick={handleSubmit} style={{ width: "100%", padding: "10px", border: "1px solid #0f0f0f", borderRadius: "5px", cursor: "pointer" }}>Submit</button>
+      <button 
+        onClick={handleSubmit} 
+        disabled={inputCount === 0 || inputCount > 50} // 입력된 문자 수가 0이거나 50을 초과하면 비활성화
+        style={{ 
+          width: "100%", 
+          padding: "10px", 
+          border: "1px solid #0f0f0f", 
+          borderRadius: "5px", 
+          cursor: "pointer", 
+          backgroundColor: (inputCount === 0 || inputCount > 50) ? '#ccc' : '#fff' // 입력된 문자 수에 따라 배경색 변경
+        }}
+      >
+        Submit
+      </button>
     </Modal>
   );
 };
