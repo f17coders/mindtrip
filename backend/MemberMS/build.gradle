@@ -81,6 +81,9 @@ dependencies {
 //    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
     // redis
 //    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    // kafka
+    implementation 'org.springframework.kafka:spring-kafka'
+
 
 // Security
     // spring security

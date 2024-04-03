@@ -1,4 +1,4 @@
-package com.a303.missionms.domain.dailyMission.dto;
+package com.a303.memberms.domain.notification.dto.response;
 
 import lombok.Builder;
 
