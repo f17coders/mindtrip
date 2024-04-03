@@ -27,7 +27,6 @@ import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -44,7 +43,6 @@ public class MemberServiceImpl implements MemberService {
 	private final AuthClient authClient;
 	private final VillageClient villageClient;
 
-	private final KafkaTemplate<String, String> notificationEventDtoKafkaTemplate;
 
 
 	@Override
