@@ -81,14 +81,14 @@ function MyPostit() {
     const handleMouseDown = (event: MouseEvent | TouchEvent) => {
       event.preventDefault();
       const coordinates = getCoordinates(event);
-      console.log("클릭 시작 좌표:", coordinates);
+      // console.log("클릭 시작 좌표:", coordinates);
       setA1(coordinates.offsetX);
     };
 
     const handleMouseUpOrTouchEnd = (event: MouseEvent | TouchEvent) => {
       event.preventDefault(); // 필요한 경우에만 추가
       const coordinates = getCoordinates(event);
-      console.log("마우스/터치 땔 때 좌표:", coordinates);
+      // console.log("마우스/터치 땔 때 좌표:", coordinates);
       setA2(coordinates.offsetX);
     };
 
@@ -111,11 +111,11 @@ function MyPostit() {
   }, []);
 
   useEffect(() => {
-    if (a1 - a2 > 250) {
+    if (a2 - a1 > 300) {
       if (selectedIdx < postitList.length - 1) {
         setSelectedIdx((now) => now + 1);
       }
-    } else if (a2 - a1 > 250) {
+    } else if (a1 - a2 > 300) {
       if (selectedIdx > 0) {
         setSelectedIdx((now) => now - 1);
       }
@@ -138,7 +138,11 @@ function MyPostit() {
             <Button 
               isIconOnly
               variant="light"
-              className={`${villageTextColor[member.villageName]} absolute left-0 z-10 bottom-2`}
+              className={`
+                ${selectedIdx === postitList.length - 1 ? 'hidden': ''}
+                ${villageTextColor[member.villageName]} 
+                absolute left-0 z-10 bottom-2
+              `}
               onClick={()=> {
                 if (selectedIdx < postitList.length - 1) {
                   setSelectedIdx((now) => now + 1);
@@ -148,18 +152,24 @@ function MyPostit() {
             <Button 
               isIconOnly
               variant="light"
-              className={`${villageTextColor[member.villageName]} absolute right-0 z-10 bottom-2`}
+              className={`
+                ${selectedIdx === 0 ? 'hidden': ''}
+                ${villageTextColor[member.villageName]} 
+                absolute right-0 z-10 bottom-2
+              `}
               onClick={()=> {
                 if (selectedIdx > 0) {
                   setSelectedIdx((now) => now - 1);
                 }
               }}
             ><RightIcon/></Button>
-            <Card ref={box} className="h-[50vh] mt-[2vh]">
+            <div ref={box}>
+              <Card  className="h-[50vh] mt-[2vh]">
               <CardBody style={{fontFamily:'JamsilThin'}} className="p-5">
                 {postitList[selectedIdx].content}
               </CardBody>
             </Card>
+            </div>
           </div>
           )
         }

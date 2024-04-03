@@ -11,7 +11,16 @@ import SendIcon from '../../../atoms/Icons/SendIcon'
 import { villageBackgroundColor } from '../../../atoms/color'
 import { getPersonalChat, send } from '../../../services/chat';
 import ChattingAdditionalInfo from './ChattingAddtionalInfo';
+import axios from 'axios';
 
+
+type chatInfo = {
+  title: string,
+  content: string,
+  closed: boolean,
+  shared: boolean,
+  consultId: number
+}
 
 function Chatting() {
   const dispatch = useDispatch();
@@ -22,6 +31,36 @@ function Chatting() {
   // 토큰
   // let memberId = useSelector((state: RootState) => state.member.memberId);
 	let accessToken = useSelector((state: RootState) => state.accessToken.value);
+
+  // 처음 열면 고민 정보 가져오기
+  const [chatInfo, setChatInfo] = useState<chatInfo>({
+    title: '고민제목',
+    content: '고민 내용',
+    closed: false,
+    shared: false,
+    consultId: 0
+  })
+
+  const loadChatInfo = async () => {
+    try {
+      const res = await axios.get(`https://mindtrip.site/api/consults/v1/detail/${chat.selectedId}`, {
+        headers: {
+          Authorization: accessToken
+        }
+      })
+      setChatInfo(res.data.result)
+    } catch(err) {
+      console.log(err)
+    }
+  }
+
+  useEffect(() => {
+    loadChatInfo()
+  }, [])
+
+
+
+
 
   // 추가정보 열고 닫고
   const [show, setShow] = useState<boolean>(false)
@@ -187,7 +226,7 @@ function Chatting() {
             onClick={() => dispatch(changeList(true))}
           ><LeftIcon /></Button>
         </Tooltip>
-        <p>고민 제목</p>
+        <p>{chatInfo.title}</p>
         <Button
           isIconOnly
           size='sm'
@@ -229,7 +268,7 @@ function Chatting() {
 
       {/* 추가정보 나오는 곳 */}
       {(show && chat.isMine != null) && (
-        <ChattingAdditionalInfo isMine={chat.isMine}/>
+        <ChattingAdditionalInfo isMine={chat.isMine} chatInfo={chatInfo}/>
       )}
     </div>
   );

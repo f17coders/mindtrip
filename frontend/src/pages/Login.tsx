@@ -61,6 +61,11 @@ function Login() {
     }
   }
 
+  const activeEnter = (e: any) => {
+    if (e.key === 'Enter'){
+      handleLogin()
+    }
+  }
   return (
     <Card
       className="w-full h-[90vh] mt-[5vh] sm:h-[90vh] sm:mt-[5vh] mx-auto sm:w-3/5 xl:w-1/3"
@@ -97,7 +102,7 @@ function Login() {
           }
           type={isVisible ? "text" : "password"}
           className="mx-auto my-5 w-[85%] md:w-[70%]"
-
+          onKeyDown={(e) => activeEnter(e)}
         />
         {/* 로그인 버튼 */}
         <Button
