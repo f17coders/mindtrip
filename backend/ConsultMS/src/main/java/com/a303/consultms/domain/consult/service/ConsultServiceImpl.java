@@ -319,7 +319,7 @@ public class ConsultServiceImpl implements ConsultService {
 
 		// TODO 알림 발생 : notificationms에 전송
 		makeNotification("EXIT",
-			sender);
+			consult.getMemberId());
 
 	}
 
