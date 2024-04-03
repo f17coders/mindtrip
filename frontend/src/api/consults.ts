@@ -61,7 +61,7 @@ async function getCategory(token:string): Promise<categoryType[]> {
 // 입장가능한 고민 목록 가져오기
 async function getSharedConsult(token: string): Promise<consultType[]> {
   try {
-    const res = await axios.get('https://mindtrip.site/api/consults/v1/shared/1', {
+    const res = await axios.get('https://mindtrip.site/api/consults/v1/shared', {
       headers: {
         Authorization: token
       }

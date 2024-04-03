@@ -16,7 +16,7 @@ type propsType = {
 }
 
 function SharedConsult({consult} : propsType) {
-  const [like, setLike] = useState<boolean>(!consult.canLike)
+  const [like, setLike] = useState<boolean>(consult.canLike)
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
   const [openMoreInfo, setOpenMoreInfo] = useState<Boolean>(false)
   const [recvList, setRecvList] = useState<any[]>([]);
