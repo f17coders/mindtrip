@@ -21,5 +21,4 @@ public interface DailyMissionService {
 
 	void dailyMissionRecommend() throws BaseExceptionHandler;
 
-
 }

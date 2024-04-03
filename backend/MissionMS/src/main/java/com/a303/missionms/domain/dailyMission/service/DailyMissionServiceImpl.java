@@ -1,7 +1,7 @@
 package com.a303.missionms.domain.dailyMission.service;
 
 import com.a303.missionms.domain.dailyMission.DailyMission;
-import com.a303.missionms.domain.dailyMission.dto.NotificationEventDto;
+import com.a303.missionms.domain.notification.dto.response.NotificationEventDto;
 import com.a303.missionms.domain.dailyMission.repository.DailyMissionRepository;
 import com.a303.missionms.domain.mission.Mission;
 import com.a303.missionms.domain.mission.dto.request.MyTableMissionDTO;
@@ -17,9 +17,9 @@ import com.a303.missionms.global.client.NotificationClient;
 import com.a303.missionms.global.exception.BaseExceptionHandler;
 import com.a303.missionms.global.exception.code.ErrorCode;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.criteria.CriteriaBuilder.In;
 import jakarta.transaction.Transactional;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -35,6 +35,7 @@ import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
@@ -289,6 +290,83 @@ public class DailyMissionServiceImpl implements DailyMissionService {
 //		BaseResponse<Integer> res = notificationClient.dailyMissionScheduling();
 		log.info("스케쥴링 완료 알림 전송. userId : 전체");
 
+
+	}
+
+	@KafkaListener(topics = "event-topic", groupId = "group_1")
+	public void dailyMissionScheduleForNewMember(String message) throws BaseExceptionHandler {
+
+		NotificationEventDto messageRes;
+		try {
+			ObjectMapper objectMapper = new ObjectMapper();
+			messageRes = objectMapper.readValue(message, NotificationEventDto.class);
+			log.error(messageRes.toString());
+		} catch (JsonMappingException e) {
+			// log
+			throw new RuntimeException(e);
+		} catch (JsonProcessingException e) {
+			// log
+			throw new RuntimeException(e);
+		}
+
+
+	}
+
+	@KafkaListener(topics = "event-topic", groupId = "group_1")
+	public void eventTopicListener(String message) throws BaseExceptionHandler {
+
+		NotificationEventDto messageRes;
+		try {
+			ObjectMapper objectMapper = new ObjectMapper();
+			messageRes = objectMapper.readValue(message, NotificationEventDto.class);
+			log.error(messageRes.toString());
+		} catch (JsonMappingException e) {
+			// log
+			throw new RuntimeException(e);
+		} catch (JsonProcessingException e) {
+			// log
+			throw new RuntimeException(e);
+		}
+
+		if (messageRes.eventType().equals("NewMemberDailyMissionSchedule")) {
+			dailyMissionScheduleForNewMember(messageRes.memberId());
+		}
+
+	}
+
+	void dailyMissionScheduleForNewMember(int memberId) {
+
+		// 새로운 미션 3개씩 선정해서 넣기
+		List<Mission> missionList = missionRepository.getMissionList();
+
+		List<DailyMissionBaseRes> scheduledList = new ArrayList<>();
+
+		Random random = new Random();
+		Set<Integer> pickedSet = new HashSet();
+
+		int cnt = 0;
+		while (cnt < 3) {
+			int index = random.nextInt(missionList.size());
+			if (pickedSet.contains(index)) {
+				// 다시 뽑아야 함
+				continue;
+			}
+			// 넣어도 됨
+			DailyMissionBaseRes dailyMission = DailyMissionBaseRes.builder()
+				.missionId(missionList.get(index).getMissionId())
+				.memberId(memberId)
+				.isFinish(false)
+				.build();
+			scheduledList.add(dailyMission);
+			pickedSet.add(index);
+			cnt++;
+
+		}
+
+		// template으로 교체
+		if (scheduledList.size() != 0) {
+			missionBulkRepository.saveAllDailyMission(scheduledList);
+		}
 
 	}
 

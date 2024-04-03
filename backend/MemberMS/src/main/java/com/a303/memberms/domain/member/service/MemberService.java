@@ -28,4 +28,6 @@ public interface MemberService {
 	int getMissionCount(int memberId);
 
 	MemberBaseRes changeNickname(int memberId, String nickname);
+
+
 }

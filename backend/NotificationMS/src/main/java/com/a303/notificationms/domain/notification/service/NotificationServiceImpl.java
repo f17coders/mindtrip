@@ -212,22 +212,22 @@ public class NotificationServiceImpl implements NotificationService {
 		notificationRepository.saveAll(notifications);
 
 		// 실시간 알람
-		Map<Integer, SseEmitter> sseEmitters = emitterRepository.findAll();
-		for (Entry<Integer, SseEmitter> entry : sseEmitters.entrySet()) {
-			try {
-				SseEmitter sseEmitterReceiver = entry.getValue();
-				NotificationMessageRes messageRes = NotificationMessageRes.builder()
-					.type("NOTIFICATION")
-					.message(now + " 날짜의 미션이 추가되었습니다. :)")
-					.isWritten(false)
-					.localDateTime(LocalDateTime.now())
-					.build();
-				sseEmitterReceiver.send(SseEmitter.event().name("message").data(messageRes));
-
-			} catch (Exception e) {
-				emitterRepository.removeByMemberId(entry.getKey());
-			}
-		}
+//		Map<Integer, SseEmitter> sseEmitters = emitterRepository.findAll();
+//		for (Entry<Integer, SseEmitter> entry : sseEmitters.entrySet()) {
+//			try {
+//				SseEmitter sseEmitterReceiver = entry.getValue();
+//				NotificationMessageRes messageRes = NotificationMessageRes.builder()
+//					.type("NOTIFICATION")
+//					.message(now + " 날짜의 미션이 추가되었습니다. :)")
+//					.isWritten(false)
+//					.localDateTime(LocalDateTime.now())
+//					.build();
+//				sseEmitterReceiver.send(SseEmitter.event().name("message").data(messageRes));
+//
+//			} catch (Exception e) {
+//				emitterRepository.removeByMemberId(entry.getKey());
+//			}
+//		}
 	}
 
 	@Override
@@ -242,7 +242,7 @@ public class NotificationServiceImpl implements NotificationService {
 		);
 		notificationRepository.save(notification);
 
-		// 실시간 알람
+//		 실시간 알람
 //		try {
 //			SseEmitter sseEmitter = emitterRepository.findByMemberId(memberId);
 //			NotificationMessageRes messageRes = NotificationMessageRes.builder()

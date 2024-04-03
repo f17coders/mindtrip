@@ -8,6 +8,7 @@ import com.a303.memberms.domain.member.dto.response.MemberBaseRes;
 
 import com.a303.memberms.domain.member.dto.response.MemberLoginRes;
 import com.a303.memberms.domain.member.repository.MemberRepository;
+import com.a303.memberms.domain.notification.dto.response.NotificationEventDto;
 import com.a303.memberms.domain.village.dto.response.VillageBaseRes;
 import com.a303.memberms.global.api.response.BaseResponse;
 
@@ -16,6 +17,8 @@ import com.a303.memberms.global.client.VillageClient;
 
 import com.a303.memberms.global.exception.BaseExceptionHandler;
 import com.a303.memberms.global.exception.code.ErrorCode;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import java.io.IOException;
 import java.util.HashMap;
@@ -24,6 +27,7 @@ import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -39,6 +43,9 @@ public class MemberServiceImpl implements MemberService {
 
 	private final AuthClient authClient;
 	private final VillageClient villageClient;
+
+	private final KafkaTemplate<String, String> notificationEventDtoKafkaTemplate;
+
 
 	@Override
 	public MemberBaseRes getMemberByMemberId(int memberId)
@@ -109,12 +116,29 @@ public class MemberServiceImpl implements MemberService {
 				.role(target.getRole().name())
 				.build()
 		);
-        String token = response.getBody().getResult();
+		String token = response.getBody().getResult();
 
-        return MemberLoginRes.builder()
-            .memberId(target.getMemberId())
-            .token("Bearer " + token)
-            .build();
+		// 알림 전송 kafka 신규 아이디로 미션 3개 스케쥴링
+		NotificationEventDto eventDto = NotificationEventDto.builder()
+			.eventType("NewMemberDailyMissionSchedule")
+			.memberId(target.getMemberId())
+			.build();
+
+		ObjectMapper objectMapper = new ObjectMapper();
+		String jsonString;
+		// 객체를 JSON 문자열로 변환
+		try {
+			jsonString = objectMapper.writeValueAsString(eventDto);
+			notificationEventDtoKafkaTemplate.send("event-topic", jsonString);
+
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+
+		return MemberLoginRes.builder()
+			.memberId(target.getMemberId())
+			.token("Bearer " + token)
+			.build();
 
 	}
 
