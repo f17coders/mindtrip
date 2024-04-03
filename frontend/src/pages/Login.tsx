@@ -70,7 +70,7 @@ function Login() {
     <Card
       className="w-full h-[90vh] mt-[5vh] sm:h-[90vh] sm:mt-[5vh] mx-auto sm:w-3/5 xl:w-1/3"
     >
-      <CardBody className="flex-col content-center justify-around my-[15%] sm:my-[30%]">
+      <CardBody className="flex-col content-center justify-around my-[15%] sm:my-[0%]">
         <p className="text-center text-4xl mb-12">로그인</p>
         {/* 아이디 입력 창 */}
         <Input

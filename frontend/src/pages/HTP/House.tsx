@@ -131,7 +131,7 @@ function HouseDraw({ goSurvey }: propsType1) {
         </button>
       </div>
       {/* png형식의 파일만 올릴 수 있도록 함 */}
-      <input type="file" name="file" accept=".png" ref={fileInput} onChange={handleChange} style={{ display: 'none' }} />
+      <input type="file" name="file" accept="image/png" ref={fileInput} onChange={handleChange} style={{ display: 'none' }} />
     </div>
   )
 }
