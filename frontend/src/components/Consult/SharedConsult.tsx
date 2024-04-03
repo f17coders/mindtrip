@@ -70,7 +70,7 @@ function SharedConsult({consult} : propsType) {
       >
         <CardBody onClick={onOpen} className="relative">
           <p className="text-lg">{consult.title}</p>
-          <div className="h-14 text-ellipsis overflow-hidden my-1 mb-2">
+          <div className="h-5 text-ellipsis overflow-hidden my-1">
             <p className="text-sm" style={{fontFamily:"JamsilThin"}}>{consult.content}</p>
           </div>
           <Button 
@@ -108,7 +108,7 @@ function SharedConsult({consult} : propsType) {
                       `absolute ${openMoreInfo ? '' : 'hidden'}
                       w-[80vw] h-[20vh] top-[9vh] 
                       bg-white p-3 text-sm
-                      rounded-md shadow-xl 
+                      rounded-md shadow-xl
                       ${villageBackgroundColor[member.villageName]}
                       `
                     }
