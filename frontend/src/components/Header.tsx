@@ -51,8 +51,6 @@ function Header() {
   
   // 알림 서버 연결 및 데이터 가져오기
   const fetchSSE = () => {
-    let lastHeartbeat = Date.now()
-
     const eventSource = new EventSource('https://mindtrip.site/api/notifications/v1/subscribe', {
       headers: {
         Authorization: accessToken
@@ -78,10 +76,6 @@ function Header() {
           Toast.fire({
             title: parsedData.message
           })
-        }
-        // heartbeat를 수신하면 시간 업데이트
-        else if (parsedData.type === 'HEARTBEAT') {
-          lastHeartbeat = Date.now()
         }
       }
     })
