@@ -1,23 +1,34 @@
 import { Link, useNavigate } from "react-router-dom"
 import Background from '../components/HTP/BackGround'
 import { useDispatch } from "react-redux"
-import { saveToken } from "../store/memberSlice"
+import { saveToken, saveUserInfo } from "../store/memberSlice"
 import axios from "axios"
 import logo from './../assets/logo.png'
+import { memberType } from "../types/DataTypes"
 
 function Start() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
+  const initialMemberState :memberType = {
+    memberId: null,
+    nickname: null,
+    socialId: null,
+    villageId: null,
+    villageName: 'kakao',
+    level: 0,
+    missionCount: 0,
+    accessToken: null
+  }
 
   const getTempToken = async () => {
     // console.log('테스트')
+    dispatch(saveUserInfo(initialMemberState))
     try {
       const res = await axios.get('https://mindtrip.site/api/htp/v0/temp_token')
       dispatch(saveToken(res.data.Authorization))
     } catch(err) {
       console.log(err)
     }
-    
   }
 
   const handleClick = async () => {

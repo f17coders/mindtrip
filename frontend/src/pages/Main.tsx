@@ -4,13 +4,29 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
 import { villageBackgroundColor } from "../atoms/color";
+import { loadUser } from "../api/member";
+import { useDispatch } from "react-redux";
+import { memberType } from "../types/DataTypes";
+import { saveUserInfo } from "../store/memberSlice";
 
 function Main() {
+  const dispatch = useDispatch()
   const [go, setGo] = useState<string|null>(null)
 
   let member = useSelector((state : RootState) => state.member)
 
+  // 유저 정보 저장
+  const saveUser = async function (memberId: number) {
+    const userInfo: memberType | void = await loadUser(memberId)
+    if (userInfo) {
+      dispatch(saveUserInfo(userInfo))
+    }
+  }
+
   useEffect(() => {
+    if (member.memberId) {
+      saveUser(member.memberId)
+    }
     setGo(null)
   }, [])
 

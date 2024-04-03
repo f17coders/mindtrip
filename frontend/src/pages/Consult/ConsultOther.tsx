@@ -47,7 +47,7 @@ function ConsultOther() {
         Authorization: accessToken
       }
     }).then((res) => {
-      setOtherConsult(res.data.result)
+      setOtherConsult(res.data.result.consultList)
     }) .catch((err) => console.log(err))
   }
  
@@ -102,13 +102,20 @@ function ConsultOther() {
           </Tooltip>
         </div>
         <div className='grid grid-cols-2'>
-          {
-            otherConsults?.map((consult, idx) => (
-              <div className="w-full p-2 h-[20vh]" key={idx}>
-                <OtherConsult consult={consult} />
-              </div>
-            ))
-          }
+        {
+          otherConsults?.map((consult, idx) => (
+            <div className="w-full h-[20vh] p-2" key={idx}>
+              {consult.isClosed === false && <OtherConsult consult={consult} />}
+            </div>
+          ))
+        }
+        {
+          otherConsults?.length === 0 ? (
+            <div className='h-[20vh] text-gray-400 text-sm' style={{fontFamily:'JamsilThin'}}>
+              아직 업로드된 고민이 없습니다!
+            </div>
+          ) : null
+        }
         </div>
       </div>
       {/* 채팅 창 여는 버튼 */}

@@ -26,7 +26,7 @@ function ConsultShared() {
         Authorization: accessToken
       }
     }).then((res) => {
-      setShared(res.data.result)
+      setShared(res.data.result.consultList)
     }).catch((err) => console.log(err))
   }
 

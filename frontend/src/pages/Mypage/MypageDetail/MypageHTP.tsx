@@ -46,6 +46,11 @@ function MypageHTP() {
           <Button className="w-full">새 검사 하러가기</Button>
         </Link>
       </div>
+      <div className="mt-5 flex justify-center w-full items-center">
+        <hr className="w-1/4 border-black"/>
+        <p className="mx-5 text-sm" style={{fontFamily:'JamsilThin'}}>내가 그렸던 그림들</p>
+        <hr className="w-1/4 border-black"/>
+      </div>
       <div className="grid gap-y-4 mb-8">
         {
           result2.map((res, idx) => {
