@@ -109,7 +109,7 @@ public class MemberController {
 	) {
 		int registeredMemberId = memberService.standardRegister(memberStandardRegisterReq);
 
-		memberService.makeEvent("NewMemberDailyMissionSchedule", registeredMemberId);
+//		memberService.makeEvent("NewMemberDailyMissionSchedule", registeredMemberId);
 
 		return BaseResponse.success(
 			SuccessCode.INSERT_SUCCESS,
