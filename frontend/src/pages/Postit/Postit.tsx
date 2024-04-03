@@ -11,7 +11,6 @@ import "react-datepicker/dist/react-datepicker.css";
 import styles from "../../components/Calendar/Calendar.module.css";
 import { villageTextColor, villageBackgroundColor } from "../../atoms/color";
 import { Button } from "@nextui-org/react";
-import { changeLang } from "../../api/htp";
 
 export interface postitType {
   content: string;

@@ -189,7 +189,7 @@ function Mission() {
   };
 
   return (
-    <div className="bg-[#fff7e0] px-2 py-8 h-screen ">
+    <div className="bg-[#fff7e0] px-2 h-screen ">
       <Header />
       <div className="flex flex-col justify-center items-center mb-6">
         <h1 className="text-5xl font-bold mt-20">오늘의 미션</h1>
