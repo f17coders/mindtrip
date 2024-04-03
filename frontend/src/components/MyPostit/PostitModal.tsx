@@ -31,6 +31,13 @@ Modal.setAppElement('#root');
 
 const PostitModal = ({ isOpen, onClose, onSubmit }: { isOpen: boolean, onClose: () => void, onSubmit: (content: string) => void }) => {
   const [content, setContent] = useState('');
+  const [inputCount, setInputCount] = useState(0);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const inputValue = e.target.value;
+    setContent(inputValue);
+    setInputCount(inputValue.length);
+  };
 
   const handleSubmit = () => {
     onSubmit(content);
@@ -45,9 +52,16 @@ const PostitModal = ({ isOpen, onClose, onSubmit }: { isOpen: boolean, onClose: 
       style={customModalStyles}
       contentLabel="Postit Modal"
     >
-      <textarea value={content} onChange={(e) => setContent(e.target.value)}
-      placeholder="여기에 내용을 입력하세요..." 
-      style={{ width: "100%", height: "100px", marginBottom: "10px" }} />
+      <textarea 
+        value={content} 
+        maxLength={50} 
+        onChange={handleInputChange}
+        placeholder="여기에 내용을 입력하세요..." 
+        style={{ width: "100%", height: "100px", marginBottom: "10px" }} 
+      />
+      <div style={{ textAlign: 'right', marginRight: '10px', color: '#888', fontSize: '14px' }}>
+        {inputCount}/50
+      </div>
       <button onClick={handleSubmit} style={{ width: "100%", padding: "10px", border: "1px solid #0f0f0f", borderRadius: "5px", cursor: "pointer" }}>Submit</button>
     </Modal>
   );
