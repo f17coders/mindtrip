@@ -55,6 +55,14 @@ function Consult() {
     }
   }, [])
 
+
+  const handleOpen = () => {
+    if (chat.isOpen) {
+      location.reload()
+    }
+    dispatch(toggleOpen())
+  }
+
   return (
     <div>
       {/* 전체페이지 */}
@@ -79,7 +87,7 @@ function Consult() {
           size='lg'
           radius='full'
           variant={chat.isOpen ? 'solid' : 'flat'}
-          onClick={() => dispatch(toggleOpen())}
+          onClick={() => handleOpen()}
           className={`${villageBackgroundColor[member.villageName]} ${villageTextColor[member.villageName]} fixed bottom-[3%] right-[4%] shadow-xl border-1 border-zinc-400 shadow`}
         >
           {chat.isOpen ? <XIcon /> : <ChatIcon />}

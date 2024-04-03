@@ -164,8 +164,8 @@ function MyPostit() {
               }}
             ><RightIcon/></Button>
             <div ref={box}>
-              <Card  className="h-[50vh] mt-[2vh]">
-              <CardBody style={{fontFamily:'JamsilThin'}} className="p-5">
+              <Card  className="h-[40vh] w-[80vw] mt-[2vh] mx-auto">
+              <CardBody style={{fontFamily:'JamsilThin'}} className="p-7 text-xl">
                 {postitList[selectedIdx].content}
               </CardBody>
             </Card>
