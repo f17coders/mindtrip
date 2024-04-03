@@ -91,14 +91,14 @@ public class MemberController {
 		MemberStandardLoginReq memberStandardLoginReq,
 		HttpServletResponse response
 	) {
-        MemberLoginRes memberLoginRes = memberService.standardLogin(memberStandardLoginReq);
+		MemberLoginRes memberLoginRes = memberService.standardLogin(memberStandardLoginReq);
 //		response.setHeader("Authorization", "Bearer " + token);
 
 		log.info("Authorization: {}", memberLoginRes);
 
 		return BaseResponse.success(
 			SuccessCode.LOGIN_SUCCESS,
-            memberLoginRes
+			memberLoginRes
 		);
 	}
 
@@ -108,6 +108,8 @@ public class MemberController {
 		MemberStandardRegisterReq memberStandardRegisterReq
 	) {
 		int registeredMemberId = memberService.standardRegister(memberStandardRegisterReq);
+
+		memberService.makeEvent("NewMemberDailyMissionSchedule", registeredMemberId);
 
 		return BaseResponse.success(
 			SuccessCode.INSERT_SUCCESS,

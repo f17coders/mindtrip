@@ -118,23 +118,6 @@ public class MemberServiceImpl implements MemberService {
 		);
 		String token = response.getBody().getResult();
 
-		// 알림 전송 kafka 신규 아이디로 미션 3개 스케쥴링
-		NotificationEventDto eventDto = NotificationEventDto.builder()
-			.eventType("NewMemberDailyMissionSchedule")
-			.memberId(target.getMemberId())
-			.build();
-
-		ObjectMapper objectMapper = new ObjectMapper();
-		String jsonString;
-		// 객체를 JSON 문자열로 변환
-		try {
-			jsonString = objectMapper.writeValueAsString(eventDto);
-			notificationEventDtoKafkaTemplate.send("event-topic", jsonString);
-
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-		}
-
 		return MemberLoginRes.builder()
 			.memberId(target.getMemberId())
 			.token("Bearer " + token)
@@ -237,6 +220,27 @@ public class MemberServiceImpl implements MemberService {
 			.reportCount(member.getReportCount())
 			.role(member.getRole())
 			.build();
+	}
+
+	@Override
+	public void makeEvent(String type, int memberId) {
+		// 알림 전송 kafka 신규 아이디로 미션 3개 스케쥴링
+		NotificationEventDto eventDto = NotificationEventDto.builder()
+			.eventType("NewMemberDailyMissionSchedule")
+			.memberId(memberId)
+			.build();
+
+		ObjectMapper objectMapper = new ObjectMapper();
+		String jsonString;
+		// 객체를 JSON 문자열로 변환
+		try {
+			jsonString = objectMapper.writeValueAsString(eventDto);
+			notificationEventDtoKafkaTemplate.send("event-topic", jsonString);
+
+		} catch (
+			JsonProcessingException e) {
+			e.printStackTrace();
+		}
 	}
 
 }
