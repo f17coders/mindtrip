@@ -33,7 +33,5 @@ public interface MemberService {
 
 	MemberBaseRes changeNickname(int memberId, String nickname);
 
-	void makeEvent(String type, int memberId);
-
 
 }
