@@ -8,6 +8,7 @@ import { loadUser } from "../api/member";
 import { useDispatch } from "react-redux";
 import { memberType } from "../types/DataTypes";
 import { saveUserInfo } from "../store/memberSlice";
+import Header from "../components/Header";
 
 function Main() {
   const dispatch = useDispatch()
@@ -32,10 +33,13 @@ function Main() {
 
   return (
     <div className='h-screen relative'>
-      <div className='absolute top-0 left-0 z-0 w-full h-full'>
+      <div className='absolute top-0 left-0 z-0 w-full h-full z-0'>
         <MainBackground go={go}/>
       </div>
-      <div className='relative w-[384px] h-screen mx-auto z-10'>
+      <div className="absolute w-full z-20">
+        <Header />
+      </div>
+      <div className='relative w-[384px] h-full mx-auto z-10'>
         <Button
           className={`${go != null ? 'hidden' : ''} ${villageBackgroundColor[member.villageName]} absolute top-[42%] left-[10%]`}
           onClick={() => setGo('consult')}

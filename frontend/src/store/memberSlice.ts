@@ -21,10 +21,17 @@ const accessToken = createSlice({
         ...state,
         value: action.payload
       }
+    },
+    // 토큰 삭제
+    deleteToken(state) {
+      return {
+        ...state,
+        value: ''
+      }
     }
   }
 })
-export const {saveToken} = accessToken.actions;
+export const {saveToken, deleteToken} = accessToken.actions;
 
 // 회원 정보
 // 1. 타입정의 -> 타입 파일에
@@ -34,7 +41,7 @@ const initialMemberState :memberType = {
   nickname: null,
   socialId: null,
   villageId: null,
-  villageName: 'kakao',
+  villageName: 'blueberry',
   level: 0,
   missionCount: 0,
   accessToken: null
@@ -97,12 +104,25 @@ const memberSlice = createSlice({
           missionCount: newCount
         })
       }
+    },
+    deleteUserInfo(state) {
+      return {
+        ...state,
+        memberId: null,
+        nickname: null,
+        socialId: null,
+        villageId: null,
+        villageName: 'blueberry',
+        level: 0,
+        missionCount: 0,
+        accessToken: null
+      }
     }
   }
 })
 
 // 4. 함수들 내보내기
-export const {saveUserInfo, saveVillage, countUpdate} = memberSlice.actions;
+export const {saveUserInfo, saveVillage, countUpdate, deleteUserInfo} = memberSlice.actions;
 
 
 export {memberSlice, accessToken}

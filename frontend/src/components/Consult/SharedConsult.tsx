@@ -141,7 +141,7 @@ function SharedConsult({consult} : propsType) {
                     } 
                     startContent={like ? <FullHeart/> : <EmptyHeart/>}
                     onClick={() => setLike(!like)}
-                  >{like ? 21 : 20}</Button>
+                  >{like ? consult.likeCount+1 : consult.likeCount}</Button>
                 </div>
               </ModalBody>
             </>

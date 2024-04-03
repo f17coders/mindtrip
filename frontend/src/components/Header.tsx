@@ -9,22 +9,33 @@ import { RootState } from "../store/store";
 import { villageBackgroundColor } from "../atoms/color";
 import axios from "axios";
 import Swal from "sweetalert2";
-
+import { useDispatch } from "react-redux";
+import { deleteUserInfo, deleteToken } from "../store/memberSlice";
 
 type notificationType = {
   message: string
 }
 function Header() {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const [openMessage, setOpenMessage] = useState<Boolean>(false)
   const [alarmCount, setAlarmCount] = useState<number>(0)
   const [notifications, setnotifications] = useState<notificationType[]|null>(null)
+  const [showHomeBtn, setShowHomeBtn] = useState<boolean>(true)
 
   useEffect(() => {
     // 처음엔 메세지창 닫아주고
     setOpenMessage(false)
     // 서버 ON
     fetchSSE()
+    
+
+    // 만약 홈화면이면 홈버튼 없애주자
+    if (window.location.pathname === '/main'){
+      setShowHomeBtn(false)
+    } else {
+      setShowHomeBtn(true)
+    }
   }, [])
 
   let accessToken = useSelector((state:RootState) => state.accessToken.value)
@@ -77,6 +88,7 @@ function Header() {
 
     eventSource.addEventListener('error', (err) => {
       console.log(err)
+      eventSource.close()
     })
   }
 
@@ -98,6 +110,17 @@ function Header() {
     }) .catch((err) => console.log(err))
   }
 
+
+  // 로그아웃
+  const logout = function() {
+    dispatch(deleteToken())
+    dispatch(deleteUserInfo())
+    Swal.fire({
+      text: '로그아웃되었습니다!'
+    }).then(() => {
+      navigate('/')
+    })
+  }
   
   return(
     <div className="relactive">
@@ -105,19 +128,32 @@ function Header() {
         <Button 
           isIconOnly 
           variant="light"
+          className={`${showHomeBtn ? '': 'hidden'}`}
           onClick={() => {navigate('/main')}}
         >
           <HomeIcon />
         </Button>
-        <Badge content={alarmCount} className={villageBackgroundColor[member.villageName]}>
+        <div className={`${showHomeBtn ? 'hidden': ''}`}/>
+        <div>
           <Button 
             isIconOnly 
             variant="light"
-            onClick={handleAlarm}
+            onClick={logout}
+            className="ml-1"
           >
-            <MessageIcon />
+            <LogoutIcon />
           </Button>
-        </Badge>
+          <Badge content={alarmCount} className={villageBackgroundColor[member.villageName]}>
+            <Button 
+              isIconOnly 
+              variant="light"
+              onClick={handleAlarm}
+            >
+              <MessageIcon />
+            </Button>
+          </Badge>
+        </div>
+        
         
       </div>
       {/* 메세지창 */}
@@ -148,3 +184,13 @@ function Header() {
 }
 
 export default Header
+
+
+function LogoutIcon () {
+  return(
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+  <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15" />
+</svg>
+
+  )
+}

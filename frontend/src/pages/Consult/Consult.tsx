@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react'
-import { Button, Tooltip, Card, Select, SelectItem } from "@nextui-org/react";
+import { Button, Tooltip, Card, Select, SelectItem, Modal, ModalContent, ModalHeader, ModalBody, useDisclosure } from "@nextui-org/react";
 import OtherConsult from '../../components/Consult/OtherConsult';
 import SharedConsult from '../../components/Consult/SharedConsult';
+import CreateNewConsult from '../../components/Consult/CreateNewConsult';
 import Chat from '../../components/Consult/Chat/Chat';
 import Header from '../../components/Header';
 import { useNavigate } from 'react-router-dom';
 import ChatIcon from './../../atoms/Icons/ChatIcon'
 import XIcon from '../../atoms/Icons/XIcon';
+import PencilIcon from '../../atoms/Icons/PencilIcon';
 
 import { toggleOpen } from '../../store/chatSlice';
 import { useSelector, useDispatch } from "react-redux";
@@ -17,7 +19,9 @@ import { consultType, categoryType } from '../../types/DataTypes';
 import { villageBackgroundColor, villageTextColor } from '../../atoms/color';
 import axios from 'axios';
 
+
 // 고민상담소 첫 페이지
+
 function Consult() {
   const dispatch = useDispatch()
 
@@ -97,6 +101,16 @@ function Consult() {
 
 export default Consult
 
+
+
+// 모달 제어용 타입 지정
+type useDisclosureType = {
+  isOpen: boolean
+  onOpen: () => void
+  onOpenChange: (isOpen: boolean) => void
+}
+
+
 // 다른 사람들의 고민
 function Others() {
   const navigate = useNavigate()
@@ -122,6 +136,9 @@ function Others() {
     }) .catch((err) => console.log(err))
   }
 
+  // 모달창 오픈 제어용
+  const { isOpen, onOpen, onOpenChange }: useDisclosureType = useDisclosure();
+
   useEffect(() => {
     // 전체 고민 가져오기
     const fetchConsult = async () => {
@@ -138,12 +155,18 @@ function Others() {
 
   return (
     <div className="px-3 min-h-[40%]">
-      <p
-        className="text-2xl hover:cursor-pointer mb-3" 
-        onClick={() => navigate('/consult/other')}
-      >
-        🙋‍♀️다른 사람들의 고민 보기
-      </p>
+      <div className='flex'>
+        <p
+          className="text-2xl hover:cursor-pointer mb-3" 
+          onClick={() => navigate('/consult/other')}
+        >
+          🙋‍♀️다른 사람들의 고민 보기
+        </p>
+        {/* 내 고민 작성하기 */}
+        <Tooltip content='내 고민 작성하기'>
+          <Button isIconOnly variant='light' onPress={onOpen} className='pb-2 ml-2'><PencilIcon /></Button>
+        </Tooltip>
+      </div>
       <div className="flex justify-between mt-2">
         {/* 카테고리들 */}
         <Select
@@ -183,6 +206,18 @@ function Others() {
           ) : null
         }
       </div>
+      <Modal size="sm" placement='center' isOpen={isOpen} onOpenChange={onOpenChange}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader>내 고민 공유하기</ModalHeader>
+              <ModalBody>
+                <CreateNewConsult onClose={onClose} category={category} />
+              </ModalBody>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </div>
   )
 }
