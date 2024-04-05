@@ -39,6 +39,14 @@ public class MissionController {
 	private final DailyMissionService dailyMissionService;
 	private final MissionLogService missionLogService;
 
+	@GetMapping("/v0/welcome")
+	public ResponseEntity<BaseResponse<String>> welcome() {
+
+		missionService.welcome();
+
+		return BaseResponse.success(SuccessCode.SELECT_SUCCESS, "good!!!");
+	}
+
 	//    @Operation(summary = "미션리스트조회")
 	@GetMapping("/v0")
 	public ResponseEntity<BaseResponse<MissionListRes>> getMissionList() throws IOException {
