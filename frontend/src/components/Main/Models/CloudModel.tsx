@@ -18,7 +18,7 @@ type GLTFResult = GLTF & {
 }
 
 export function CloudModel(props: JSX.IntrinsicElements['group']) {
-  const { nodes, materials } = useGLTF('./models/cloud.glb') as GLTFResult
+  const { nodes, materials } = useGLTF('/models/cloud.glb') as GLTFResult
   return (
     <group {...props} dispose={null}>
       <group position={[-1, 12.26, -12.046]} rotation={[-Math.PI, 1.322, -Math.PI]}>
@@ -45,4 +45,4 @@ export function CloudModel(props: JSX.IntrinsicElements['group']) {
   )
 }
 
-useGLTF.preload('./models/cloud.glb')
+useGLTF.preload('/models/cloud.glb')
