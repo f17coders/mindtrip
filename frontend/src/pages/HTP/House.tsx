@@ -140,7 +140,6 @@ function HouseSurvey({ goNext, survey, isLast }: propsType) {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   let house = useSelector((state: RootState) => state.htpAnswer.house)
-  const [selected, setSelected] = useState<number|null>(null)
   
   const handleClick = function (questionId: number, answerId: number) {
     if (house === null) {
