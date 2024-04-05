@@ -73,11 +73,14 @@ dependencies {
     // MariaDB
     implementation 'org.mariadb.jdbc:mariadb-java-client'
     // mongodb
-//    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
     // redis
 //    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     // kafka
     implementation 'org.springframework.kafka:spring-kafka'
+    // firebase
+    implementation 'com.google.firebase:firebase-admin:9.2.0'
+
 
 // Security
     // spring security

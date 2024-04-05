@@ -1,5 +1,6 @@
 package com.a303.notificationms.domain.notification.controller;
 
+import com.a303.notificationms.domain.notification.dto.request.FCMNotificationReq;
 import com.a303.notificationms.domain.notification.dto.response.NotificationMessageRes;
 import com.a303.notificationms.domain.notification.service.NotificationService;
 import com.a303.notificationms.global.api.response.BaseResponse;
@@ -17,6 +18,7 @@ import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -65,6 +67,16 @@ public class NotificationController {
 		notificationService.makeNotification(memberId);
 
 		return BaseResponse.success(SuccessCode.UPDATE_SUCCESS, "알림 성공 생성");
+	}
+
+	@PostMapping("/v0/fcm")
+	public String makeNotification(
+		@RequestBody FCMNotificationReq requestDto
+	) {
+
+		return notificationService.sendNotificationByToken(requestDto);
+
+//		return BaseResponse.success(SuccessCode.UPDATE_SUCCESS, "알림 성공 생성");
 	}
 
 //	-------------------- feign -----------------------

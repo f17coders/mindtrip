@@ -39,3 +39,5 @@ out/
 *.yml
 *.yaml
 *.xml
+
+**/serviceAccountKey.json

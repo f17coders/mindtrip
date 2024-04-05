@@ -5,6 +5,7 @@ import com.a303.notificationms.domain.domain.Domain;
 import com.a303.notificationms.domain.domain.repository.DomainRepository;
 import com.a303.notificationms.domain.notification.Notification;
 import com.a303.notificationms.domain.notification.dto.NotificationEventDto;
+import com.a303.notificationms.domain.notification.dto.request.FCMNotificationReq;
 import com.a303.notificationms.domain.notification.dto.response.CountNotificationMessageRes;
 import com.a303.notificationms.domain.notification.dto.response.NotificationMessageRes;
 import com.a303.notificationms.domain.notification.repository.NotificationBulkRepository;
@@ -15,8 +16,13 @@ import com.a303.notificationms.global.exception.code.ErrorCode;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingException;
+import com.google.firebase.messaging.Message;
 import jakarta.transaction.Transactional;
 import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -25,6 +31,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -47,6 +54,7 @@ public class NotificationServiceImpl implements NotificationService {
 
 	private final NotificationBulkRepository notificationBulkRepository;
 
+	private final FirebaseMessaging firebaseMessaging;
 
 	// 메시지 알림
 	public SseEmitter subscribe(int memberId) {
@@ -288,6 +296,47 @@ public class NotificationServiceImpl implements NotificationService {
 //			emitterRepository.removeByMemberId(memberId);
 //		}
 
+	}
+
+	public String getAccessToken() {
+
+		ClassPathResource resource = new ClassPathResource("serviceAccountKey.json");
+
+		try {
+
+			final GoogleCredentials googleCredentials = GoogleCredentials
+				.fromStream(resource.getInputStream())
+				.createScoped(List.of("https://www.googleapis.com/auth/cloud-platform"));
+
+			googleCredentials.refreshIfExpired();
+
+			return googleCredentials.getAccessToken().getTokenValue();
+		} catch (IOException e) {
+			throw new BaseExceptionHandler(ErrorCode.GOOGLE_REQUEST_TOKEN_ERROR);
+		}
+	}
+
+	@Override
+	public String sendNotificationByToken(FCMNotificationReq reqDto) {
+
+		com.google.firebase.messaging.Notification notification = com.google.firebase.messaging.Notification
+			.builder()
+			.setTitle(reqDto.title())
+			.setBody(reqDto.body())
+			.build();
+
+		Message message = Message.builder()
+			.setToken("fdXEAMJPrOfCLU_bLAF5_8:APA91bFzi0TX1cc2dRQM4k02q4xK82cQrFKObMw3i9Dg-EETutGEmYHITv190sIum0znQOBZPVLzO418yRIPMfR913gxcAL5LImu1SLE7L9l-jKP95vFiOTMDPSCNO8kLUF2-cYSHIw1")
+			.setNotification(notification)
+			.build();
+
+		try {
+			firebaseMessaging.send(message);
+		} catch (FirebaseMessagingException e) {
+			throw new BaseExceptionHandler(e.toString(), ErrorCode.IO_ERROR);
+		}
+
+		return "Success";
 	}
 
 }
