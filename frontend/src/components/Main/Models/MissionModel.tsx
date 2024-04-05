@@ -12,7 +12,7 @@ type GLTFResult = GLTF & {
 }
 
 export function MissionModel(props: JSX.IntrinsicElements['group']) {
-  const { nodes, materials } = useGLTF('./models/mission.glb') as GLTFResult
+  const { nodes, materials } = useGLTF('/models/mission.glb') as GLTFResult
   return (
     <group {...props} dispose={null}>
       <mesh
@@ -27,4 +27,4 @@ export function MissionModel(props: JSX.IntrinsicElements['group']) {
   )
 }
 
-useGLTF.preload('./models/mission.glb')
+useGLTF.preload('/models/mission.glb')

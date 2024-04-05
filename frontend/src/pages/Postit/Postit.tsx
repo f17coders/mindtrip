@@ -20,14 +20,14 @@ export interface postitType {
   likeCount: number;
   reportCount: number;
   village:
-    | "apple"
-    | "orange"
-    | "pineapple"
-    | "watermelon"
-    | "grape"
-    | "peach"
-    | "blueberry"
-    | "kakao";
+  | "apple"
+  | "orange"
+  | "pineapple"
+  | "watermelon"
+  | "grape"
+  | "peach"
+  | "blueberry"
+  | "kakao";
 }
 
 const PostitPage: React.FC = () => {
@@ -170,25 +170,8 @@ const PostitPage: React.FC = () => {
         <h1 className="text-xl font-bold mt-10 w-4/5">{topic}</h1>
       </div>
       <div>
-        <div className="p-2 w-4/5 mx-auto flex justify-end">
-          <Button
-            className= {`${villageTextColor[member.villageName]} mx-4`}
-            variant={sortBy === `like` ? `solid` : `ghost`}
-            onClick={() => setSortBy("like")}
-          >
-            좋아요순
-          </Button>
-          <Button
-            className= {`${villageTextColor[member.villageName]}`}
-            variant={sortBy === `date` ? `solid` : `ghost`}
-            onClick={() => setSortBy("date")}
-          >
-            최신순
-          </Button>
-        </div>
-
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8 w-4/5 mx-auto">
-          <div>
+        <div className="bg-white rounded-lg shadow-md p-6 mb-8 w-5/6 md:w-4/5 mx-auto">
+          <div className="flex mx-3">
             <select
               value={selectedFilter}
               onChange={(e) => setSelectedFilter(e.target.value)}
@@ -202,6 +185,22 @@ const PostitPage: React.FC = () => {
               <option value="blueberry">블루베리</option>
               <option value="kakao">카카오</option>
             </select>
+            <div className="p-2 w-4/5 mx-auto flex justify-end">
+              <Button
+                className={`${villageTextColor[member.villageName]} mx-1`}
+                variant={sortBy === `like` ? `solid` : `ghost`}
+                onClick={() => setSortBy("like")}
+              >
+                좋아요순
+              </Button>
+              <Button
+                className={`${villageTextColor[member.villageName]}`}
+                variant={sortBy === `date` ? `solid` : `ghost`}
+                onClick={() => setSortBy("date")}
+              >
+                최신순
+              </Button>
+            </div>
           </div>
           <div className="flex justify-center items-center flex-wrap list-none">
             <div className="m-2">
