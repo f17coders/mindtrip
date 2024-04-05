@@ -44,7 +44,7 @@ type GLTFResult = GLTF & {
 }
 
 export function BaseModel(props: JSX.IntrinsicElements['group']) {
-  const { nodes, materials } = useGLTF('./models/base.glb') as GLTFResult
+  const { nodes, materials } = useGLTF('/models/base.glb') as GLTFResult
   return (
     <group {...props} dispose={null}>
       <group
@@ -158,4 +158,4 @@ export function BaseModel(props: JSX.IntrinsicElements['group']) {
   )
 }
 
-useGLTF.preload('./models/base.glb')
+useGLTF.preload('/models/base.glb')

@@ -17,7 +17,7 @@ type GLTFResult = GLTF & {
 }
 
 export function PostitModel(props: JSX.IntrinsicElements['group']) {
-  const { nodes, materials } = useGLTF('./models/postit.glb') as GLTFResult
+  const { nodes, materials } = useGLTF('/models/postit.glb') as GLTFResult
   return (
     <group {...props} dispose={null}>
       <group
@@ -47,4 +47,4 @@ export function PostitModel(props: JSX.IntrinsicElements['group']) {
   )
 }
 
-useGLTF.preload('./models/postit.glb')
+useGLTF.preload('/models/postit.glb')

@@ -12,7 +12,7 @@ type GLTFResult = GLTF & {
 }
 
 export function ConsultModel(props: JSX.IntrinsicElements['group']) {
-  const { nodes, materials } = useGLTF('./models/consult.glb') as GLTFResult
+  const { nodes, materials } = useGLTF('/models/consult.glb') as GLTFResult
   return (
     <group {...props} dispose={null}>
       <mesh
@@ -28,4 +28,4 @@ export function ConsultModel(props: JSX.IntrinsicElements['group']) {
   )
 }
 
-useGLTF.preload('./models/consult.glb')
+useGLTF.preload('/models/consult.glb')
