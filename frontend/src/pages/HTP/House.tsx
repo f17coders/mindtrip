@@ -140,12 +140,15 @@ function HouseSurvey({ goNext, survey, isLast }: propsType) {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   let house = useSelector((state: RootState) => state.htpAnswer.house)
+  const [selected, setSelected] = useState<number|null>(null)
 
   const handleClick = function (questionId: number, answerId: number) {
     if (house === null) {
       dispatch(saveHouseAnswer([{ question_id: questionId, choice_id: answerId }]))
+      setSelected(null)
     } else {
       dispatch(saveHouseAnswer([...house, { question_id: questionId, choice_id: answerId }]))
+      setSelected(null)
     }
 
     if (isLast) {
@@ -164,7 +167,9 @@ function HouseSurvey({ goNext, survey, isLast }: propsType) {
             <Button
               key={idx}
               variant="bordered"
-              className='w-[90vw] lg:w-3/5 m-3 h-[10vh] px-3 text-md bg-white shadow'
+              className='w-[90vw] lg:w-3/5 m-3 h-[10vh] px-3 text-md shadow'
+              style={{backgroundColor:`${selected === idx ? 'rgb(125 211 252)' : 'white'}`}}
+              onPressStart={() => setSelected(idx)}
               onClick={() => { handleClick(survey.question_id, choice.choice_id) }}
             >
               {choice.content}

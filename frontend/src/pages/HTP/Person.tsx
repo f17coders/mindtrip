@@ -168,6 +168,9 @@ function PersonSurvey({ goNext, survey, isLast }: propsType) {
     setIsLoading(false)
   }
 
+  const [selected, setSelected] = useState<number|null>(null)
+
+  
   const handleClick = async (questionId:number, answerId:number) => {
     if (person === null) {
       dispatch(savePersonAnswer([{question_id: questionId, choice_id: answerId}]))
@@ -196,6 +199,8 @@ function PersonSurvey({ goNext, survey, isLast }: propsType) {
               key={idx}
               variant="bordered"
               className='w-[90vw] lg:w-3/5 m-3 h-[10vh] px-3 text-md bg-white shadow'
+              style={{backgroundColor:`${selected === idx ? 'rgb(125 211 252)' : 'white'}`}}
+              onPressStart={() => setSelected(idx)}
               onClick={() => {handleClick(survey.question_id, choice.choice_id)}}
             >
               {choice.content}

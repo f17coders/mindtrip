@@ -140,6 +140,7 @@ function TreeSurvey({ goNext, survey, isLast }: propsType) {
   const dispatch = useDispatch()
 
   let tree = useSelector((state: RootState) => state.htpAnswer.tree)
+  const [selected, setSelected] = useState<number|null>(null)
 
   const handleClick = function (questionId: number, answerId: number) {
     if (tree === null) {
@@ -165,6 +166,8 @@ function TreeSurvey({ goNext, survey, isLast }: propsType) {
               key={idx}
               variant="bordered"
               className='w-[90vw] lg:w-3/5 m-3 h-[10vh] px-3 text-md bg-white shadow'
+              style={{backgroundColor:`${selected === idx ? 'rgb(125 211 252)' : 'white'}`}}
+              onPressStart={() => setSelected(idx)}
               onClick={() => { handleClick(survey.question_id, choice.choice_id) }}
             >
               {choice.content}
