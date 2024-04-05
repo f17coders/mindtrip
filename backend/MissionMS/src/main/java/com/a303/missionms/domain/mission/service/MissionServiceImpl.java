@@ -8,6 +8,8 @@ import com.a303.missionms.domain.mission.dto.response.MissionListRes;
 import com.a303.missionms.domain.mission.repository.MissionRepository;
 import com.a303.missionms.global.client.MemberClient;
 import com.a303.missionms.global.exception.BaseExceptionHandler;
+import com.a303.missionms.global.exception.code.ErrorCode;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.transaction.Transactional;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -63,5 +65,24 @@ public class MissionServiceImpl implements MissionService {
 		return MissionListRes.builder()
 			.categoryMissionResList(categoryMissionResList)
 			.build();
+	}
+
+	@Override
+	@CircuitBreaker(name = "customCircuitBreaker", fallbackMethod = "callFallback")
+	public void welcome() throws BaseExceptionHandler {
+		long before = System.currentTimeMillis();
+		try {
+			Thread.sleep(5000L);
+		} catch (InterruptedException e) {
+			throw new BaseExceptionHandler(ErrorCode.BAD_REQUEST_ERROR);
+		}
+		long after = System.currentTimeMillis();
+		log.info("[MissionService] call => {}ms", after - before);
+
+	}
+
+	public String callFallback(Exception e) {
+		log.error("[MissionService] callFallback");
+		return "fallback";
 	}
 }

@@ -16,6 +16,7 @@ import java.util.Map.Entry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.retry.annotation.CircuitBreaker;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,6 +38,14 @@ public class MissionController {
 	private final MissionService missionService;
 	private final DailyMissionService dailyMissionService;
 	private final MissionLogService missionLogService;
+
+	@GetMapping("/v0/welcome")
+	public ResponseEntity<BaseResponse<String>> welcome() {
+
+		missionService.welcome();
+
+		return BaseResponse.success(SuccessCode.SELECT_SUCCESS, "good!!!");
+	}
 
 	//    @Operation(summary = "미션리스트조회")
 	@GetMapping("/v0")

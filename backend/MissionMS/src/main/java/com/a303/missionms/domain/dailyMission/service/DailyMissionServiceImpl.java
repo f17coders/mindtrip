@@ -35,6 +35,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.retry.annotation.CircuitBreaker;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -56,8 +57,10 @@ public class DailyMissionServiceImpl implements DailyMissionService {
 	private final NotificationClient notificationClient;
 
 
+
 	// TODO missionId가 바뀌지는 않지만 만약 없는 미션아이디일 경우의 예외처리도 필요하다.
 	@Override
+	@CircuitBreaker
 	public List<MyTableMissionRes> putMyTableMissions(int memberId,
 		HashMap<Integer, MyTableMissionDTO> myTableMissionDTOMap)
 		throws BaseExceptionHandler, IOException {
