@@ -88,17 +88,11 @@ function MyBtn({village}: proptype) {
     } else {
       Swal.fire({
         html:`
-         <p>로그인이나 회원가입을 통해<br/>마을에 들어갈 수 있어요.</p>
+         <p>회원가입을 통해<br/>마을에 들어갈 수 있어요.</p>
         `,
-        showCancelButton: true,
-        confirmButtonText: '로그인하기',
-        cancelButtonText: '회원가입하기'
-      }).then((result)=>{
-        if (result.isConfirmed) {
-          navigate('/login')
-        } else {
-          navigate('/signup')
-        }
+        confirmButtonText: '회원가입하기'
+      }).then(()=>{
+        navigate('/signup')
       })
     }
   }
