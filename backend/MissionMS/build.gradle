@@ -58,6 +58,11 @@ dependencies {
     // https://mvnrepository.com/artifact/net.logstash.logback/logstash-logback-encoder
     implementation 'net.logstash.logback:logstash-logback-encoder:7.4'
     implementation 'io.github.openfeign:feign-micrometer'
+    // resillience4j
+    implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j'
+//    implementation 'io.github.resilience4j:resillience4j-spring-boot3'
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+    implementation 'io.github.resilience4j:resilience4j-reactor'
 
 
 // JPA
