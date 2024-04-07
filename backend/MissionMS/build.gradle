@@ -43,7 +43,7 @@ dependencies {
 
 // spring cloud
     // eureka client
-//    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
     // feign client
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
     // actuator
@@ -58,6 +58,7 @@ dependencies {
     // https://mvnrepository.com/artifact/net.logstash.logback/logstash-logback-encoder
     implementation 'net.logstash.logback:logstash-logback-encoder:7.4'
     implementation 'io.github.openfeign:feign-micrometer'
+
 
 
 // JPA
