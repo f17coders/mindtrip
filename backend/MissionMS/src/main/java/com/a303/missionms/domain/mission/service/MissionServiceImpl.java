@@ -65,4 +65,5 @@ public class MissionServiceImpl implements MissionService {
 			.categoryMissionResList(categoryMissionResList)
 			.build();
 	}
+
 }
