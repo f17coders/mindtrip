@@ -28,6 +28,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -184,8 +185,9 @@ public class NotificationServiceImpl implements NotificationService {
 					false);
 
 			// 발송할 토큰이 있는 경우에만 전송
-			for (String token : memberToken.getTokens()
-			) {
+			Iterator<String> memberTokenIterator = memberToken.getTokens().iterator();
+			while (memberTokenIterator.hasNext()) {
+				String token = memberTokenIterator.next();
 				Message message1 = Message.builder()
 						.setToken(token)
 						.putData("type", "NOTIFICATION")
@@ -209,7 +211,9 @@ public class NotificationServiceImpl implements NotificationService {
 					memberToken.getTokens().remove(token);
 //					throw new BaseExceptionHandler(e.toString(), ErrorCode.FCM_IO_EXCEPTION);
 				}
+
 			}
+
 		}
 	}
 
@@ -225,7 +229,7 @@ public class NotificationServiceImpl implements NotificationService {
 		);
 		notificationRepository.save(notification);
 
-		// 실시간 알람
+
 		// 유저의 모든 토큰을 가져온다.
 		MemberToken memberToken = memberTokenRepository.findByMemberId(memberId);
 		if (memberToken == null) return;
@@ -234,8 +238,9 @@ public class NotificationServiceImpl implements NotificationService {
 				false);
 
 		// 발송할 토큰이 있는 경우에만 전송
-		for (String token : memberToken.getTokens()
-		) {
+		Iterator<String> memberTokenIterator = memberToken.getTokens().iterator();
+		while (memberTokenIterator.hasNext()) {
+			String token = memberTokenIterator.next();
 			Message message1 = Message.builder()
 					.setToken(token)
 					.putData("type", "NOTIFICATION")
@@ -255,10 +260,14 @@ public class NotificationServiceImpl implements NotificationService {
 				firebaseMessaging.send(message1);
 				firebaseMessaging.send(message2);
 			} catch (FirebaseMessagingException e) {
+
 				memberToken.getTokens().remove(token);
-//				throw new BaseExceptionHandler(e.toString(), ErrorCode.FCM_IO_EXCEPTION);
+//					throw new BaseExceptionHandler(e.toString(), ErrorCode.FCM_IO_EXCEPTION);
 			}
+
 		}
+
+
 
 	}
 
@@ -279,7 +288,6 @@ public class NotificationServiceImpl implements NotificationService {
 
 		notificationRepository.save(notification);
 
-		// 실시간 알람
 		// 유저의 모든 토큰을 가져온다.
 		MemberToken memberToken = memberTokenRepository.findByMemberId(memberId);
 		if (memberToken == null) return;
@@ -288,8 +296,9 @@ public class NotificationServiceImpl implements NotificationService {
 				false);
 
 		// 발송할 토큰이 있는 경우에만 전송
-		for (String token : memberToken.getTokens()
-		) {
+		Iterator<String> memberTokenIterator = memberToken.getTokens().iterator();
+		while (memberTokenIterator.hasNext()) {
+			String token = memberTokenIterator.next();
 			Message message1 = Message.builder()
 					.setToken(token)
 					.putData("type", "NOTIFICATION")
@@ -309,9 +318,11 @@ public class NotificationServiceImpl implements NotificationService {
 				firebaseMessaging.send(message1);
 				firebaseMessaging.send(message2);
 			} catch (FirebaseMessagingException e) {
+
 				memberToken.getTokens().remove(token);
-//				throw new BaseExceptionHandler(e.toString(), ErrorCode.FCM_IO_EXCEPTION);
+//					throw new BaseExceptionHandler(e.toString(), ErrorCode.FCM_IO_EXCEPTION);
 			}
+
 		}
 
 	}
@@ -328,8 +339,9 @@ public class NotificationServiceImpl implements NotificationService {
 		Long notificationCnt = notificationRepository.countByMemberIdAndAndIsWritten(memberId,
 				false);
 
-		for (String token : memberToken.getTokens()
-		) {
+		Iterator<String> memberTokenIterator = memberToken.getTokens().iterator();
+		while (memberTokenIterator.hasNext()) {
+			String token = memberTokenIterator.next();
 			Message message = Message.builder()
 					.setToken(token)
 					.putData("type", "COUNT")
@@ -343,7 +355,9 @@ public class NotificationServiceImpl implements NotificationService {
 				memberToken.getTokens().remove(token);
 //				throw new BaseExceptionHandler(e.toString(), ErrorCode.FCM_IO_EXCEPTION);
 			}
+
 		}
+
 	}
 
 	@Override
