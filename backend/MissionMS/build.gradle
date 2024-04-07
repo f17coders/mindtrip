@@ -43,7 +43,7 @@ dependencies {
 
 // spring cloud
     // eureka client
-//    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
     // feign client
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
     // actuator
