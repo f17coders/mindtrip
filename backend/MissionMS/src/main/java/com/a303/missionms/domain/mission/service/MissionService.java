@@ -10,6 +10,5 @@ public interface MissionService {
 
 	MissionListRes getMissionList() throws BaseExceptionHandler, IOException;
 
-	void welcome() throws BaseExceptionHandler;
 
 }

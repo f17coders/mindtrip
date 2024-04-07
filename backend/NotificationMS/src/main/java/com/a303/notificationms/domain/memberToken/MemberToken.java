@@ -2,6 +2,7 @@ package com.a303.notificationms.domain.memberToken;
 
 import com.a303.notificationms.domain.MongoBaseEntity;
 import java.util.List;
+import java.util.Set;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,9 +25,9 @@ public class MemberToken extends MongoBaseEntity {
 	private int memberId;
 
 	@Field(name = "tokens")
-	private List<String> tokens;
+	private Set<String> tokens;
 
-	public static MemberToken createMemberToken(int memberId, List<String> tokens) {
+	public static MemberToken createMemberToken(int memberId, Set<String> tokens) {
 		MemberToken memberToken = new MemberToken();
 
 		memberToken.setMemberId(memberId);

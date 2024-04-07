@@ -10,8 +10,8 @@ import org.springframework.data.repository.query.Param;
 
 public interface NotificationRepository extends JpaRepository<Notification, Integer> {
 
-	@Query("select n from Notification n where n.memberId=:memberId order by n.notificationId desc")
-	List<Notification> findByMemberId(@Param("memberId") int memberId, Pageable pageable);
+	@Query("select n from Notification n where n.memberId=:memberId and n.isWritten=false order by n.notificationId desc")
+	List<Notification> findByMemberId(@Param("memberId") int memberId);
 
 	Long countByMemberIdAndAndIsWritten(int memberId, boolean isWritten);
 

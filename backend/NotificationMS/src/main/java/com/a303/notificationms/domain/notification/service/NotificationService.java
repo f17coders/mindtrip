@@ -21,7 +21,9 @@ public interface NotificationService {
 
 	void makeNotification(int memberId);
 
-	String sendNotificationByToken(FCMNotificationReq reqDto);
+	void sendCountNotification(int memberId);
+
+	void saveToken(int memberId, String token);
 
 
 

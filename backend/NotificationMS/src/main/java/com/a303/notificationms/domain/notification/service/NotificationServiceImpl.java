@@ -3,6 +3,8 @@ package com.a303.notificationms.domain.notification.service;
 import com.a303.notificationms.domain.Emitter.repository.EmitterRepository;
 import com.a303.notificationms.domain.domain.Domain;
 import com.a303.notificationms.domain.domain.repository.DomainRepository;
+import com.a303.notificationms.domain.memberToken.MemberToken;
+import com.a303.notificationms.domain.memberToken.repository.MemberTokenRepository;
 import com.a303.notificationms.domain.notification.Notification;
 import com.a303.notificationms.domain.notification.dto.NotificationEventDto;
 import com.a303.notificationms.domain.notification.dto.request.FCMNotificationReq;
@@ -26,11 +28,14 @@ import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.common.protocol.types.Field.Str;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -51,6 +56,7 @@ public class NotificationServiceImpl implements NotificationService {
 	private final NotificationRepository notificationRepository;
 	private final DomainRepository domainRepository;
 	private final MemberClient memberClient;
+	private final MemberTokenRepository memberTokenRepository;
 
 	private final NotificationBulkRepository notificationBulkRepository;
 
@@ -113,9 +119,11 @@ public class NotificationServiceImpl implements NotificationService {
 	@Override
 	public List<NotificationMessageRes> findNotificationsByMemberId(int memberId) {
 
-		Pageable pageable = PageRequest.of(0, 10);
-		List<Notification> notifications = notificationRepository.findByMemberId(memberId,
-			pageable);
+//		Pageable pageable = PageRequest.of(0, 10);
+//		List<Notification> notifications = notificationRepository.findByMemberId(memberId,
+//			pageable);
+
+		List<Notification> notifications = notificationRepository.findByMemberId(memberId);
 
 		List<NotificationMessageRes> notificationMessageResList = new ArrayList<>();
 		for (Notification noti : notifications
@@ -220,22 +228,42 @@ public class NotificationServiceImpl implements NotificationService {
 		notificationRepository.saveAll(notifications);
 
 		// 실시간 알람
-//		Map<Integer, SseEmitter> sseEmitters = emitterRepository.findAll();
-//		for (Entry<Integer, SseEmitter> entry : sseEmitters.entrySet()) {
-//			try {
-//				SseEmitter sseEmitterReceiver = entry.getValue();
-//				NotificationMessageRes messageRes = NotificationMessageRes.builder()
-//					.type("NOTIFICATION")
-//					.message(now + " 날짜의 미션이 추가되었습니다. :)")
-//					.isWritten(false)
-//					.localDateTime(LocalDateTime.now())
-//					.build();
-//				sseEmitterReceiver.send(SseEmitter.event().name("message").data(messageRes));
-//
-//			} catch (Exception e) {
-//				emitterRepository.removeByMemberId(entry.getKey());
-//			}
-//		}
+
+		for (int memberId : memberIdList
+		) {
+			// 유저의 모든 토큰을 가져온다.
+			MemberToken memberToken = memberTokenRepository.findByMemberId(memberId);
+			if (memberToken == null) return;
+
+			Long notificationCnt = notificationRepository.countByMemberIdAndAndIsWritten(memberId,
+					false);
+
+			// 발송할 토큰이 있는 경우에만 전송
+			for (String token : memberToken.getTokens()
+			) {
+				Message message1 = Message.builder()
+						.setToken(token)
+						.putData("type", "NOTIFICATION")
+						.putData("message", now + " 날짜의 미션이 추가되었습니다. :)")
+						.putData("isWritten", String.valueOf(false))
+						.putData("localDateTime", LocalDateTime.now().toString())
+						.build();
+
+				Message message2 = Message.builder()
+						.setToken(token)
+						.putData("type", "COUNT")
+						.putData("count", notificationCnt.toString())
+						.putData("localDateTime", LocalDateTime.now().toString())
+						.build();
+
+				try {
+					firebaseMessaging.send(message1);
+					firebaseMessaging.send(message2);
+				} catch (FirebaseMessagingException e) {
+//					throw new BaseExceptionHandler(e.toString(), ErrorCode.FCM_IO_EXCEPTION);
+				}
+			}
+		}
 	}
 
 	@Override
@@ -250,25 +278,46 @@ public class NotificationServiceImpl implements NotificationService {
 		);
 		notificationRepository.save(notification);
 
-//		 실시간 알람
-//		try {
-//			SseEmitter sseEmitter = emitterRepository.findByMemberId(memberId);
-//			NotificationMessageRes messageRes = NotificationMessageRes.builder()
-//				.type("NOTIFICATION")
-//				.message(notification.getContent())
-//				.isWritten(notification.isWritten())
-//				.localDateTime(notification.getCreateTime())
-//				.build();
-//			sseEmitter.send(SseEmitter.event().name("message").data(messageRes));
-//		} catch (Exception e) {
-//			emitterRepository.removeByMemberId(memberId);
-//		}
+		// 실시간 알람
+		// 유저의 모든 토큰을 가져온다.
+		MemberToken memberToken = memberTokenRepository.findByMemberId(memberId);
+		if (memberToken == null) return;
+
+		Long notificationCnt = notificationRepository.countByMemberIdAndAndIsWritten(memberId,
+				false);
+
+		// 발송할 토큰이 있는 경우에만 전송
+		for (String token : memberToken.getTokens()
+		) {
+			Message message1 = Message.builder()
+					.setToken(token)
+					.putData("type", "NOTIFICATION")
+					.putData("message", notification.getContent())
+					.putData("isWritten", String.valueOf(notification.isWritten()))
+					.putData("localDateTime", LocalDateTime.now().toString())
+					.build();
+
+			Message message2 = Message.builder()
+					.setToken(token)
+					.putData("type", "COUNT")
+					.putData("count", notificationCnt.toString())
+					.putData("localDateTime", LocalDateTime.now().toString())
+					.build();
+
+			try {
+				firebaseMessaging.send(message1);
+				firebaseMessaging.send(message2);
+			} catch (FirebaseMessagingException e) {
+				throw new BaseExceptionHandler(e.toString(), ErrorCode.FCM_IO_EXCEPTION);
+			}
+		}
 
 	}
 
 
 	@Override
 	public void makeNotification(int memberId) {
+
 		// Notification 저장
 		Domain domain = domainRepository.findByName("임시");
 		LocalDate now = LocalDate.now();
@@ -283,60 +332,98 @@ public class NotificationServiceImpl implements NotificationService {
 		notificationRepository.save(notification);
 
 		// 실시간 알람
-//		try {
-//			SseEmitter sseEmitter = emitterRepository.findByMemberId(memberId);
-//			NotificationMessageRes messageRes = NotificationMessageRes.builder()
-//				.type("NOTIFICATION")
-//				.message(notification.getContent())
-//				.isWritten(notification.isWritten())
-//				.localDateTime(notification.getCreateTime())
-//				.build();
-//			sseEmitter.send(SseEmitter.event().name("message").data(messageRes));
-//		} catch (Exception e) {
-//			emitterRepository.removeByMemberId(memberId);
-//		}
+		// 유저의 모든 토큰을 가져온다.
+		MemberToken memberToken = memberTokenRepository.findByMemberId(memberId);
+		if (memberToken == null) return;
+
+		Long notificationCnt = notificationRepository.countByMemberIdAndAndIsWritten(memberId,
+				false);
+
+		// 발송할 토큰이 있는 경우에만 전송
+		for (String token : memberToken.getTokens()
+		) {
+			Message message1 = Message.builder()
+					.setToken(token)
+					.putData("type", "NOTIFICATION")
+					.putData("message", notification.getContent())
+					.putData("isWritten", String.valueOf(notification.isWritten()))
+					.putData("localDateTime", LocalDateTime.now().toString())
+					.build();
+
+			Message message2 = Message.builder()
+					.setToken(token)
+					.putData("type", "COUNT")
+					.putData("count", notificationCnt.toString())
+					.putData("localDateTime", LocalDateTime.now().toString())
+					.build();
+
+			try {
+				firebaseMessaging.send(message1);
+				firebaseMessaging.send(message2);
+			} catch (FirebaseMessagingException e) {
+				throw new BaseExceptionHandler(e.toString(), ErrorCode.FCM_IO_EXCEPTION);
+			}
+		}
 
 	}
 
-	public String getAccessToken() {
+	@Override
+	public void sendCountNotification(int memberId) {
 
-		ClassPathResource resource = new ClassPathResource("serviceAccountKey.json");
+		// 유저의 모든 토큰을 가져온다.
+		MemberToken memberToken = memberTokenRepository.findByMemberId(memberId);
+		if (memberToken == null) return;
 
-		try {
+		// 발송할 토큰이 있는 경우에만 전송
+		// memberId로 저장된 미개봉 notification 개수 조회
+		Long notificationCnt = notificationRepository.countByMemberIdAndAndIsWritten(memberId,
+				false);
 
-			final GoogleCredentials googleCredentials = GoogleCredentials
-				.fromStream(resource.getInputStream())
-				.createScoped(List.of("https://www.googleapis.com/auth/cloud-platform"));
+		for (String token : memberToken.getTokens()
+		) {
+			Message message = Message.builder()
+					.setToken(token)
+					.putData("type", "COUNT")
+					.putData("count", notificationCnt.toString())
+					.putData("localDateTime", LocalDateTime.now().toString())
+					.build();
 
-			googleCredentials.refreshIfExpired();
-
-			return googleCredentials.getAccessToken().getTokenValue();
-		} catch (IOException e) {
-			throw new BaseExceptionHandler(ErrorCode.GOOGLE_REQUEST_TOKEN_ERROR);
+			try {
+				firebaseMessaging.send(message);
+			} catch (FirebaseMessagingException e) {
+				throw new BaseExceptionHandler(e.toString(), ErrorCode.FCM_IO_EXCEPTION);
+			}
 		}
 	}
 
 	@Override
-	public String sendNotificationByToken(FCMNotificationReq reqDto) {
+	public void saveToken(int memberId, String token) {
 
-		com.google.firebase.messaging.Notification notification = com.google.firebase.messaging.Notification
-			.builder()
-			.setTitle(reqDto.title())
-			.setBody(reqDto.body())
-			.build();
+//		널 -> 새로 넣어 / 널아님, 있음 -> 종료 / 널아님, 없음 -> 추가한다.
 
-		Message message = Message.builder()
-			.setToken("fdXEAMJPrOfCLU_bLAF5_8:APA91bFzi0TX1cc2dRQM4k02q4xK82cQrFKObMw3i9Dg-EETutGEmYHITv190sIum0znQOBZPVLzO418yRIPMfR913gxcAL5LImu1SLE7L9l-jKP95vFiOTMDPSCNO8kLUF2-cYSHIw1")
-			.setNotification(notification)
-			.build();
-
-		try {
-			firebaseMessaging.send(message);
-		} catch (FirebaseMessagingException e) {
-			throw new BaseExceptionHandler(e.toString(), ErrorCode.IO_ERROR);
+		// 멤버id로 일단 가져와
+		MemberToken memberToken = memberTokenRepository.findByMemberId(memberId);
+		if (memberToken != null) {
+			Set<String> memberTokenSet = memberToken.getTokens();
+			if(!memberTokenSet.contains(token)) {
+				// 없음 -> 추가한다.
+				memberTokenSet.add(token);
+				memberToken.setTokens(memberTokenSet);
+				memberTokenRepository.save(memberToken);
+			}
+			// 이미 존재하는 토큰 -> 에러 반환
+			else {
+				throw new BaseExceptionHandler(ErrorCode.GOOGLE_TOKEN_ALREADY_EXISTS);
+			}
+		}
+		else {
+			// 아예 새로 MemberToken 만들어야함
+			Set<String> tokens = new HashSet<>();
+			tokens.add(token);
+			MemberToken tempMemberToken = MemberToken.createMemberToken(memberId, tokens);
+			memberTokenRepository.save(tempMemberToken);
 		}
 
-		return "Success";
 	}
 
 }
