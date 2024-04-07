@@ -21,6 +21,7 @@ function MypageHTP() {
     const tempresult = await loadRecentResult(accessToken)
     if (typeof tempresult === 'string') {
       setResult1(tempresult)
+      console.log(tempresult)
     }
   }
 
@@ -29,6 +30,7 @@ function MypageHTP() {
     const tempResult = await loadPictureResult(accessToken)
     if (tempResult) {
       setResult2(tempResult)
+      console.log(tempResult)
     }
   }
   

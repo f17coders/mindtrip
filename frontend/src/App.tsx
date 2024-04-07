@@ -45,7 +45,7 @@ function App() {
   initializeApp(firebaseConfig)
   const messaging = getMessaging()
 
-  getToken(messaging, {vapidKey: 'BBed0IMXnHFY78t_dUpP-utLJbZiIR9LOZ-0EgxvWvQXhYMZ1wzFcorxwFUDLxpPEo-KhDTKVlqbLpSYIO67sRg'}). then((currentToken) => {
+  getToken(messaging, {vapidKey: import.meta.env.VITE_APP_VAPID_KEY}). then((currentToken) => {
     if (currentToken) {
       if (notificationToken === '') {
         dispatch(saveNotificationToken(currentToken))

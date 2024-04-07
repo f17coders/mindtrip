@@ -10,7 +10,8 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { useDispatch } from "react-redux";
 import { deleteUserInfo, deleteToken } from "../store/memberSlice";
-import { getMessaging, onMessage } from 'firebase/messaging';
+import { getMessaging, onMessage, getToken } from 'firebase/messaging';
+import { saveNotificationToken } from "../store/notificationSlice";
 
 type notificationType = {
   message: string
@@ -22,20 +23,34 @@ function Header() {
 
   let accessToken = useSelector((state:RootState) => state.accessToken.value)
   let member = useSelector((state:RootState) => state.member)
+  let notificationToken = useSelector((state:RootState) => state.notificationToken.value)
 
   const [openMessage, setOpenMessage] = useState<Boolean>(false)
   const [alarmCount, setAlarmCount] = useState<number>(0)
   const [notifications, setnotifications] = useState<notificationType[]|null>(null)
   const [showHomeBtn, setShowHomeBtn] = useState<boolean>(true)
 
+  // 메세지 갯수
   const getMessageCount = function() {
     axios.get('https://mindtrip.site/api/notifications/v1/notification-count', {
       headers: {
         Authorization: accessToken
       }
-    }).then((res) => console.log(res))
+    }).then((res) => console.log('1번',res))
     .catch((err) => console.log(err))
   }
+
+  const messaging = getMessaging()
+
+  getToken(messaging, {vapidKey: import.meta.env.VITE_APP_VAPID_KEY}). then((currentToken) => {
+    if (currentToken) {
+      // 토큰이 업데이트 되었다면
+      if (notificationToken != currentToken) {
+        dispatch(saveNotificationToken(currentToken))
+      }
+    } 
+  }).catch((err) => console.log(err))
+
 
   useEffect(() => {
     // 처음엔 메세지창 닫아주고
@@ -53,9 +68,8 @@ function Header() {
   }, [])
 
 
-  const messaging = getMessaging()
   onMessage(messaging, (payload) => {
-    console.log(payload)
+    console.log('2번', payload)
     const temp = payload.data?.count
     if (temp) {
       setAlarmCount(Number(temp))

@@ -20,8 +20,8 @@ messaging.onBackgroundMessage((payload) => {
     '[firebase-messaging-sw.js] Received background message ',
     payload
   )
-  
-  const notificationMessage = payload.data.message
-
-  self.registration.showNotification(notificationMessage);
+  if (payload.data.message) {
+    const notificationMessage = payload.data.message
+    self.registration.showNotification(notificationMessage);
+  }
 });
