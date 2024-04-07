@@ -236,7 +236,7 @@ function Chatting() {
       </div>
 
       {/* 채팅방 */}
-      <div ref={scrollContainerRef} className="h-[43vh] w-full p-1 overflow-scroll">
+      <div ref={scrollContainerRef} className="h-[42vh] w-full p-1 overflow-scroll">
         {
           recvList.map((msg, index) => (
             <div key={index}>

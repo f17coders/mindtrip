@@ -88,18 +88,23 @@ function Consult() {
           radius='full'
           variant={chat.isOpen ? 'solid' : 'flat'}
           onClick={() => handleOpen()}
-          className={`${villageBackgroundColor[member.villageName]} ${villageTextColor[member.villageName]} fixed bottom-[3%] right-[4%] shadow-xl border-1 border-zinc-400 shadow`}
+          className={`${villageBackgroundColor[member.villageName]} ${villageTextColor[member.villageName]} fixed bottom-[3%] right-[4%] shadow-xl border-1 border-zinc-400 shadow z-20`}
         >
           {chat.isOpen ? <XIcon /> : <ChatIcon />}
         </Button>
       </Tooltip>
+      <div style={{
+          display: chat.isOpen ? 'block' : 'none'
+        }} 
+        className='w-full h-full absolute bg-gray-500 top-0 left-0 opacity-50 z-10'
+      />
       {/* 채팅창 */}
       <Card
         style={{
           display: chat.isOpen ? 'block' : 'none',
         }}
         className='fixed top-[20%] right-[2.5%] w-[80%] h-[70%]
-          sm:top-[20%] w-[95%] h-[65%] p-5 z-10'
+          sm:top-[20%] w-[95%] h-[65%] p-5 z-20'
       >
         <Chat />
       </Card>

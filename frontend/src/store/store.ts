@@ -5,7 +5,7 @@ import { htpAnswer, htpSurveys } from './htpSlice';
 import {memberSlice, accessToken} from './memberSlice';
 import { persistStore, persistReducer } from 'redux-persist';
 import storageSession from 'redux-persist/lib/storage/session';
-
+import { notificationToken } from './notificationSlice';
 
 
 // storage 저장용
@@ -13,7 +13,7 @@ const persistConfig = {
   key: 'root',
   storage: storageSession,
   // 로컬에 저장하고 싶은 애만 빼주기
-  whitelist: ['chat', 'member', 'accessToken', 'consultSlice', 'htpAnswer', 'htpSurveys']
+  whitelist: ['chat', 'member', 'accessToken', 'consultSlice', 'htpAnswer', 'htpSurveys', 'notificationToken']
 }
 
 const persistedReducer = persistReducer(
@@ -24,7 +24,8 @@ const persistedReducer = persistReducer(
     member: memberSlice.reducer,
     accessToken: accessToken.reducer,
     htpAnswer: htpAnswer.reducer,
-    htpSurveys: htpSurveys.reducer
+    htpSurveys: htpSurveys.reducer,
+    notificationToken: notificationToken.reducer
   })
 )
 

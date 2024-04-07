@@ -23,6 +23,8 @@ function Signup () {
   // 임시토큰
   let tempToken = useSelector((state:RootState) => state.accessToken.value)
   let tempUserVillage = useSelector((state:RootState) => state.member.villageName)
+  // 알람 토큰
+  let notificationToken = useSelector((state:RootState) => state.notificationToken.value)
 
   // 아이디
   const [id, setId] = useState<string>('')
@@ -226,6 +228,13 @@ function Signup () {
     if (tempInfo != null) {
       dispatch(saveToken(tempInfo.token))
       saveUser(tempInfo.memberId)
+      axios.post('https://mindtrip.site/api/notifications/v1/save-token', {
+        'token' : notificationToken
+      }, {
+        headers: {
+          Authorization: tempInfo.token
+        }
+      })
       if (tempUserVillage) {
         Swal.fire({
           text: `당신은 ${changeLang(tempUserVillage)}마을에 도착했습니다`

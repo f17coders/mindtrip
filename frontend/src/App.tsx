@@ -19,8 +19,44 @@ import MypageProgress from './pages/Mypage/MypageDetail/MypageProgress';
 import MypageHistory from './pages/Mypage/MypageDetail/MypageHistory';
 import { Routes, Route } from 'react-router-dom'
 import { ProtectedRoute } from './services/protectRoute';
+import { initializeApp } from 'firebase/app';
+import { getMessaging, getToken } from 'firebase/messaging';
+import { saveNotificationToken } from './store/notificationSlice';
+import { useDispatch } from 'react-redux';
+import { RootState } from './store/store';
+import { useSelector } from 'react-redux';
 
 function App() {
+
+  // 앱 시작하면 noti용 토큰을 저장해둠
+  const dispatch = useDispatch()
+  let notificationToken = useSelector((state:RootState) => state.notificationToken.value)
+
+  const firebaseConfig = ({
+    apiKey: import.meta.env.VITE_APP_API_KEY,
+    authDomain: import.meta.env.VITE_APP_AUTH_DOMAIN,
+    projectId: import.meta.env.VITE_APP_PROJECT_ID,
+    storageBucket: import.meta.env.VITE_APP_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.VITE_APP_MESSAGING_SENDER_ID,
+    appId: import.meta.env.VITE_APP_APP_ID,
+    measurementId: import.meta.env.VITE_APP_MEASUREMENT_ID,
+  });
+
+  initializeApp(firebaseConfig)
+  const messaging = getMessaging()
+
+  getToken(messaging, {vapidKey: 'BBed0IMXnHFY78t_dUpP-utLJbZiIR9LOZ-0EgxvWvQXhYMZ1wzFcorxwFUDLxpPEo-KhDTKVlqbLpSYIO67sRg'}). then((currentToken) => {
+    if (currentToken) {
+      if (notificationToken === '') {
+        dispatch(saveNotificationToken(currentToken))
+      }
+      // console.log('토큰임', currentToken)
+    } else {
+      console.log('토큰 못가져옴')
+    }
+  }).catch((err) => console.log(err))
+
+
   return (
     <div className="App select-none">
       <Routes>

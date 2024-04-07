@@ -5,6 +5,9 @@ import { useDispatch } from "react-redux";
 import { saveToken, saveUserInfo } from "../store/memberSlice";
 import { useNavigate } from "react-router-dom";
 import { memberType } from "../types/DataTypes";
+import { useSelector } from "react-redux";
+import { RootState } from "../store/store";
+import axios from "axios";
 
 type memberInfo = {
   memberId: number,
@@ -14,6 +17,8 @@ type memberInfo = {
 function Login() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
+
+  let notificationToken = useSelector((state:RootState) => state.notificationToken.value)
 
   // 비밀번호 보이고 안보이고 제어
   const [isVisible, setIsVisible] = useState(false);
@@ -56,6 +61,13 @@ function Login() {
       if (tempInfo != null) {
         dispatch(saveToken(tempInfo.token))
         saveUser(tempInfo.memberId)
+        axios.post('https://mindtrip.site/api/notifications/v1/save-token', {
+          'token' : notificationToken
+        }, {
+          headers: {
+            Authorization: tempInfo.token
+          }
+        })
         navigate('/main')
       }
     }
