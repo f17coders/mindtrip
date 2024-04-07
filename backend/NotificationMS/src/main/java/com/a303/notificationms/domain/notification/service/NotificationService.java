@@ -1,5 +1,6 @@
 package com.a303.notificationms.domain.notification.service;
 
+import com.a303.notificationms.domain.notification.dto.request.FCMNotificationReq;
 import com.a303.notificationms.domain.notification.dto.response.NotificationMessageRes;
 import java.util.List;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -19,6 +20,10 @@ public interface NotificationService {
 	void makeConsultNotification(String type, int memberId);
 
 	void makeNotification(int memberId);
+
+	void sendCountNotification(int memberId);
+
+	void saveToken(int memberId, String token);
 
 
 

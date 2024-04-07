@@ -70,6 +70,11 @@ public enum ErrorCode {
     // 데일리 미션
     INVALID_REQUEST_TIME_EXCEPTION(403, "B200", "유효한 시간대가 아닙니다."),
 
+    // 토큰 발급 요청 실패
+    GOOGLE_REQUEST_TOKEN_ERROR(500, "G100","구글 토큰 요청 에러"),
+    GOOGLE_TOKEN_ALREADY_EXISTS(500, "G100","해당 토큰은 이미 존재합니다."),
+    FCM_IO_EXCEPTION(500, "G100","firebase에 알림 제공 IO 실패"),
+
 
     // 유저가 존재하지 않음
     NOT_FOUND_USER_EXCEPTION(404, "B200", "존재하지 않는 유저입니다."),
