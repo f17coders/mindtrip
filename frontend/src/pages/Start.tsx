@@ -23,7 +23,6 @@ function Start() {
   }
 
   const getTempToken = async () => {
-    // console.log('테스트')
     dispatch(saveUserInfo(initialMemberState))
     try {
       const res = await axios.get('https://mindtrip.site/api/htp/v0/temp_token')

@@ -29,11 +29,6 @@ function OtherConsult({ consult }: propsType) {
   // 모달창 오픈 제어용
   const { isOpen, onOpen, onOpenChange }: useDisclosureType = useDisclosure();
 
-
-  useEffect(() => {
-    console.log(consult)
-    console.log(member.memberId)
-  }, [])
   // 채팅창 관련 가져오기
   let chat = useSelector((state: RootState) => state.chat)
   const dispatch = useDispatch()

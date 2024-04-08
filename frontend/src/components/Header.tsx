@@ -36,7 +36,7 @@ function Header() {
       headers: {
         Authorization: accessToken
       }
-    }).then((res) => console.log('1번',res))
+    }).then((_res) => console.log('메세지도착'))
     .catch((err) => console.log(err))
   }
 
@@ -69,7 +69,6 @@ function Header() {
 
 
   onMessage(messaging, (payload) => {
-    console.log('2번', payload)
     const temp = payload.data?.count
     if (temp) {
       setAlarmCount(Number(temp))
@@ -88,7 +87,6 @@ function Header() {
         Authorization: accessToken
       }
     }).then((res) => {
-      console.log(res.data)
       setLoading(false)
       setnotifications(res.data.result)
       setAlarmCount(0)

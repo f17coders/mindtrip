@@ -38,10 +38,9 @@ function ConsultOther() {
   
   
   // 선택된 카테고리
-  const [selectedCategory, setSelectedCategory] = useState<categoryType | null>(null)
+  const [_selectedCategory, setSelectedCategory] = useState<categoryType | null>(null)
   const handleCategory = (e: any) => {
     setSelectedCategory(e.target.value)
-    console.log(selectedCategory)
     axios.get(`https://mindtrip.site/api/consults/v1/category/${e.target.value}`,{
       headers: {
         Authorization: accessToken
@@ -58,7 +57,6 @@ function ConsultOther() {
       try {
         let tempOtherConsult: consultType[] = await getConsults(accessToken)
         setOtherConsult(tempOtherConsult)
-        console.log(tempOtherConsult)
       } catch (err) {
         console.log(err)
       }

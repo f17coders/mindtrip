@@ -105,9 +105,6 @@ function TreeDraw({ goSurvey }: propsType1) {
     if (file != null) {
       let formData = new FormData()
       formData.append('file', file)
-      for (const value of formData.values()) {
-        console.log(value);
-      }
       handleFile(formData)
     }
   }, [file])

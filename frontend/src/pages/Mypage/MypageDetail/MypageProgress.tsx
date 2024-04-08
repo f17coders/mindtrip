@@ -11,7 +11,6 @@ function MypageProgress() {
   const [percent, setPercent] = useState(0); // percent 상태 추가
   const [missionData, setMissionData] = useState(null); // 미션 데이터 상태 추가
   const currentDate = new Date();
-  console.log(currentDate)
   const currentYear = currentDate.getFullYear();
   const currentMonth = currentDate.getMonth() + 1;
 

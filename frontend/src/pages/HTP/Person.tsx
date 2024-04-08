@@ -105,9 +105,6 @@ function PersonDraw({ goSurvey }: propsType1) {
     if (file != null) {
       let formData = new FormData()
       formData.append('file', file)
-      for (const value of formData.values()) {
-        console.log(value);
-      }
       handleFile(formData)
     }
   }, [file])
@@ -149,7 +146,7 @@ function PersonSurvey({ goNext, survey, isLast }: propsType) {
   const sendAnswer = async () => {
     setIsLoading(true)
     try {
-      const res = await axios.post('https://mindtrip.site/api/htp/v1/answer', {
+      await axios.post('https://mindtrip.site/api/htp/v1/answer', {
         answer: {
           house: answer.house,
           tree: answer.tree,
@@ -160,7 +157,7 @@ function PersonSurvey({ goNext, survey, isLast }: propsType) {
           Authorization: accessToken
         }
       })
-      console.log(res)
+      // console.log(res)
 
     } catch (err) {
       console.log(err)

@@ -17,10 +17,9 @@ function ConsultShared() {
   const [shared, setShared] = useState<consultType[] | null>(null)
 
   // 선택된 카테고리
-  const [selectedCategory, setSelectedCategory] = useState<categoryType | null>(null)
+  const [_selectedCategory, setSelectedCategory] = useState<categoryType | null>(null)
   const handleCategory = (e: any) => {
     setSelectedCategory(e.target.value)
-    console.log(selectedCategory)
     axios.get(`https://mindtrip.site/api/consults/v1/shared/${e.target.value}`, {
       headers: {
         Authorization: accessToken
@@ -38,7 +37,6 @@ function ConsultShared() {
       try {
         let tempSharedConsult: consultType[] = await getSharedConsult(accessToken)
         setShared(tempSharedConsult)
-        console.log(tempSharedConsult)
       } catch (err) {
         console.log(err)
       }

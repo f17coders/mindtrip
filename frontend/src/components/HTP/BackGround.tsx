@@ -2,6 +2,9 @@ import * as THREE from 'three'
 import { useRef, useEffect } from 'react'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 
+// 초기화면 3D 모델, 여기는 r3f와 lazy loading을 적용하지 않았음
+// 모델이 한개이기도 하고, 초기화면이라 상호작용도 필요없을 것이라는 판단
+
 function Background() {
   // 3d 모델
   const canvasRef = useRef<HTMLCanvasElement>(null);

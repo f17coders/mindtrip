@@ -105,7 +105,7 @@ async function loadChattingMine(token:string) :Promise<chattingRoom[]|null>{
         Authorization: token
       }
     })
-    console.log(res)
+    // console.log(res)
     const tempRes = res.data.result
     // console.log('--- 내 고민 목록 출력 ---')
     // console.log(tempRes)
@@ -123,14 +123,14 @@ async function loadChattingMine(token:string) :Promise<chattingRoom[]|null>{
 
 // 대화중인 채팅 목록 불러오기(다른사람꺼)
 async function loadChattingOthers(token:string) :Promise<chattingRoom[]|null>{
-  console.log(token)
+  // console.log(token)
   try{
     const res = await axios.get(`https://mindtrip.site/api/consults/v1/others`,{
       headers: {
         Authorization: token
       }
     })
-    console.log(res)
+    // console.log(res)
     const temp = res.data.result
     if (temp === null) {
       return null

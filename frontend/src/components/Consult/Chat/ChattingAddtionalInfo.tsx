@@ -117,9 +117,6 @@ function ChattingAdditionalInfo({ isMine, chatInfo }: propsType) {
     })
   }
 
-  useEffect(() => {
-    console.log(isMine)
-  }, [])
 
   return (
     <div

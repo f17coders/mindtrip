@@ -44,7 +44,7 @@ const TestCal: React.FC<TestCalProps> = ({ missionData }) => {
 
   useEffect(() => {
     if (missionData) {
-      console.log(missionData)
+      // console.log(missionData)
       const missionCalender = missionData;
       const tempDayData: DayData = {};
       const tempMissionInfo: MissionData = {};

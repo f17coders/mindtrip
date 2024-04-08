@@ -83,8 +83,6 @@ function Mission() {
     const currentTime = new Date();
     const currentHour = currentTime.getHours();
     const currentMinute = currentTime.getMinutes();
-    console.log(currentHour);
-    console.log(currentMinute);
 
     if (currentHour === 0 && currentMinute >= 0 && currentMinute <= 5) {
       setIsMidnight(true);

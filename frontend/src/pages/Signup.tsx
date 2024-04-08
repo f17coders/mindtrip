@@ -242,7 +242,7 @@ function Signup () {
           navigate('/main')
         })
       } else {
-        console.log('회원정보 저장이 안된듯?')
+        console.log('회원정보를 저장하는데에 오류가 생겼습니다.')
         navigate('/main')
       }
       

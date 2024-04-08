@@ -47,7 +47,7 @@ async function signup(id: string, password: string, nickname: string): Promise<n
       'password': password,
       'nickname': nickname
     });
-    console.log(res)
+    // console.log(res)
     return res.data.result
   } catch (err) {
     console.log(err);
@@ -72,8 +72,8 @@ async function registerResult(memberId: number, tempToken: string): Promise<bool
       }
     })
     // 메세지가 있는건 성공
-    console.log(res)
-    console.log(res.data)
+    // console.log(res)
+    // console.log(res.data)
     if (res.data.message) {
       return true
     }

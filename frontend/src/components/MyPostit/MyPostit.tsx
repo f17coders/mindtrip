@@ -36,7 +36,7 @@ function MyPostit() {
           },
         }
       );
-      console.log(response.data.result)
+      // console.log(response.data.result)
       setPostitList(response.data.result)
     } catch (e) {
       console.log(e);

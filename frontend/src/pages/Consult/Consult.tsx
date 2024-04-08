@@ -136,10 +136,9 @@ function Others() {
   const [otherConsults, setOtherConsult] = useState<consultType[]>([])
 
   // 선택된 카테고리
-  const [selectedCategory, setSelectedCategory] = useState<categoryType | null>(null)
+  const [_selectedCategory, setSelectedCategory] = useState<categoryType | null>(null)
   const handleCategory = (e: any) => {
     setSelectedCategory(e.target.value)
-    console.log(selectedCategory)
     axios.get(`https://mindtrip.site/api/consults/v1/category/${e.target.value}`,{
       headers: {
         Authorization: accessToken
@@ -247,10 +246,9 @@ function Shared() {
   const [shared, setShared] = useState<consultType[]>([])
 
   // 선택된 카테고리
-  const [selectedCategory, setSelectedCategory] = useState<categoryType | null>(null)
+  const [_selectedCategory, setSelectedCategory] = useState<categoryType | null>(null)
   const handleCategory = (e: any) => {
     setSelectedCategory(e.target.value)
-    console.log(selectedCategory)
     axios.get(`https://mindtrip.site/api/consults/v1/shared/${e.target.value}`,{
       headers: {
         Authorization: accessToken
@@ -267,7 +265,6 @@ function Shared() {
     const fetchConsult = async () => {
       try {
         let tempSharedConsult: consultType[] = await getSharedConsult(accessToken)
-        console.log(tempSharedConsult)
         setShared(tempSharedConsult)
       } catch (err) {
         console.log(err)

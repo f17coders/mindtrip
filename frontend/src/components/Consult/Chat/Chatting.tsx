@@ -105,15 +105,15 @@ function Chatting() {
 
       setIsLoading(true);
 
-    stomp.onConnect = (frame: Frame) => { //연결이 성공하면 수행할 작업
+    stomp.onConnect = (_frame: Frame) => { //연결이 성공하면 수행할 작업
         // setConnected(true);
-      console.log('Connected: ' + frame);
-      console.log(channelId)
+      // console.log('Connected: ' + frame);
+      // console.log(channelId)
       stomp.subscribe(`/sub/${channelId}`,
         (res: { body: string; }) => {
           setRecvList(prevRecvList => [...prevRecvList, JSON.parse(res.body)]);
         });
-      console.log(recvList);
+      // console.log(recvList);
       setIsLoading(false);
     };
 
@@ -152,18 +152,18 @@ function Chatting() {
   useEffect(() => {
     disconnectChat();
     if (channelId != null) {
-      console.log("연결")
+      // console.log("연결")
       chatPrivateConnect();
     }
     // 연결
     const fetchData = async () => {
       try {
-        console.log("fetch")
+        // console.log("fetch")
         if (channelId != null) {
           const personalChat = await getPersonalChat(accessToken, channelId);
           setPersonalChat(personalChat);
-          console.log('personalChat에 대한 정보를 출력합니다.')
-          console.log(personalChat);
+          // console.log('personalChat에 대한 정보를 출력합니다.')
+          // console.log(personalChat);
           setRecvList(personalChat.messageList);
         }
 

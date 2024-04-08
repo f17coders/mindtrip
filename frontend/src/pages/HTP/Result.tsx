@@ -14,8 +14,8 @@ function Result() {
   let tempToken = useSelector((state: RootState) => state.accessToken.value)
   const dispatch = useDispatch()
 
-  const [result1, setResult1] = useState<string>('가족들과의 관계에서 고립감이나 외로움 등 부정적인 느낌을 갖고 있는 걸로 보여요. 우울할 때가 많고 에너지 수준이 낮은데 반해 자아가 강해서 다른 사람과의 소통에서 방어적이거나, 반대로 우울감을 감추기 위해 공격적인 태도를 취하고 있을 수 있어요. 명상, 독서, 필사 등을 해보면서 마음의 안정을 찾는 것도 좋은 방법이 될 거예요.')
-  const [result2, setResult2] = useState<villageNameType>('watermelon')
+  const [result1, setResult1] = useState<string>('결과를 로딩중입니다. 해당화면이 길게 지속된다면 검사를 다시 진행해주세요.')
+  const [result2, setResult2] = useState<villageNameType| null>(null)
 
   // 결과
   const fetchResult1 = async () => {
@@ -33,7 +33,6 @@ function Result() {
   const fetchResult2 = async () => {
     try {
       let tempResult:villageNameType|null = await getResult2(tempToken)
-      console.log(tempResult)
       if (tempResult != null) {
         setResult2(tempResult)
         dispatch(saveVillage(tempResult))
@@ -55,13 +54,15 @@ function Result() {
   <div>
       <p className="text-center text-4xl pt-8 pb-8">검사 결과</p>
       <div className={`
-        ${villageBackgroundColor[result2]} 
+        ${result2 ? villageBackgroundColor[result2]: ''} 
         rounded mx-auto mb-5 shadow
         w-[80vw] lg:w-[50vw] min-h-[12vh]
         flex items-center pl-5`
       }>
-        <img src={`/Image/${result2}.png`} className="w-[30%] mx-3 mt-2"/>
-        <p className="text-center">당신의 마을은<br/><span className={villageTextColor[result2]}>{changeLang(result2)}</span>마을입니다!</p>
+        {
+          result2 ? (<img src={`/Image/${result2}.png`} className="w-[30%] mx-3 mt-2"/>) : (<div className="w-[30%] mx-3 mt-2"></div>)
+        }
+        <p className="text-center">당신의 마을은<br/><span className={result2 ? villageTextColor[result2] : ''}>{result2 ? changeLang(result2): ''}</span>마을입니다!</p>
       </div>
       <div className="w-full lg:w-[70vw] mx-auto text-center border-3 rounded-md bg-white min-h-[45vh] p-7">
         <p className="min-h-[40vh] text-lg" style={{fontFamily: 'JamsilThin'}}>{result1}</p>
@@ -75,7 +76,7 @@ export default Result
 
 
 type proptype = {
-  village : villageNameType
+  village : villageNameType | null
 }
 function MyBtn({village}: proptype) {
   const navigate = useNavigate()
@@ -102,7 +103,7 @@ function MyBtn({village}: proptype) {
       className={`fixed bottom-10 left-1/2 translate-x-[-50%] py-2 px-8 h-14 w-48 text-black text-base font-bold nded-full overflow-hidden bg-white rounded-full transition-all duration-400 ease-in-out shadow-md hover:scale-105 hover:text-white hover:shadow-lg active:scale-90 before:absolute before:top-0 before:-left-full before:w-full before:h-full before:bg-gradient-to-r before:from-blue-500 before:to-blue-300 before:transition-all before:duration-500 before:ease-in-out before:z-[-1] before:rounded-full hover:before:left-0`}
       onClick={goNextStep}
     >
-      <p><span className={`${villageTextColor[village]}`}>{changeLang(village)}</span>마을 가기</p>
+      <p><span className={`${village ? villageTextColor[village] : ''}`}>{village ? changeLang(village) : ''}</span>마을 가기</p>
     </button>
   )
 }

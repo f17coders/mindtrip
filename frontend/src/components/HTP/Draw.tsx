@@ -135,7 +135,6 @@ function Draw({now, goSurvey, tempAuthorization}:propsType) {
         const file = new File([blob], `${now}.png`, {type:'image/png'})
         const formData = new FormData()
         formData.append('file', file)
-        console.log(file)
         try {
           axios.post(`https://mindtrip.site/api/htp/v1/test/${now}`, formData, {
             headers: {
