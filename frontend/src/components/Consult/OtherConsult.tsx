@@ -5,7 +5,6 @@ import { RootState } from './../../store/store'
 import { consultType } from "../../types/DataTypes";
 import { villageBackgroundColor, villageTextColor } from "../../atoms/color";
 import { enterRoom } from "../../api/consults";
-import { useEffect } from "react";
 import Swal from "sweetalert2";
 // 다른 사람의 고민 하나의 컴포넌트
 // 고민 제목과 내용, 그리고 상담하기 버튼이 들어감
