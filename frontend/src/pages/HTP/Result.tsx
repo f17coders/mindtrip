@@ -14,8 +14,8 @@ function Result() {
   let tempToken = useSelector((state: RootState) => state.accessToken.value)
   const dispatch = useDispatch()
 
-  const [result1, setResult1] = useState<string>('')
-  const [result2, setResult2] = useState<villageNameType>('apple')
+  const [result1, setResult1] = useState<string>('가족들과의 관계에서 고립감이나 외로움 등 부정적인 느낌을 갖고 있는 걸로 보여요. 우울할 때가 많고 에너지 수준이 낮은데 반해 자아가 강해서 다른 사람과의 소통에서 방어적이거나, 반대로 우울감을 감추기 위해 공격적인 태도를 취하고 있을 수 있어요. 명상, 독서, 필사 등을 해보면서 마음의 안정을 찾는 것도 좋은 방법이 될 거예요.')
+  const [result2, setResult2] = useState<villageNameType>('watermelon')
 
   // 결과
   const fetchResult1 = async () => {
