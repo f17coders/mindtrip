@@ -2,7 +2,6 @@ import { Button } from "@nextui-org/react"
 import Swal from "sweetalert2"
 import { useDispatch } from "react-redux"
 import { toggleOpen, changeList } from "../../../store/chatSlice"
-import { useEffect } from "react"
 import axios from 'axios'
 import { useSelector } from "react-redux"
 import { RootState } from "../../../store/store"
