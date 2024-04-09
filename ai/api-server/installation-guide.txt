@@ -1,0 +1,7 @@
+pip install --no-cache-dir boto3
+pip install --no-cache-dir sqlalchemy
+pip install --no-cache-dir mysqlclient
+pip install --no-cache-dir fastapi uvicorn python-multipart
+pip install --no-cache-dir py-redis
+pip install --no-cache-dir pika
+pip install --no-cache-dir pyjwt
