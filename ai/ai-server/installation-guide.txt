@@ -1,6 +1,5 @@
-# Pytorch설치는 https://pytorch.org/get-started/previous-versions/를 참조하십시오.
+# Pytorch 설치는 https://pytorch.org/get-started/previous-versions/를 참조하십시오.
 # ultralytics보다 먼저 설치하는 걸 권장합니다.
-# Linux라면 nvidia-cuda-toolkit도 포함되어 설치됩니다.
 
 pip install --no-cache-dir ultralytics
 pip install --no-cache-dir python-dotenv
