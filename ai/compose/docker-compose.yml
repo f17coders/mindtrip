@@ -1,0 +1,28 @@
+version: "3.8"
+services:
+  redis:
+    image: "redis:alpine"
+    container_name: "readyes"
+    ports:
+      - "${REDIS_PORT_HOST}:${REDIS_PORT_CONTAINER}"
+    volumes:
+      - type: bind
+        source: ${REDIS_VOLUME_SOURCE}
+        target: ${REDIS_VOLUME_DESTINATION}
+
+  rabbitmq:
+    image: "rabbitmq:management-alpine"
+    container_name: "pika-boo"
+    ports:
+      - "${RABBITMQ_PORT_AMQP_HOST}:${RABBITMQ_PORT_AMQP_CONTAINER}" # AMQP 프로토콜 포트
+      - "${RABBITMQ_PORT_MANAGEMENT_HOST}:${RABBITMQ_PORT_MANAGEMENT_CONTAINER}" # 관리 인터페이스 포트
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
+    volumes:
+      - type: bind
+        source: ${RABBITMQ_VOLUME_DATA_SOURCE}
+        target: ${RABBITMQ_VOLUME_DATA_TARGET}
+      - type: bind
+        source: ${RABBITMQ_VOLUME_LOG_SOURCE}
+        target: ${RABBITMQ_VOLUME_LOG_TARGET}
