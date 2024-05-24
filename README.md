@@ -1,7 +1,6 @@
 <div align="center">
   <br />
-    <h1>나여</h1>
-    <h2>나를 위한 여정</h2>
+    <img alt="logo" src="https://github.com/ss0510s/mindtrip/assets/77006790/139eba45-c559-47e8-bb05-e4f42ae937f8">
 
 ### 🎬[Demo 시연영상](https://youtu.be/_g9i4IPfLvI)
 💡삼성 청년 SW 아카데미💡     
